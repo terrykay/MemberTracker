@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLVisitorHistoryController">
+   <children>
+      <VBox layoutX="335.0" layoutY="63.0" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <TableView fx:id="visitTable" onMousePressed="#handleTableClicked" prefWidth="600.0">
+              <columns>
+                <TableColumn fx:id="startColumn" editable="false" prefWidth="118.0" text="Start date" />
+                <TableColumn fx:id="endColumn" prefWidth="118.0" text="End date" />
+                  <TableColumn fx:id="durationColumn" prefWidth="89.0" text="Duration" />
+                  <TableColumn fx:id="inColumn" prefWidth="127.0" text="In" />
+                  <TableColumn fx:id="dimensionsColumn" prefWidth="109.0" text="Dimensions" />
+              </columns>
+            </TableView>
+            <HBox alignment="CENTER" fillHeight="false" prefHeight="40.0" spacing="20.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleAddNewButton" prefWidth="80.0" text="Add new" />
+                  <Button layoutX="263.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleSaveButton" prefWidth="80.0" text="Save" />
+               </children>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

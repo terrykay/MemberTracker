@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="198.0" prefWidth="783.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLQueryController">
+   <children>
+      <VBox layoutX="17.0" layoutY="17.0" spacing="20.0">
+         <children>
+            <HBox layoutX="19.0" layoutY="83.0" spacing="20.0">
+               <children>
+                  <RadioButton fx:id="andRadioButton" mnemonicParsing="false" text="And" />
+                  <RadioButton fx:id="orRadioButton" mnemonicParsing="false" text="Or" />
+                  <ChoiceBox fx:id="choiceBoxOne" layoutX="20.0" layoutY="17.0" prefWidth="150.0" />
+                  <RadioButton fx:id="containsOne" layoutX="344.0" layoutY="30.0" mnemonicParsing="false" text="Contains" />
+                  <RadioButton fx:id="notContainsOne" layoutX="463.0" layoutY="29.0" mnemonicParsing="false" text="Does not contain" />
+                  <TextField fx:id="textFieldOne" layoutX="139.0" layoutY="25.0" />
+               </children>
+            </HBox>
+            <HBox layoutX="20.0" layoutY="17.0" spacing="20.0">
+               <children>
+                  <Label prefWidth="110.0" />
+                  <ChoiceBox fx:id="choiceBoxTwo" layoutX="20.0" layoutY="17.0" prefWidth="150.0" />
+                  <RadioButton fx:id="containsTwo" layoutX="344.0" layoutY="30.0" mnemonicParsing="false" text="Contains" />
+                  <RadioButton fx:id="notContainsTwo" layoutX="463.0" layoutY="29.0" mnemonicParsing="false" text="Does not contain" />
+                  <TextField fx:id="textFieldTwo" layoutX="139.0" layoutY="25.0" />
+               </children>
+            </HBox>
+            <HBox layoutX="10.0" layoutY="55.0" spacing="20.0">
+               <children>
+                  <Label prefWidth="110.0" />
+                  <ChoiceBox fx:id="choiceBoxThree" layoutX="20.0" layoutY="17.0" prefWidth="150.0" />
+                  <RadioButton fx:id="containsThree" layoutX="344.0" layoutY="30.0" mnemonicParsing="false" text="Contains" />
+                  <RadioButton fx:id="notContainsThree" layoutX="463.0" layoutY="29.0" mnemonicParsing="false" text="Does not contain" />
+                  <TextField fx:id="textFieldThree" layoutX="139.0" layoutY="25.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleResetButton" text="Reset" />
+                  <Button mnemonicParsing="false" onAction="#handleApplyButton" text="Apply" />
+                  <Button mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

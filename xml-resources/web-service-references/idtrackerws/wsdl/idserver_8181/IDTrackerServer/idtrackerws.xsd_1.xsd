@@ -1,0 +1,356 @@
+<?xml version='1.0' encoding='UTF-8'?><!-- Published by JAX-WS RI (http://jax-ws.java.net). RI's version is Metro/2.3.2-b608 (trunk-7979; 2015-01-21T12:50:19+0000) JAXWS-RI/2.2.11-b150120.1832 JAXWS-API/2.2.12 JAXB-RI/2.2.12-b141219.1637 JAXB-API/2.2.13-b141020.1521 svn-revision#unknown. --><xs:schema xmlns:tns="http://controller/" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" targetNamespace="http://controller/">
+
+<xs:element name="checkIsValidSession" type="tns:checkIsValidSession"/>
+
+<xs:element name="checkIsValidSessionResponse" type="tns:checkIsValidSessionResponse"/>
+
+<xs:element name="deleteCustomer" type="tns:deleteCustomer"/>
+
+<xs:element name="deleteCustomerResponse" type="tns:deleteCustomerResponse"/>
+
+<xs:element name="getCustomerByID" type="tns:getCustomerByID"/>
+
+<xs:element name="getCustomerByIDResponse" type="tns:getCustomerByIDResponse"/>
+
+<xs:element name="getCustomers" type="tns:getCustomers"/>
+
+<xs:element name="getCustomersResponse" type="tns:getCustomersResponse"/>
+
+<xs:element name="getDisplayCustomers" type="tns:getDisplayCustomers"/>
+
+<xs:element name="getDisplayCustomersResponse" type="tns:getDisplayCustomersResponse"/>
+
+<xs:element name="loginUser" type="tns:loginUser"/>
+
+<xs:element name="loginUserResponse" type="tns:loginUserResponse"/>
+
+<xs:element name="removePartner" type="tns:removePartner"/>
+
+<xs:element name="removePartnerResponse" type="tns:removePartnerResponse"/>
+
+<xs:element name="saveAddress" type="tns:saveAddress"/>
+
+<xs:element name="saveAddressResponse" type="tns:saveAddressResponse"/>
+
+<xs:element name="saveCustomer" type="tns:saveCustomer"/>
+
+<xs:element name="saveCustomerResponse" type="tns:saveCustomerResponse"/>
+
+<xs:complexType name="getDisplayCustomers">
+<xs:sequence>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getDisplayCustomersResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:customerTO" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="customerTO">
+<xs:sequence>
+<xs:element name="addressId" type="tns:addressTO" minOccurs="0"/>
+<xs:element name="carCollection" type="tns:carTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="carDeleteCollection" type="tns:carTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="childCollection" type="tns:childTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="childDeleteCollection" type="tns:childTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="customerCollection" type="tns:customerTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="dob" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="email" type="xs:string" minOccurs="0"/>
+<xs:element name="forename" type="xs:string" minOccurs="0"/>
+<xs:element name="giftAid" type="xs:boolean" minOccurs="0"/>
+<xs:element name="hobbies" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="imageCollection" type="tns:imageTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="imageDeleteCollection" type="tns:imageTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="membership" type="tns:membershipTO" minOccurs="0"/>
+<xs:element name="middlenames" type="xs:string" minOccurs="0"/>
+<xs:element name="nextOfKin" type="tns:nextOfKinTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="notes" type="tns:notesTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="occupation" type="xs:string" minOccurs="0"/>
+<xs:element name="partnerId" type="xs:int" minOccurs="0"/>
+<xs:element name="photography" type="xs:boolean" minOccurs="0"/>
+<xs:element name="refuse" type="tns:refuseTO" minOccurs="0"/>
+<xs:element name="surname" type="xs:string" minOccurs="0"/>
+<xs:element name="telephoneOne" type="xs:string" minOccurs="0"/>
+<xs:element name="telephoneTwo" type="xs:string" minOccurs="0"/>
+<xs:element name="visitCollection" type="tns:visitTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="addressTO">
+<xs:sequence>
+<xs:element name="addressLineOne" type="xs:string" minOccurs="0"/>
+<xs:element name="addressLineTwo" type="xs:string" minOccurs="0"/>
+<xs:element name="country" type="xs:string" minOccurs="0"/>
+<xs:element name="county" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="postcode" type="xs:string" minOccurs="0"/>
+<xs:element name="town" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="carTO">
+<xs:sequence>
+<xs:element name="colour" type="xs:string" minOccurs="0"/>
+<xs:element name="customerId" type="xs:int"/>
+<xs:element name="dateAdded" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="idcar" type="xs:int" minOccurs="0"/>
+<xs:element name="make" type="xs:string" minOccurs="0"/>
+<xs:element name="model" type="xs:string" minOccurs="0"/>
+<xs:element name="regno" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="childTO">
+<xs:sequence>
+<xs:element name="customerId" type="xs:int"/>
+<xs:element name="dob" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="forename" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="surname" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="imageTO">
+<xs:sequence>
+<xs:element name="customerId" type="xs:int"/>
+<xs:element name="details" type="xs:string" minOccurs="0"/>
+<xs:element name="expires" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="filename" type="xs:string" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="scanned" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="type" type="xs:unsignedShort"/>
+<xs:element name="url" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="membershipTO">
+<xs:sequence>
+<xs:element name="caravanCollection" type="tns:caravanTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="customer" type="xs:int"/>
+<xs:element name="district" type="xs:string" minOccurs="0"/>
+<xs:element name="electricityHookup" type="xs:boolean" minOccurs="0"/>
+<xs:element name="electricitychargeCollection" type="tns:electricitychargeTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="joinedDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="lockerId" type="xs:string" minOccurs="0"/>
+<xs:element name="membershipNo" type="xs:string" minOccurs="0"/>
+<xs:element name="membershipchargeCollection" type="tns:membershipchargeTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="parkingSpace" type="xs:boolean" minOccurs="0"/>
+<xs:element name="plotId" type="xs:string" minOccurs="0"/>
+<xs:element name="society" type="xs:string" minOccurs="0"/>
+<xs:element name="swipeCardId" type="xs:string" minOccurs="0"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="winterStorage" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="caravanTO">
+<xs:sequence>
+<xs:element name="cris" type="xs:string" minOccurs="0"/>
+<xs:element name="idcaravan" type="xs:int" minOccurs="0"/>
+<xs:element name="length" type="xs:int" minOccurs="0"/>
+<xs:element name="make" type="xs:string" minOccurs="0"/>
+<xs:element name="membershipId" type="xs:int" minOccurs="0"/>
+<xs:element name="model" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="electricitychargeTO">
+<xs:sequence>
+<xs:element name="charge" type="xs:int" minOccurs="0"/>
+<xs:element name="datePaid" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="endUnit" type="xs:int" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="membershipId" type="xs:int"/>
+<xs:element name="startUnit" type="xs:int" minOccurs="0"/>
+<xs:element name="year" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="membershipchargeTO">
+<xs:sequence>
+<xs:element name="amount" type="xs:int" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="invoiceCollection" type="tns:invoiceTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="membership" type="xs:int" minOccurs="0"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+<xs:element name="receiptCollection" type="tns:receiptTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+<xs:element name="year" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="invoiceTO">
+<xs:sequence>
+<xs:element name="amount" type="xs:int" minOccurs="0"/>
+<xs:element name="duedate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="invoicenumber" type="xs:int" minOccurs="0"/>
+<xs:element name="issuedate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="membershipchargeCollection" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="receiptTO">
+<xs:sequence>
+<xs:element name="amount" type="xs:int" minOccurs="0"/>
+<xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+<xs:element name="receiptnumber" type="xs:int" minOccurs="0"/>
+<xs:element name="receivedby" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="nextOfKinTO">
+<xs:sequence>
+<xs:element name="awareNaturist" type="xs:boolean" minOccurs="0"/>
+<xs:element name="contactNo" type="xs:string" minOccurs="0"/>
+<xs:element name="customerId" type="xs:int" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="name" type="xs:string" minOccurs="0"/>
+<xs:element name="relationship" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="notesTO">
+<xs:sequence>
+<xs:element name="customerId" type="xs:int" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="refuseTO">
+<xs:sequence>
+<xs:element name="customerId" type="xs:int" minOccurs="0"/>
+<xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="visitTO">
+<xs:sequence>
+<xs:element name="customerId" type="xs:int" minOccurs="0"/>
+<xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="invoiceCollection" type="tns:invoiceTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="unitId" type="tns:unitTO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="unitTO">
+<xs:sequence>
+<xs:element name="dimensions" type="xs:string" minOccurs="0"/>
+<xs:element name="electricity" type="xs:boolean" minOccurs="0"/>
+<xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="make" type="xs:string" minOccurs="0"/>
+<xs:element name="model" type="xs:string" minOccurs="0"/>
+<xs:element name="visitId" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteCustomer">
+<xs:sequence>
+<xs:element name="who" type="tns:customerTO" minOccurs="0"/>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="deleteCustomerResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkIsValidSession">
+<xs:sequence>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="checkIsValidSessionResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePartner">
+<xs:sequence>
+<xs:element name="customerID" type="xs:int"/>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="removePartnerResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCustomers">
+<xs:sequence>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCustomersResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:customerTO" minOccurs="0" maxOccurs="unbounded"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="saveAddress">
+<xs:sequence>
+<xs:element name="addressTO" type="tns:addressTO" minOccurs="0"/>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="saveAddressResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:int" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="saveCustomer">
+<xs:sequence>
+<xs:element name="aCustomer" type="tns:customerTO" minOccurs="0"/>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="saveCustomerResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCustomerByID">
+<xs:sequence>
+<xs:element name="customerID" type="xs:int"/>
+<xs:element name="sessionID" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="getCustomerByIDResponse">
+<xs:sequence>
+<xs:element name="return" type="tns:customerTO" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginUser">
+<xs:sequence>
+<xs:element name="username" type="xs:string" minOccurs="0"/>
+<xs:element name="password" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="loginUserResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+</xs:schema>

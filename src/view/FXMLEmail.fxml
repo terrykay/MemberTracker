@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="379.0" prefWidth="610.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLEmailController">
+   <children>
+      <VBox layoutX="139.0" layoutY="62.0" prefHeight="200.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+         <children>
+            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" spacing="20.0">
+               <children>
+                  <Label text="To" />
+                  <TextArea fx:id="toTextArea" prefHeight="25.0" prefWidth="491.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="20.0">
+               <children>
+                  <Label text="From" />
+                  <TextField fx:id="fromTextField" prefHeight="25.0" prefWidth="491.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing="20.0">
+               <children>
+                  <Label text="Subject" />
+                  <TextField fx:id="subjectTextField" prefHeight="25.0" prefWidth="491.0" />
+               </children>
+            </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0" spacing="5.0">
+               <children>
+                  <Label text="Message body" />
+                  <TextArea fx:id="messageBodyTextArea" prefHeight="200.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleSendButton" text="Send" />
+                  <Button mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

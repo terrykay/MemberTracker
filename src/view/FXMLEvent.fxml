@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="173.0" prefWidth="320.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="controller.FXMLEventController">
+   <children>
+      <VBox layoutX="162.0" layoutY="14.0" prefHeight="423.0" prefWidth="511.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_RIGHT" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Label text="Event title" />
+                  <TextField fx:id="eventTitleTextField" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Label text="Start date" />
+                  <DatePicker fx:id="startDateDatePicker" prefHeight="25.0" prefWidth="171.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="35.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Label text="End date" />
+                  <DatePicker fx:id="endDateDatePicker" prefHeight="25.0" prefWidth="171.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
+                  <Button mnemonicParsing="false" onAction="#handleCancelButton" text="Cancel" />
+               </children>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

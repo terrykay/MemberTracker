@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.collections.*?>
+
+<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" prefHeight="790.0" prefWidth="783.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLCustomerController">
+    <children>
+      <VBox layoutX="16.0" layoutY="17.0" prefHeight="598.0" prefWidth="764.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+         <children>
+            <HBox layoutX="16.0" layoutY="17.0" prefHeight="573.0" prefWidth="766.0">
+               <children>
+                    <VBox alignment="CENTER_RIGHT" layoutX="16.0" layoutY="17.0" prefHeight="451.0" prefWidth="348.0" spacing="5.0">
+                        <children>
+                            <HBox alignment="CENTER_RIGHT" layoutX="19.0" layoutY="26.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="19.0" layoutY="30.0" text="Forename" />
+                                    <TextField fx:id="forenameField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="17.0" layoutY="64.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="17.0" layoutY="64.0" text="Middle names" />
+                                    <TextField fx:id="middlenameField" layoutX="131.0" layoutY="65.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="23.0" layoutY="108.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Surname" />
+                                    <TextField fx:id="surnameField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="70.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Address one" />
+                                    <TextField fx:id="addressOneField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="100.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Address two" />
+                                    <TextField fx:id="addressTwoField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="130.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Town" />
+                                    <TextField fx:id="townField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="160.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="County" />
+                                    <TextField fx:id="countyField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="190.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Postcode" />
+                                    <TextField fx:id="postcodeField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="220.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Country" />
+                                    <TextField fx:id="countryField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="250.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Telephone one" />
+                                    <TextField fx:id="telephoneOneField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                            <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="280.0" spacing="10.0">
+                                <children>
+                                    <Label layoutX="23.0" layoutY="112.0" text="Telephone two" />
+                                    <TextField fx:id="telephoneTwoField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                                </children>
+                            </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="303.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="23.0" layoutY="112.0" text="Email" />
+                              <TextField fx:id="emailField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="417.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="23.0" layoutY="112.0" text="Occupation" />
+                              <TextField fx:id="occupationField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                           <children>
+                              <Label layoutX="23.0" layoutY="112.0" text="Hobbies" />
+                              <TextField fx:id="hobbiesField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                           <children>
+                              <Label text="Date of birth" />
+                              <DatePicker fx:id="dobDatePicker" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
+                           <children>
+                              <CheckBox fx:id="photographyCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Allow photography" />
+                              <CheckBox fx:id="giftAidCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Gift aid" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" layoutX="10.0" layoutY="460.0" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
+                           <children>
+                              <CheckBox fx:id="meberCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" prefWidth="147.0" text="Member" />
+                              <CheckBox fx:id="giftAidCheckBox1" disable="true" mnemonicParsing="false" onAction="#setUpdatedAction" text="Gift aid" visible="false" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="446.0" spacing="10.0">
+                           <children>
+                              <Label fx:id="dateJoinedLabel" layoutX="23.0" layoutY="112.0" text="Date joined" />
+                              <TextField fx:id="dateJoinedField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <Button fx:id="editMemberButton" mnemonicParsing="false" onAction="#handleMemberEditButton" prefHeight="25.0" prefWidth="104.0" text="Edit details" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="506.0" spacing="10.0">
+                           <children>
+                              <Label fx:id="lastVisitLabel" layoutX="23.0" layoutY="112.0" text="Last visit" />
+                              <TextField fx:id="lastVisitField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <Button fx:id="addVisitButton" mnemonicParsing="false" onAction="#handleAddVisitButton" prefHeight="25.0" prefWidth="104.0" text="Add visit" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="543.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="23.0" layoutY="112.0" text="Partner" />
+                              <TextField fx:id="partnerNameField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handlePartnerNameClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <Button fx:id="findPartnerButton" mnemonicParsing="false" onAction="#handleFindPartnerButton" prefHeight="25.0" prefWidth="104.0" text="Find" />
+                           </children>
+                        </HBox>
+                        <Separator prefWidth="200.0" />
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="26.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="19.0" layoutY="30.0" text="Next of kin" />
+                              <TextField fx:id="nextOfKinField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="558.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="19.0" layoutY="30.0" text="Contact no." />
+                              <TextField fx:id="contactNoField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="573.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="19.0" layoutY="30.0" text="Relationship" />
+                              <TextField fx:id="relationShipField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" layoutX="10.0" layoutY="460.0" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
+                           <children>
+                              <CheckBox fx:id="naturistAwareCheckbox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Aware of being a naturist" />
+                           </children>
+                        </HBox>            
+                        </children>
+                    </VBox>
+                  <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="443.0" prefWidth="403.0" spacing="10.0">
+                     <children>
+                        <TableView fx:id="carTable" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleCarClicked" prefHeight="123.0" prefWidth="368.0">
+                          <columns>
+                            <TableColumn fx:id="carRegColumn" prefWidth="77.0" text="Car reg" />
+                            <TableColumn fx:id="carMakeColumn" prefWidth="102.0" text="Make" />
+                              <TableColumn fx:id="carModelColumn" prefWidth="89.0" text="Model" />
+                              <TableColumn fx:id="carColourColumn" text="Colour" />
+                          </columns>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </TableView>
+                        <TableView fx:id="childTable" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleChildClicked" prefHeight="115.0" prefWidth="368.0">
+                          <columns>
+                            <TableColumn fx:id="childNameColumn" prefWidth="100.0" resizable="false" text="Child name" />
+                            <TableColumn fx:id="childSurnameColumn" prefWidth="104.0" text="Surname" />
+                              <TableColumn fx:id="childDOBColumn" prefWidth="98.0" text="DOB" />
+                              <TableColumn fx:id="childAgeColumn" maxWidth="187.0" prefWidth="47.0" text="age" />
+                          </columns>
+                        </TableView>
+                        <TableView fx:id="IDTable" onDragDropped="#handleIDDragDrop" onDragOver="#handleIDDragOver" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleIDClicked" prefHeight="130.0" prefWidth="368.0">
+                          <columns>
+                            <TableColumn fx:id="IDTypeColumn" prefWidth="243.0" text="ID type" />
+                            <TableColumn fx:id="IDExpiryColumn" prefWidth="106.0" text="Expiry date" />
+                          </columns>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </TableView>
+                        <TableView fx:id="documentTable" onDragDropped="#handleDocDragDropped" onDragOver="#handleIDDragOver" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleDocumentClicked" prefHeight="136.0" prefWidth="368.0">
+                          <columns>
+                            <TableColumn fx:id="documentTypeColumn" prefWidth="243.0" text="Document type" />
+                            <TableColumn fx:id="documentDateColumn" prefWidth="106.0" text="Date scanned" />
+                          </columns>
+                        </TableView>
+                        <Label text="Notes:" />
+                        <TextArea fx:id="notesTextArea" onKeyPressed="#setUpdatedKey" prefHeight="133.0" prefWidth="368.0" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets left="25.0" right="10.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+      <HBox alignment="CENTER" spacing="10.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
+         <children>
+              <Button fx:id="saveButton" layoutX="151.0" layoutY="540.0" onAction="#handleSaveButtonAction" text="Save" />
+            <Button fx:id="exportButton" mnemonicParsing="false" onAction="#handleExportButton" text="Export" />
+            <Button fx:id="printButton" mnemonicParsing="false" onAction="#handlePrintButton" text="Print" />
+              <Button fx:id="cancelButton" layoutX="222.0" layoutY="541.0" mnemonicParsing="false" onAction="#handleCancelButtonAction" text="Cancel" />
+            <Button fx:id="refuseButton" mnemonicParsing="false" onAction="#handleRefuseButton" text="Refuse" />
+         </children>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
+      </HBox>
+    </children>
+</AnchorPane>

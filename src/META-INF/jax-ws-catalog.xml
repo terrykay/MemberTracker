@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="https://localhost:8181/IDTrackerServer/idtrackerws?wsdl" uri="wsdl/localhost_8080/IDTrackerServer/idtrackerws.wsdl"/>
+    <system systemId="https://localhost:8181/IDTrackerServer/idtrackerws?xsd=1" uri="wsdl/localhost_8181/IDTrackerServer/idtrackerws.xsd_1.xsd"/>
+    <system systemId="http://idserver:8080/IDTrackerServer/idtrackerws?wsdl" uri="wsdl/idserver_8080/IDTrackerServer/idtrackerws.wsdl"/>
+    <system systemId="http://idserver:8080/IDTrackerServer/idtrackerws?xsd=1" uri="wsdl/idserver_8080/IDTrackerServer/idtrackerws.xsd_1.xsd"/>
+    <system systemId="http://localhost:8080/IDTrackerServer/idtrackerws?wsdl" uri="wsdl/localhost_8080/IDTrackerServer/idtrackerws.wsdl"/>
+    <system systemId="http://localhost:8080/IDTrackerServer/idtrackerws?xsd=1" uri="wsdl/localhost_8080/IDTrackerServer/idtrackerws.xsd_1.xsd"/>
+    <system systemId="https://idserver:8181/IDTrackerServer/idtrackerws?xsd=1" uri="wsdl/idserver_8181/IDTrackerServer/idtrackerws.xsd_1.xsd"/>
+    <system systemId="https://idserver:8181/IDTrackerServer/idtrackerws?wsdl" uri="wsdl/idserver_8181/IDTrackerServer/idtrackerws.wsdl"/>
+</catalog>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="596.0" minWidth="1040.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLSearchCustomerController">
+   <children>
+      <VBox fx:id="mainVBox" layoutX="20.0" layoutY="70.0" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0">
+         <children>
+            <HBox alignment="CENTER" spacing="20.0">
+               <children>
+                  <TextField fx:id="searchField" onKeyReleased="#handleSearchKeyReleased" promptText="Enter search term here" />
+                  <ChoiceBox fx:id="searchSelection" prefWidth="120.0" />
+                  <ChoiceBox fx:id="filterSelection" prefWidth="120.0" />
+                  <Button fx:id="addNewButton" mnemonicParsing="false" onAction="#handleAddNewButton" text="Add new" />
+                  <Button mnemonicParsing="false" onAction="#handleRefreshButton" text="Refresh" />
+                  <CheckBox fx:id="attendeesOnlyCheckbox" mnemonicParsing="false" onAction="#handleAttendeesOnlyCheckbox" prefWidth="0.0" text="Attendees only" visible="false" />
+               </children>
+            </HBox>
+            <AnchorPane fx:id="subAnchorPane">
+               <children>
+                  <!-- ScrollPane hbarPolicy="NEVER" prefHeight="514.0" prefWidth="859.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"-->
+                    <!-- content -->
+                      <AnchorPane fx:id="tableAnchorPane" prefWidth="878.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <TableView fx:id="searchResultsTable" onKeyPressed="#handleKeyPressedOnTable" onMouseClicked="#handleMouseClickOnTable" prefHeight="505.0" prefWidth="852.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <columns>
+                                  <TableColumn fx:id="nameColumn" prefWidth="100.0" text="Name" />
+                                  <TableColumn fx:id="surnameColumn" prefWidth="144.0" text="Surname" />
+                                    <TableColumn fx:id="partnerNameColumn" prefWidth="108.0" text="Partner name" />
+                                    <TableColumn fx:id="childrenColumn" prefWidth="160.0" text="Children" />
+                                    <TableColumn fx:id="carRegColumn" prefWidth="180.0" text="Car reg" />
+                                    <TableColumn fx:id="memberNoColumn" prefWidth="110.0" text="Date joined" />
+                                    <TableColumn fx:id="societyColumn" prefWidth="90.0" text="Society" />
+                                    <TableColumn fx:id="idValidColumn" prefWidth="90.0" text="ID valid" />
+                                </columns>
+                              </TableView>
+                           </children>
+                        </AnchorPane>
+                    <!-- /content -->
+                  <!-- /ScrollPane -->
+               </children>
+            </AnchorPane>
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+               <children>
+                  <HBox fx:id="customersDisplayedHBox">
+                     <children>
+                        <Label text="Customers displayed : " />
+                        <Label fx:id="customerCountStatus" text="---" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="queryHBox" layoutX="10.0" layoutY="-5.0">
+                     <children>
+                        <Label text="Query applied : " />
+                        <Label fx:id="queryStatus" text="none" />
+                     </children>
+                     <padding>
+                        <Insets left="20.0" />
+                     </padding>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="-15.0" top="-15.0" />
+               </padding>
+               <opaqueInsets>
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+               </opaqueInsets>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
