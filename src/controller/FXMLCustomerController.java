@@ -980,6 +980,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     public void setCustomerDetails(CustomerTO myCustomer) {
+        if (aCustomer == null)
+                mainAnchorPane.setDisable(true);
         Task task = new Task() {
             protected Integer call() throws Exception {
                 try {
@@ -991,6 +993,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                     Platform.runLater(() -> {
                         showCustomerDetails(aCustomer);
+                        mainAnchorPane.setDisable(false);
                     });
                 } catch (Exception e) {
 
