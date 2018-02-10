@@ -5,6 +5,8 @@ import Soap.ChildTO;
 import Soap.CustomerTO;
 import Soap.ImageTO;
 import Soap.AddressTO;
+import Soap.ElectricitychargeTO;
+import Soap.InvoiceTO;
 import Soap.MembershipTO;
 import Soap.NextOfKinTO;
 import Soap.NotesTO;
@@ -83,6 +85,7 @@ import javax.imageio.ImageIO;
 import model.CarRowItem;
 import model.ChildRowItem;
 import model.ImageRowItem;
+import model.InvoiceRowItem;
 import model.SoapHandler;
 import model.VisitRowItem;
 import org.ghost4j.document.DocumentException;
@@ -115,6 +118,14 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private Button addVisitButton;
     @FXML
     private TextField dateJoinedField;
+    @FXML
+    private TableView<InvoiceRowItem> invoiceTable;
+    @FXML
+    private TableColumn<InvoiceRowItem, String> invoiceTypeColumn;
+    @FXML
+    private TableColumn<InvoiceRowItem, String> invoiceAmountColumn;
+    @FXML
+    private TableColumn<InvoiceRowItem, String> invoicePaidColumn;
 
     // Override String from parent so Load() will work correctly
     //protected String FXMLPath="FXMLCustomer.fxml";
@@ -256,6 +267,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     ObservableList<ChildRowItem> myChildList;
     ObservableList<ImageRowItem> myDocumentList;
     ObservableList<ImageRowItem> myIDList;
+    ObservableList<InvoiceRowItem> invoiceList;
     // Build lists of anything deleted so we can return the list, then they can be removed...
     List<CarTO> carDeleteList;
     List<ChildTO> childDeleteList;
@@ -361,6 +373,15 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         documentDateColumn.setCellValueFactory(cellData -> cellData.getValue().getScannedProperty());
         photographyCheckBox.setSelected(false);
 
+        // Invoice column
+        invoiceList = FXCollections.observableArrayList();
+        invoiceTable.setContextMenu(new myContextMenu(invoiceTable));
+        invoiceTypeColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceTypeProperty());
+        invoiceAmountColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceAmountProperty());
+        invoicePaidColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoicePaidProperty());
+        addNewInvoice();
+        invoiceTable.setItems(invoiceList);
+        
         meberCheckBox.setOnAction(value -> {
             if (meberCheckBox.isSelected()) {
                 handleMemberEditButton(value);
@@ -715,6 +736,15 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         newCar.setRegno(ADDNEW);
         myCarList.add(new CarRowItem(newCar));
     }
+    
+    private void addNewInvoice() {
+        if (invoiceList == null) {
+            invoiceList = FXCollections.observableArrayList();
+        }
+        InvoiceTO newInvoice = new InvoiceTO();
+        newInvoice.setType(ADDNEW);
+        invoiceList.add(new InvoiceRowItem(newInvoice));
+    }
 
     private void addNewDocument() {
         if (myDocumentList == null) {
@@ -804,7 +834,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         try {
             aCustomer.setId(Integer.parseInt(value));
         } catch (NumberFormatException e) {
-            System.err.println("Problem parsing ID of customer (CustomerController 697) : " + e.getMessage());
+            System.err.println("Problem parsing ID of customer (CustomerController) : " + e.getMessage());
             System.err.println("Value of value : " + value);
             // Not a valid id!
         }
@@ -996,7 +1026,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                         mainAnchorPane.setDisable(false);
                     });
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 return 0;
             }
@@ -1094,6 +1124,15 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         addNewID();
         documentTable.setItems(myDocumentList);
         IDTable.setItems(myIDList);
+        
+        invoiceList = FXCollections.observableArrayList();
+        for (ElectricitychargeTO eachcharge : myCustomer.getMembership().getElectricitychargeCollection()) {
+            for (InvoiceTO eachInvoice : eachcharge.getInvoiceList()) {
+                invoiceList.add(new InvoiceRowItem(eachInvoice));
+            }
+        }
+        addNewInvoice();
+        
         if (myCustomer.getRefuse() != null && myCustomer.getRefuse().getDate() != null) {
             showRefused();
         }

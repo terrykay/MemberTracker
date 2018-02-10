@@ -164,9 +164,33 @@
 <xs:element name="datePaid" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="endUnit" type="xs:int" minOccurs="0"/>
 <xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="invoiceList" type="tns:invoiceTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="membershipId" type="xs:int"/>
 <xs:element name="startUnit" type="xs:int" minOccurs="0"/>
 <xs:element name="year" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="invoiceTO">
+<xs:sequence>
+<xs:element name="amount" type="xs:int" minOccurs="0"/>
+<xs:element name="duedate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="invoicenumber" type="xs:int" minOccurs="0"/>
+<xs:element name="issuedate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="membershipchargeCollection" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+<xs:element name="receiptCollection" type="tns:receiptTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="receiptTO">
+<xs:sequence>
+<xs:element name="amount" type="xs:int" minOccurs="0"/>
+<xs:element name="date" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="notes" type="xs:string" minOccurs="0"/>
+<xs:element name="receiptnumber" type="xs:int" minOccurs="0"/>
+<xs:element name="receivedby" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 
@@ -180,27 +204,6 @@
 <xs:element name="receiptCollection" type="tns:receiptTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="type" type="xs:string" minOccurs="0"/>
 <xs:element name="year" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="invoiceTO">
-<xs:sequence>
-<xs:element name="amount" type="xs:int" minOccurs="0"/>
-<xs:element name="duedate" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="invoicenumber" type="xs:int" minOccurs="0"/>
-<xs:element name="issuedate" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="membershipchargeCollection" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
-<xs:element name="notes" type="xs:string" minOccurs="0"/>
-</xs:sequence>
-</xs:complexType>
-
-<xs:complexType name="receiptTO">
-<xs:sequence>
-<xs:element name="amount" type="xs:int" minOccurs="0"/>
-<xs:element name="date" type="xs:dateTime" minOccurs="0"/>
-<xs:element name="notes" type="xs:string" minOccurs="0"/>
-<xs:element name="receiptnumber" type="xs:int" minOccurs="0"/>
-<xs:element name="receivedby" type="xs:string" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

@@ -167,7 +167,7 @@
                     </VBox>
                   <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="443.0" prefWidth="403.0" spacing="10.0">
                      <children>
-                        <TableView fx:id="carTable" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleCarClicked" prefHeight="123.0" prefWidth="368.0">
+                        <TableView fx:id="carTable" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleCarClicked" prefHeight="95.0" prefWidth="368.0">
                           <columns>
                             <TableColumn fx:id="carRegColumn" prefWidth="77.0" text="Car reg" />
                             <TableColumn fx:id="carMakeColumn" prefWidth="102.0" text="Make" />
@@ -201,8 +201,15 @@
                             <TableColumn fx:id="documentDateColumn" prefWidth="106.0" text="Date scanned" />
                           </columns>
                         </TableView>
+                        <TableView fx:id="invoiceTable" layoutX="35.0" layoutY="420.0" onDragDropped="#handleDocDragDropped" onDragOver="#handleIDDragOver" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleDocumentClicked" prefHeight="136.0" prefWidth="368.0">
+                           <columns>
+                              <TableColumn fx:id="invoiceTypeColumn" prefWidth="171.0" text="Invoice type" />
+                              <TableColumn fx:id="invoiceAmountColumn" prefWidth="86.0" text="Amount" />
+                              <TableColumn fx:id="invoicePaidColumn" prefWidth="89.0" text="Paid" />
+                           </columns>
+                        </TableView>
                         <Label text="Notes:" />
-                        <TextArea fx:id="notesTextArea" onKeyPressed="#setUpdatedKey" prefHeight="133.0" prefWidth="368.0" wrapText="true" />
+                        <TextArea fx:id="notesTextArea" onKeyPressed="#setUpdatedKey" prefHeight="81.0" prefWidth="368.0" wrapText="true" />
                      </children>
                      <padding>
                         <Insets left="25.0" right="10.0" />
