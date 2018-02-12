@@ -501,7 +501,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
                 try {
                     long start = System.currentTimeMillis();
-                    fullCustomerList = SoapHandler.getCustomers();
+                    fullCustomerList = SoapHandler.getDisplayCustomers();
                     System.out.println("Request took " + ((System.currentTimeMillis() - start)) + " milliseconds");
                     //  if (fullCustomerList == null || fullCustomerList.size() == 0) {
                     // No customers! - set place holder for blank searches as well...

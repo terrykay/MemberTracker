@@ -1070,17 +1070,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     public void setCustomerDetails(CustomerTO myCustomer) {
-
-        aCustomer = myCustomer;
-        if (aCustomer.getId() == null) {
-            aCustomer.setId(0);
-        }
-        showCustomerDetails(aCustomer);
-
-        /*      if (myCustomer == null || myCustomer.getId() == null) {
-            aCustomer = new SearchRowItem();
+        
+        CustomerTO customer = myCustomer;
+        
+        if (customer.getId() == null || customer.getId() == 0) {
+            customer.setId(0);
+            showCustomerDetails(customer);
+            aCustomer = customer;
             return;
         }
+
         if (aCustomer == null) {
             mainAnchorPane.setDisable(true);
         }
@@ -1105,7 +1104,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         };
         Thread th = new Thread(task);
         th.setDaemon(true);
-        th.start();*/
+        th.start();
     }
 
     private void showCustomerDetails(CustomerTO myCustomer) {
@@ -1155,11 +1154,11 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             notesTextArea.setText("");
         }
 
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-            contactNoField.setText(aCustomer.getNextOfKin().get(0).getContactNo());
-            relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
-            naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
+        if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
+            nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
+            contactNoField.setText(myCustomer.getNextOfKin().get(0).getContactNo());
+            relationShipField.setText(myCustomer.getNextOfKin().get(0).getRelationship());
+            naturistAwareCheckbox.setSelected(myCustomer.getNextOfKin().get(0).isAwareNaturist());
         } else {
             nextOfKinField.setText("");
             contactNoField.setText("");

@@ -75,6 +75,7 @@ public class Utility {
         //Soap.CustomerTO is generated class, create here
         CustomerTO newCustomer = new CustomerTO();
         newCustomer.setAddressId(new AddressTO());
+        newCustomer.setId(0);
 
         return newCustomer;
     }
