@@ -7,17 +7,16 @@ package model;
 
 import Soap.InvoiceTO;
 import Soap.ReceiptTO;
-import Soap.UnitTO;
 import UtilityClasses.MyDate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -29,6 +28,8 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
     StringProperty invoiceAmountProperty;
     StringProperty invoicePaidProperty;
     
+    InvoiceTO invoiceTO;
+    
     private DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
     
     public InvoiceRowItem() {
@@ -36,44 +37,65 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
     }
     
     public InvoiceRowItem(InvoiceTO anInvoice) {
-        
+        invoiceTO = anInvoice;
         setInvoice(anInvoice);
  //       invalidated((ObservableUnit)getUnitId());
     }
     
     public void setInvoice(InvoiceTO anInvoice) {
-        amount = anInvoice.getAmount();
+        invoiceTO = anInvoice;
+        setAmount(anInvoice.getAmount());
         setDuedate(anInvoice.getDuedate());
         setType(anInvoice.getType());
         invoicenumber = anInvoice.getInvoicenumber();
         issuedate = anInvoice.getIssuedate();
         membershipchargeCollection = anInvoice.getMembershipchargeCollection();
         notes = anInvoice.getNotes();
-        receiptCollection = new ObservableList();
-        for (ReceiptTO each : anInvoice.getReceiptCollection()) {
-            ObservableReceipt observableReceipt = new ObservableReceipt(each);
-            observableReceipt.addListener(this);
-        }    
-        ((ObservableList)receiptCollection).addListener(this);
+        setReceiptCollection(anInvoice.getReceiptCollection());
     }
 
     public void setDueDate(XMLGregorianCalendar dueDate) {
         if (dueDate == null)
             return;
+        if (invoiceTO != null)
+            invoiceTO.setDuedate(dueDate);
         
         this.duedate = dueDate;
     }
 
     public void setType(String type) {
         this.type = type;
+        if (invoiceTO != null)
+            invoiceTO.setType(type);
         invoiceTypeProperty = setValue(invoiceTypeProperty, type);
     }
     
+    public void setAmount(Integer amount) {
+        this.amount = amount;
+        if (invoiceTO != null)
+            invoiceTO.setAmount(amount);
+        String value = "";
+        if (amount != null)
+            value = Double.toString(amount.doubleValue()/100);
+       invoiceAmountProperty = setValue(invoiceAmountProperty, value);
+    }
+    
     public void setReceiptCollection(Collection <ReceiptTO> receipts) {
-        this.receiptCollection = new ArrayList(receipts);
+        this.receiptCollection = new ObservableList();
+        this.receiptCollection.addAll(receipts);
+        
+        ((ObservableList)this.receiptCollection).addListener(this);
         if (receiptCollection.isEmpty())
             return;
         invoicePaidProperty = setValue(invoicePaidProperty, MyDate.longToDate(receiptCollection.get(0).getDate().toGregorianCalendar().getTime().getTime()));
+    }
+    
+    public void addReceipt(ReceiptTO receipt) {
+        receiptCollection.add(receipt);
+        if (invoiceTO != null) {
+            invoiceTO.getReceiptCollection().add(receipt);
+        }
+        invoicePaidProperty = setValue(invoicePaidProperty, MyDate.longToDate(receipt.getDate().toGregorianCalendar().getTime().getTime()));
     }
     
     private StringProperty setValue(StringProperty string, String value) {
@@ -89,7 +111,8 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
         if (observable instanceof ObservableReceipt) {
             System.out.println("InvoiceRowItem: "+observable+" A receipt was updated");
         } else if (observable instanceof ObservableList) {
-            System.out.println("InvoiceRowItem: "+observable+" A receipt was added");
+            System.out.println("InvoiceRowItem: "+observable+" A receipt was added, marked");
+            invoicePaidProperty = setValue(invoicePaidProperty, "paid");
         }
    /*     if (observable instanceof ObservableUnit) {
             ObservableUnit aUnit = (ObservableUnit) observable;

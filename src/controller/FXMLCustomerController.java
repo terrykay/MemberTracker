@@ -10,6 +10,7 @@ import Soap.InvoiceTO;
 import Soap.MembershipTO;
 import Soap.NextOfKinTO;
 import Soap.NotesTO;
+import Soap.ReceiptTO;
 import Soap.RefuseTO;
 import Soap.VisitTO;
 import UtilityClasses.MyDate;
@@ -86,6 +87,7 @@ import model.CarRowItem;
 import model.ChildRowItem;
 import model.ImageRowItem;
 import model.InvoiceRowItem;
+import model.SearchRowItem;
 import model.SoapHandler;
 import model.VisitRowItem;
 import org.ghost4j.document.DocumentException;
@@ -98,10 +100,6 @@ import utility.SSLUtilities;
 import utility.Utility;
 import static utility.Utility.showConfirmationAlert;
 
-/**
- *
- * @author tezk
- */
 public class FXMLCustomerController extends FXMLParentController implements Initializable {
 
     private final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -375,13 +373,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         // Invoice column
         invoiceList = FXCollections.observableArrayList();
-        invoiceTable.setContextMenu(new myContextMenu(invoiceTable));
+        invoiceTable.setContextMenu(new myInvoiceContextMenu(invoiceTable));
         invoiceTypeColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceTypeProperty());
         invoiceAmountColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceAmountProperty());
         invoicePaidColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoicePaidProperty());
         addNewInvoice();
         invoiceTable.setItems(invoiceList);
-        
+
         meberCheckBox.setOnAction(value -> {
             if (meberCheckBox.isSelected()) {
                 handleMemberEditButton(value);
@@ -516,6 +514,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         viewVisitDetails();
     }
 
+    @FXML
+    private void setMemberUpdatedAction(ActionEvent event) {
+        viewMemberDetails();
+    }
+
+    @FXML
+    private void setVisitUpdatedAction(ActionEvent event) {
+        viewVisitDetails();
+    }
+
     private class myPartnerContextMenu extends ContextMenu {
 
         public myPartnerContextMenu() {
@@ -548,6 +556,22 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
+    private class myInvoiceContextMenu extends ContextMenu {
+
+        public myInvoiceContextMenu(TableView targetTable) {
+            MenuItem markPaid = new MenuItem("Mark paid");
+            MenuItem addCharge = new MenuItem("Add a/c charge");
+
+            getItems().addAll(markPaid, addCharge);
+            markPaid.setOnAction(event -> {
+                handleMarkPaid(event);
+            });
+            addCharge.setOnAction(event -> {
+                handleAddAcCharge(event);
+            });
+        }
+    }
+
     @FXML
     private void handleKeyPressOnTable(KeyEvent event) {
         KeyCode keyCode = event.getCode();
@@ -566,6 +590,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             aCustomer.getVisitCollection().clear();
             aCustomer.getVisitCollection().addAll(items);
             setVisits();
+            aCustomer.getVisitDeleteCollection().addAll(controller.getDeleteList());
         }
     }
 
@@ -673,6 +698,40 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
+    private void handleMarkPaid(ActionEvent event) {
+        InvoiceRowItem whichInvoice = invoiceTable.getSelectionModel().getSelectedItem();
+
+        ReceiptTO newReceipt = new ReceiptTO();
+        newReceipt.setAmount(1);
+        newReceipt.setDate(MyDate.toXMLGregorianCalendar(new Date()));
+        newReceipt.setNotes("v1");
+        whichInvoice.addReceipt(newReceipt);
+
+        System.out.println("cc. handleMarkPaid");
+        whichInvoice.getInvoicePaidProperty().setValue("Test");
+
+        updated = true;
+    }
+
+    private void handleAddAcCharge(ActionEvent event) {
+        ElectricitychargeTO charge = new ElectricitychargeTO();
+        charge.setYear(Integer.toString(new Date().getYear()));
+        InvoiceTO invoice = new InvoiceTO();
+        invoice.setAmount(1);
+        charge.getInvoiceList().add(invoice);
+
+        aCustomer.getMembership().getElectricitychargeCollection().add(charge);
+
+        InvoiceRowItem invoiceRowItem = new InvoiceRowItem(invoice);
+        invoiceRowItem.setType("Electricity");
+
+        ObservableList<InvoiceRowItem> list = FXCollections.observableArrayList(invoiceRowItem);
+        list.addAll(invoiceList);
+
+        invoiceList = list;
+        invoiceTable.setItems(list);
+    }
+
     private void handleDelete(ActionEvent event) {
         Object whichItem;
         ObservableList whichList;
@@ -736,7 +795,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         newCar.setRegno(ADDNEW);
         myCarList.add(new CarRowItem(newCar));
     }
-    
+
     private void addNewInvoice() {
         if (invoiceList == null) {
             invoiceList = FXCollections.observableArrayList();
@@ -827,6 +886,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         } catch (Exception e) {
             Utility.showAlert("Error saving customer!", "Fault received from server", e.getMessage());
             System.err.println("Error saving customer! SOAP fault received from server : " + e.getMessage());
+            e.printStackTrace();
             //getScene().getWindow().hide();
             return;
         }
@@ -1010,8 +1070,20 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     public void setCustomerDetails(CustomerTO myCustomer) {
-        if (aCustomer == null)
-                mainAnchorPane.setDisable(true);
+
+        aCustomer = myCustomer;
+        if (aCustomer.getId() == null) {
+            aCustomer.setId(0);
+        }
+        showCustomerDetails(aCustomer);
+
+        /*      if (myCustomer == null || myCustomer.getId() == null) {
+            aCustomer = new SearchRowItem();
+            return;
+        }
+        if (aCustomer == null) {
+            mainAnchorPane.setDisable(true);
+        }
         Task task = new Task() {
             protected Integer call() throws Exception {
                 try {
@@ -1033,11 +1105,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         };
         Thread th = new Thread(task);
         th.setDaemon(true);
-        th.start();
+        th.start();*/
     }
 
     private void showCustomerDetails(CustomerTO myCustomer) {
-
         forenameField.setText(myCustomer.getForename());
         middlenameField.setText(myCustomer.getMiddlenames());
         surnameField.setText(myCustomer.getSurname());
@@ -1124,15 +1195,20 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         addNewID();
         documentTable.setItems(myDocumentList);
         IDTable.setItems(myIDList);
-        
+
         invoiceList = FXCollections.observableArrayList();
-        for (ElectricitychargeTO eachcharge : myCustomer.getMembership().getElectricitychargeCollection()) {
-            for (InvoiceTO eachInvoice : eachcharge.getInvoiceList()) {
-                invoiceList.add(new InvoiceRowItem(eachInvoice));
+        if (myCustomer.getMembership() != null && myCustomer.getMembership().getElectricitychargeCollection() != null) {
+            for (ElectricitychargeTO eachcharge : myCustomer.getMembership().getElectricitychargeCollection()) {
+                for (InvoiceTO eachInvoice : eachcharge.getInvoiceList()) {
+                    InvoiceRowItem invoiceRowItem = new InvoiceRowItem(eachInvoice);
+                    invoiceRowItem.getInvoiceTypeProperty().setValue("Electricity " + eachcharge.getYear());
+                    invoiceList.add(invoiceRowItem);
+                }
             }
         }
         addNewInvoice();
-        
+        invoiceTable.setItems(invoiceList);
+
         if (myCustomer.getRefuse() != null && myCustomer.getRefuse().getDate() != null) {
             showRefused();
         }

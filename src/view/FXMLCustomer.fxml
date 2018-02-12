@@ -121,21 +121,21 @@
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="446.0" spacing="10.0">
                            <children>
                               <Label fx:id="dateJoinedLabel" layoutX="23.0" layoutY="112.0" text="Date joined" />
-                              <TextField fx:id="dateJoinedField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <TextField fx:id="dateJoinedField" editable="false" layoutX="131.0" layoutY="108.0" onAction="#setMemberUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
                               <Button fx:id="editMemberButton" mnemonicParsing="false" onAction="#handleMemberEditButton" prefHeight="25.0" prefWidth="104.0" text="Edit details" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="506.0" spacing="10.0">
                            <children>
                               <Label fx:id="lastVisitLabel" layoutX="23.0" layoutY="112.0" text="Last visit" />
-                              <TextField fx:id="lastVisitField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <TextField fx:id="lastVisitField" editable="false" layoutX="131.0" layoutY="108.0" onAction="#setVisitUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
                               <Button fx:id="addVisitButton" mnemonicParsing="false" onAction="#handleAddVisitButton" prefHeight="25.0" prefWidth="104.0" text="Add visit" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="543.0" spacing="10.0">
                            <children>
                               <Label layoutX="23.0" layoutY="112.0" text="Partner" />
-                              <TextField fx:id="partnerNameField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handlePartnerNameClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <TextField fx:id="partnerNameField" editable="false" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handlePartnerNameClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
                               <Button fx:id="findPartnerButton" mnemonicParsing="false" onAction="#handleFindPartnerButton" prefHeight="25.0" prefWidth="104.0" text="Find" />
                            </children>
                         </HBox>

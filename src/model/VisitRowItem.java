@@ -105,7 +105,7 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
             return;
         
         String date = df.format(MyDate.toDate(endDate));
-        setEndDateProperty(setValue(getStartDateProperty(), date));
+        setEndDateProperty(setValue(getEndDateProperty(), date));
         this.endDate = endDate;
         setDurationProperty();
     }
@@ -145,7 +145,9 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
     }
 
     public void setUnitId(UnitTO unitId) {
-        this.unitId = unitId;
+        ObservableUnit observableUnit = new ObservableUnit(unitId);
+        invalidated(observableUnit);
+        this.unitId = observableUnit;
     }
 
     public StringProperty getDurationProperty() {

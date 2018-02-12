@@ -76,6 +76,7 @@
 <xs:element name="telephoneOne" type="xs:string" minOccurs="0"/>
 <xs:element name="telephoneTwo" type="xs:string" minOccurs="0"/>
 <xs:element name="visitCollection" type="tns:visitTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="visitDeleteCollection" type="tns:visitTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 </xs:sequence>
 </xs:complexType>
 

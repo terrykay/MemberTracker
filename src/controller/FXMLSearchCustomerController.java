@@ -3,6 +3,9 @@ package controller;
 import IDTrackerTO.EventTO;
 import Soap.CustomerTO;
 import UtilityClasses.MyDate;
+import static controller.FXMLMemberController.LARGE_VAN_PITCH;
+import static controller.FXMLMemberController.TENT_PITCH;
+import static controller.FXMLMemberController.VAN_PITCH;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -227,6 +230,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private static final String SOUTHERN = "Southern";
     private static final String BROMLEY = "Bromley";
     private static final String KENT = "Kent";
+    private static final String ELECTRIC_HOOKUP = "Members with electricity";
+    private static final String NO_ELECTRIC_HOOKUP = "Members with pitch, no elec";
     private static final String[] filterItems = {SHOWONLY, SHOWALL, EXPIRED, MEMBERSONLY, NONEMEMBERS, REFUSED, NORTHERN, SOUTHERN, BROMLEY, KENT};
 
     @FXML
@@ -443,12 +448,19 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         idWillExpire.setOnAction(v -> queryBuilderIDExpiring());
         MenuItem customersMissingEmail = new MenuItem("Customers missing email address");
         customersMissingEmail.setOnAction(v -> queryBuilderMissingEmail());
+        MenuItem customersWithHookup = new MenuItem("Pitch members with hookup");
+        customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
+        MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
+        pitchMemberNoHookup.setOnAction(v -> queryBuilderPitchNoElectricHookupTemplate());
 
-        Menu menuEvents = new Menu("Events");
+   /*     Menu menuEvents = new Menu("Events");
         MenuItem menuEventsView = new MenuItem("View");
         menuEventsView.setOnAction(v -> {
             showEvents();
-        });
+        });*/
+        Menu menuTools = new Menu("Tools");
+        MenuItem menuCreateInvoice = new MenuItem("Create invoices");
+        menuCreateInvoice.setOnAction(v -> createInvoices());
         
         menuFile.getItems().addAll(
                 menuPrintList,
@@ -467,13 +479,16 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuQueryFindMissingDocuments,
                 menuQueryBirthday,
                 idWillExpire,
-                customersMissingEmail
+                customersMissingEmail,
+                customersWithHookup,
+                pitchMemberNoHookup
         );
+        menuTools.getItems().addAll(menuCreateInvoice);
  //       menuEvents.getItems().addAll(
  //               menuEventsView
  //       );
 
-        menuBar.getMenus().addAll(menuFile, menuQuery);
+        menuBar.getMenus().addAll(menuFile, menuQuery, menuTools);
 
         mainAnchorPane.getChildren().add(menuBar);
     }
@@ -486,7 +501,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
                 try {
                     long start = System.currentTimeMillis();
-                    fullCustomerList = SoapHandler.getDisplayCustomers();
+                    fullCustomerList = SoapHandler.getCustomers();
                     System.out.println("Request took " + ((System.currentTimeMillis() - start)) + " milliseconds");
                     //  if (fullCustomerList == null || fullCustomerList.size() == 0) {
                     // No customers! - set place holder for blank searches as well...
@@ -607,9 +622,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         if (EXPIRED.equals(filterSelected)) {
             showOnlyFilter.addFilter(a -> {
                 int days = Utility.getIDDaysLeft(a.getImageCollection());
-
                 return days <= 0;
-
             });
         } else if (MEMBERSONLY.equals(filterSelected)) {
             showOnlyFilter.addFilter(a -> {
@@ -637,6 +650,14 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         FXMLEventListController newController = new FXMLEventListController();
 
         newController = (FXMLEventListController) newController.load();
+        newController.getStage().show();
+    }
+    
+    private void createInvoices() {
+        FXMLCreateInvoicesController newController = new FXMLCreateInvoicesController();
+
+        newController = (FXMLCreateInvoicesController) newController.load();
+        newController.setCustomerList(fullCustomerRowItemList);
         newController.getStage().show();
     }
     
@@ -1095,7 +1116,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("Displaying customers with birthday today");
         applyFilters();
     }
-
+    
     private void queryBuilderTemplate() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1104,6 +1125,32 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         });
         filterList.add(queryFilter);
         queryStatus.setText("");
+        applyFilters();
+    }
+    
+    private void queryBuilderElectricHookupTemplate() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+                return (a.getMembership() != null && 
+                        (a.getMembership().isElectricityHookup() != null && a.getMembership().isElectricityHookup()));
+            });
+        filterList.add(queryFilter);
+        queryStatus.setText("Pitch members with hookup");
+        applyFilters();
+    }
+    
+    private void queryBuilderPitchNoElectricHookupTemplate() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+                return ((a.getMembership() != null) &&
+                        (a.getMembership().getType() != null && ((a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(TENT_PITCH) || a.getMembership().getType().equals(VAN_PITCH)))) &&
+                        (a.getMembership().isElectricityHookup()== null || !a.getMembership().isElectricityHookup())
+                        );
+            });
+        filterList.add(queryFilter);
+        queryStatus.setText("Pitch members with no hookup");
         applyFilters();
     }
 

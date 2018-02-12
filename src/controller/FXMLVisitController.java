@@ -127,7 +127,7 @@ public class FXMLVisitController extends FXMLParentController implements Initial
             LocalDate startDate = startDatePicker.getValue();
             LocalDate endDate = endDatePicker.getValue();
             if (endDate.isBefore(startDate)) {
-                endDatePicker.setValue(startDate);
+                startDatePicker.setValue(endDate);
             }  
         });
     }

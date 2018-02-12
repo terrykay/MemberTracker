@@ -34,10 +34,10 @@ public class FXMLMemberController extends FXMLParentController implements Initia
 
     private final String SELECT = "Select";
     private final String SOCIETIES[] = {SELECT, "Northern", "Southern", "Bromley", "Kent"};
-    private final String REGIONS[] = {"N/A"};
-    private final String VAN_PITCH = "Van pitch";
-    private final String LARGE_VAN_PITCH = "Large van pitch";
-    private final String MEMBERSHIP_TYPE[] = {SELECT, "Member", "Tent pitch", VAN_PITCH, LARGE_VAN_PITCH, "Resident"};
+    public final static String TENT_PITCH = "Texnt pitch";
+    public final static String VAN_PITCH = "Van pitch";
+    public final static String LARGE_VAN_PITCH = "Large van pitch";
+    private final String MEMBERSHIP_TYPE[] = {SELECT, "Member", TENT_PITCH, VAN_PITCH, LARGE_VAN_PITCH, "Resident"};
     private final String TITLE = "Member details";
 
     private MembershipTO aMembership;
@@ -72,8 +72,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     @FXML
     private ChoiceBox<String> societyChoiceBox;
     @FXML
-    private ChoiceBox<String> districtChoiceBox;
-    @FXML
     private ChoiceBox<String> membershipTypeChoiceBox;
     @FXML
     private TextField swipeCardIDTextField;
@@ -107,8 +105,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     public void initialize(URL url, ResourceBundle rb) {
         societyChoiceBox.getItems().addAll(FXCollections.observableArrayList(SOCIETIES));
         societyChoiceBox.getSelectionModel().select(SOCIETIES[0]);
-        districtChoiceBox.getItems().addAll(FXCollections.observableArrayList(REGIONS));
-        districtChoiceBox.getSelectionModel().select(0);
         membershipTypeChoiceBox.getItems().addAll(FXCollections.observableArrayList(MEMBERSHIP_TYPE));
         membershipTypeChoiceBox.getSelectionModel().select(MEMBERSHIP_TYPE[0]);
         caravanLengthTextField.textProperty().addListener((e, oldv, newv) -> {
