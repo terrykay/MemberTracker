@@ -4,24 +4,6 @@
 <xsd:import namespace="http://controller/" schemaLocation="https://idserver:8181/IDTrackerServer/idtrackerws?xsd=1"/>
 </xsd:schema>
 </types>
-<message name="getDisplayCustomers">
-<part name="parameters" element="tns:getDisplayCustomers"/>
-</message>
-<message name="getDisplayCustomersResponse">
-<part name="parameters" element="tns:getDisplayCustomersResponse"/>
-</message>
-<message name="saveCustomer">
-<part name="parameters" element="tns:saveCustomer"/>
-</message>
-<message name="saveCustomerResponse">
-<part name="parameters" element="tns:saveCustomerResponse"/>
-</message>
-<message name="getCustomers">
-<part name="parameters" element="tns:getCustomers"/>
-</message>
-<message name="getCustomersResponse">
-<part name="parameters" element="tns:getCustomersResponse"/>
-</message>
 <message name="getCustomerByID">
 <part name="parameters" element="tns:getCustomerByID"/>
 </message>
@@ -58,19 +40,25 @@
 <message name="removePartnerResponse">
 <part name="parameters" element="tns:removePartnerResponse"/>
 </message>
+<message name="getCustomers">
+<part name="parameters" element="tns:getCustomers"/>
+</message>
+<message name="getCustomersResponse">
+<part name="parameters" element="tns:getCustomersResponse"/>
+</message>
+<message name="getDisplayCustomers">
+<part name="parameters" element="tns:getDisplayCustomers"/>
+</message>
+<message name="getDisplayCustomersResponse">
+<part name="parameters" element="tns:getDisplayCustomersResponse"/>
+</message>
+<message name="saveCustomer">
+<part name="parameters" element="tns:saveCustomer"/>
+</message>
+<message name="saveCustomerResponse">
+<part name="parameters" element="tns:saveCustomerResponse"/>
+</message>
 <portType name="idtrackerws">
-<operation name="getDisplayCustomers">
-<input wsam:Action="http://controller/idtrackerws/getDisplayCustomersRequest" message="tns:getDisplayCustomers"/>
-<output wsam:Action="http://controller/idtrackerws/getDisplayCustomersResponse" message="tns:getDisplayCustomersResponse"/>
-</operation>
-<operation name="saveCustomer">
-<input wsam:Action="http://controller/idtrackerws/saveCustomerRequest" message="tns:saveCustomer"/>
-<output wsam:Action="http://controller/idtrackerws/saveCustomerResponse" message="tns:saveCustomerResponse"/>
-</operation>
-<operation name="getCustomers">
-<input wsam:Action="http://controller/idtrackerws/getCustomersRequest" message="tns:getCustomers"/>
-<output wsam:Action="http://controller/idtrackerws/getCustomersResponse" message="tns:getCustomersResponse"/>
-</operation>
 <operation name="getCustomerByID">
 <input wsam:Action="http://controller/idtrackerws/getCustomerByIDRequest" message="tns:getCustomerByID"/>
 <output wsam:Action="http://controller/idtrackerws/getCustomerByIDResponse" message="tns:getCustomerByIDResponse"/>
@@ -95,36 +83,21 @@
 <input wsam:Action="http://controller/idtrackerws/removePartnerRequest" message="tns:removePartner"/>
 <output wsam:Action="http://controller/idtrackerws/removePartnerResponse" message="tns:removePartnerResponse"/>
 </operation>
+<operation name="getCustomers">
+<input wsam:Action="http://controller/idtrackerws/getCustomersRequest" message="tns:getCustomers"/>
+<output wsam:Action="http://controller/idtrackerws/getCustomersResponse" message="tns:getCustomersResponse"/>
+</operation>
+<operation name="getDisplayCustomers">
+<input wsam:Action="http://controller/idtrackerws/getDisplayCustomersRequest" message="tns:getDisplayCustomers"/>
+<output wsam:Action="http://controller/idtrackerws/getDisplayCustomersResponse" message="tns:getDisplayCustomersResponse"/>
+</operation>
+<operation name="saveCustomer">
+<input wsam:Action="http://controller/idtrackerws/saveCustomerRequest" message="tns:saveCustomer"/>
+<output wsam:Action="http://controller/idtrackerws/saveCustomerResponse" message="tns:saveCustomerResponse"/>
+</operation>
 </portType>
 <binding name="idtrackerwsPortBinding" type="tns:idtrackerws">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
-<operation name="getDisplayCustomers">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="saveCustomer">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="getCustomers">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
 <operation name="getCustomerByID">
 <soap:operation soapAction=""/>
 <input>
@@ -171,6 +144,33 @@
 </output>
 </operation>
 <operation name="removePartner">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="getCustomers">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="getDisplayCustomers">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="saveCustomer">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

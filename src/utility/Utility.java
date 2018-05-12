@@ -27,6 +27,7 @@ import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -71,6 +72,16 @@ public class Utility {
         tempFileList = null;
     }
     
+    public static String penceToPounds(int pence) {
+        int pounds = pence / 100;
+        int newPence = pence % 100;
+       
+        String value = "" + pounds + "." + (newPence < 10? "0" + newPence : newPence);
+        if (newPence % 10 == 0)
+            value = value + "0";
+        return value;
+    }
+    
     public static CustomerTO createCustomer() {
         //Soap.CustomerTO is generated class, create here
         CustomerTO newCustomer = new CustomerTO();
@@ -78,6 +89,18 @@ public class Utility {
         newCustomer.setId(0);
 
         return newCustomer;
+    }
+    
+        public static Optional<ButtonType> showOkOrYesAlert(String title, String header, String body, String yesButtonText) {
+        // Returns Optional, optional.get() == ButtonType.ok for OK selected
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(body);
+        ButtonType customButton = new ButtonType(yesButtonText, ButtonBar.ButtonData.YES);
+        alert.getButtonTypes().add(customButton);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result;
     }
 
     public static Optional<ButtonType> showConfirmationAlert(String title, String header, String body) {

@@ -23,6 +23,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
@@ -30,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
@@ -59,6 +61,8 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     private VBox buttonVBox;
     @FXML
     private ScrollPane imageScrollPane;
+    @FXML
+    private CheckBox expiresCheckBox;
 
     public boolean isUpdated() {
         return updated;
@@ -117,9 +121,22 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
                 }
             }
         });
-
+        expiresCheckBox.setSelected(true);
+        expiresCheckBox.setVisible(false);
     }
 
+    public void setExpires(boolean flag) {
+        expiresCheckBox.setVisible(true);
+        if (flag != expiresCheckBox.isSelected())
+            return;
+        
+        expiresCheckBox.setSelected(flag);
+        expiresDatePicker.setDisable(!flag);
+        if (!flag) {
+            expiresDatePicker.setValue(scannedDatePicker.getValue());
+        } 
+    }
+    
     public void setImage(ImageRowItem anImage) {
         ourImage = anImage;
         WritableImage newImage = null;
@@ -145,6 +162,10 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
         if (mph > primScreenBounds.getHeight() - 50) {
             mainAnchorPane.setPrefHeight(primScreenBounds.getHeight() - 50);
         }
+    }
+    
+    public void resetExpiresDate() {
+        expiresDatePicker.setValue(scannedDatePicker.getValue());
     }
 
     private void saveImage() {
@@ -196,5 +217,10 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
 
         }
 
+    }
+
+    @FXML
+    private void handleClickExpiresCheckBox(ActionEvent event) {
+        setExpires(expiresCheckBox.isSelected());
     }
 }

@@ -30,7 +30,7 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
     
     InvoiceTO invoiceTO;
     
-    private DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+    final private DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
     
     public InvoiceRowItem() {
         setInvoice(new InvoiceTO());
@@ -83,11 +83,12 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
     public void setReceiptCollection(Collection <ReceiptTO> receipts) {
         this.receiptCollection = new ObservableList();
         this.receiptCollection.addAll(receipts);
-        
+       
+        if (invoicePaidProperty == null)
+            invoicePaidProperty = new SimpleStringProperty();
         ((ObservableList)this.receiptCollection).addListener(this);
-        if (receiptCollection.isEmpty())
-            return;
-        invoicePaidProperty = setValue(invoicePaidProperty, MyDate.longToDate(receiptCollection.get(0).getDate().toGregorianCalendar().getTime().getTime()));
+        if (!receiptCollection.isEmpty())
+            invoicePaidProperty = setValue(invoicePaidProperty, MyDate.longToDate(receiptCollection.get(0).getDate().toGregorianCalendar().getTime().getTime()));
     }
     
     public void addReceipt(ReceiptTO receipt) {

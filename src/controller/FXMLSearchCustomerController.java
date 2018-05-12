@@ -2,6 +2,7 @@ package controller;
 
 import IDTrackerTO.EventTO;
 import Soap.CustomerTO;
+import Soap.ElectricitychargeTO;
 import UtilityClasses.MyDate;
 import static controller.FXMLMemberController.LARGE_VAN_PITCH;
 import static controller.FXMLMemberController.TENT_PITCH;
@@ -70,6 +71,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import model.SearchRowItem;
 import model.SoapHandler;
+import utility.CustomerFilter;
 import utility.CustomerListFilter;
 import utility.MailHandler;
 import utility.ProgressIndicator;
@@ -85,6 +87,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private static final String SELECT_TITLE = "Selecting";
     private static final String SEARCH_TITLE = "BH ID tracker customer list";
     private static final String EVENT_SEARCH_TITLE = "Attendees for ";
+    private static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
     private ContextMenu contextMenu;
     // If we're selecting for an Event
@@ -346,7 +349,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
         // Comparator to ensure "Sort by member joined date" sorts by date, not String
         Comparator comparator = new Comparator<String>() {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+
             public int compare(String a, String b) {         
                 Date startDate;
                 Date endDate;
@@ -409,7 +412,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         menuRefresh.setAccelerator(KeyCombination.keyCombination("Ctrl+F5"));
         menuRefresh.setOnAction(v -> handleRefreshButton(null));
         Menu menuEmail = new Menu("Email");
-        MenuItem menuEmailAll = new MenuItem("Email all");
+        MenuItem menuEmailAll = new MenuItem("Email filtered");
         MenuItem menuEmailSelected = new MenuItem("Email selected");
         menuEmailAll.setOnAction(v -> {
             handleSendEmailList();
@@ -452,6 +455,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
         MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
         pitchMemberNoHookup.setOnAction(v -> queryBuilderPitchNoElectricHookupTemplate());
+        MenuItem unpaidInvoices = new MenuItem("Outstanding invoices");
+        unpaidInvoices.setOnAction(v -> queryBuilderOutstandingInvoices());
 
    /*     Menu menuEvents = new Menu("Events");
         MenuItem menuEventsView = new MenuItem("View");
@@ -476,12 +481,13 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuQueryView,
                 menuQueryClear,
                 new SeparatorMenuItem(),
+                unpaidInvoices,
+                customersWithHookup,
+                pitchMemberNoHookup,
                 menuQueryFindMissingDocuments,
                 menuQueryBirthday,
                 idWillExpire,
-                customersMissingEmail,
-                customersWithHookup,
-                pitchMemberNoHookup
+                customersMissingEmail
         );
         menuTools.getItems().addAll(menuCreateInvoice);
  //       menuEvents.getItems().addAll(
@@ -756,7 +762,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         FXMLCustomerController newController = new FXMLCustomerController();
 
         newController = (FXMLCustomerController) newController.load();
-        CustomerTO aCustomer = Utility.createCustomer();
+        SearchRowItem aCustomer = new SearchRowItem(Utility.createCustomer());
         // Is this a case of "PickAndSelect"? If so, we  might be adding a partner...
         //       System.err.println("addressId = "+selectFor.getAddressId());
         if (pickAndReturn && selectFor != null) {
@@ -1128,6 +1134,37 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         applyFilters();
     }
     
+    private void queryBuilderOutstandingInvoices() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(new CustomerFilter() {
+            @Override
+            public boolean include(SearchRowItem a) {
+                if (a.getMembership() == null)
+                    return false;
+                if (a.getMembership().getElectricitychargeCollection() == null)
+                    return false;
+                if (!a.getMembership().getElectricitychargeCollection().isEmpty()) {
+                    boolean flag = false;
+                    for (ElectricitychargeTO action : a.getMembership().getElectricitychargeCollection()) {
+                //    a.getMembership().getElectricitychargeCollection().stream().forEach((ElectricitychargeTO action) -> {
+                        if (action.getInvoiceList() != null && action.getInvoiceList().size() > 0) {
+                            // Only check for receipt of fist invoice for now
+                            if (action.getInvoiceList().get(0).getReceiptCollection()==null || action.getInvoiceList().get(0).getReceiptCollection().size()==0)
+                                flag = true;
+                        }
+                    }
+                    return flag;
+                    
+                }
+                return false;
+            }
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Outstanding invoices");
+        applyFilters();
+    }
+    
     private void queryBuilderElectricHookupTemplate() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1224,6 +1261,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 //       CustomerTO updatedCustomer = SoapHandler.getCustomerByID(whichCustomer.getCustomerId());
                 //       whichCustomer.setCustomerTO(updatedCustomer);
                 // if there's a partner, set the name
+                CustomerTO updatedCustomer = controller.getCustomer();
                 Integer partnerId = whichCustomer.getPartnerId();
                 if (partnerId!=null && partnerId!=0) {
                     if (whichCustomer.getPartnerProperty()==null)
@@ -1240,8 +1278,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                         whichCustomer.getPartnerProperty().setValue("");
                     }
                 } 
-                
-                whichCustomer.refresh(whichCustomer);
+                whichCustomer.setCustomer(updatedCustomer);
+                whichCustomer.refresh(updatedCustomer);
               //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
               //  customer.setCustomerTO(whichCustomer);
                 
@@ -1295,11 +1333,19 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             mh.setSubject(emailController.getSubject());
             mh.setEmailBody(emailController.getBody());
             mh.setFrom(emailController.getFrom());
+            mh.setAddBcc(emailController.getBccFrom());
             mh.setRecipients(filteredRowItemList);
             if (mh.send()) {
                 Utility.showAlert("Email send", "Email has been sent", "Email has been sent to the server");
             } else {
-                Utility.showAlert("Error occured", "An error was returned", "An error occurred sending\nthe email\n\n" + mh.getErrorMessage());
+                Optional<ButtonType> showOkOrYesAlert = Utility.showOkOrYesAlert("Error occured", "An error was returned", "An error occurred sending the emails.\nClick Log to view the error report\nor OK to close.", "Log");
+                System.out.println("Button type = "+showOkOrYesAlert.get());
+                if (showOkOrYesAlert.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
+                    FXMLCopySheetController controller = new FXMLCopySheetController();
+                    controller = (FXMLCopySheetController) controller.load();
+                    controller.setText(mh.getErrorMessage());
+                    controller.getStage().showAndWait();
+                }
             }
 
         }
@@ -1308,6 +1354,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private void handleSendEmailSingle() {
         FXMLEmailController emailController = new FXMLEmailController();
         emailController = (FXMLEmailController) emailController.load();
+        if (searchResultsTable.getSelectionModel().getSelectedItem() == null) {
+                        Utility.showAlert("Please select a record", "Nothing selected", "Please select a record and try again");
+            return;
+        }
         String toEmail = searchResultsTable.getSelectionModel().getSelectedItem().getEmail();
         if (toEmail == null || toEmail.length() == 0) {
             Utility.showAlert("Problem with record", "EMail address unavailable",

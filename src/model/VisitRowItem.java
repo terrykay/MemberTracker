@@ -47,6 +47,7 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
         setCustomerId(aVisit.getCustomerId());
         setStartDate(aVisit.getStartDate());
         setEndDate(aVisit.getEndDate());
+        setType(aVisit.getType());
         UnitTO aUnit = aVisit.getUnitId();
         if (aUnit == null)
             aUnit = new UnitTO();
@@ -169,7 +170,10 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
         setDimensionsProperty(setValue(getDimensionsProperty(), dimension));
     }
     
-    
+    public void setType(String type) {
+        this.type = type;
+        inProperty = setValue(inProperty, type);
+    }
     
     private StringProperty setValue(StringProperty string, String value) {
         if (string == null)

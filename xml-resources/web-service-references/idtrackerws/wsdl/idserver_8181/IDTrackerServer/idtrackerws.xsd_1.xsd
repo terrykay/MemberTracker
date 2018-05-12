@@ -241,6 +241,7 @@
 <xs:element name="id" type="xs:int" minOccurs="0"/>
 <xs:element name="invoiceCollection" type="tns:invoiceTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="startDate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="type" type="xs:string" minOccurs="0"/>
 <xs:element name="unitId" type="tns:unitTO" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>

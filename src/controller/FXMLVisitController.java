@@ -128,7 +128,7 @@ public class FXMLVisitController extends FXMLParentController implements Initial
             LocalDate endDate = endDatePicker.getValue();
             if (endDate.isBefore(startDate)) {
                 startDatePicker.setValue(endDate);
-            }  
+            }
         });
     }
 
@@ -161,6 +161,7 @@ public class FXMLVisitController extends FXMLParentController implements Initial
 
         aVisit.setStartDate(MyDate.toXMLGregorianCalendar(startDatePicker.getValue()));
         aVisit.setEndDate(MyDate.toXMLGregorianCalendar(endDatePicker.getValue()));
+        aVisit.setType(inChoiceBox.getSelectionModel().getSelectedItem());
         // TODO: Save choice
         aVisit.getUnitId().setMake(caravanMakeTextField.getText());
         aVisit.getUnitId().setModel(caravanModelTextField.getText());
@@ -180,11 +181,13 @@ public class FXMLVisitController extends FXMLParentController implements Initial
             endDatePicker.setValue(MyDate.toLocalDate(aVisit.getEndDate()));
         }
 
+        int selected = inChoiceBox.getItems().indexOf(aVisit.getType());
+        if (selected > 0) {
+            inChoiceBox.getSelectionModel().select(selected);
+        }
+
         if (aVisit.getUnitId() != null) {
-            int selected = inChoiceBox.getItems().indexOf(aVisit.getUnitId().getMake());
-            if (selected > 0) {
-                inChoiceBox.getSelectionModel().select(selected);
-            }
+
             caravanMakeTextField.setText(aVisit.getUnitId().getMake());
             caravanModelTextField.setText(aVisit.getUnitId().getModel());
             caravanLengthTextField.setText(aVisit.getUnitId().getDimensions());

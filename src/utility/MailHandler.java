@@ -21,13 +21,16 @@ public class MailHandler {
     private String fromDNR = "donotreply@naturistfoundation.org";
     private String fromNat = "natfound@hotmail.co.uk";
     private String from = null;
+    private int successCount = 0;
     private final String host = "idserver";
     private final Properties properties;
     private final Session session;
     private String subject;
     private String emailBody;
-    private String errorMessage = null;
+    private String errorMessage = "";
     public String getErrorMessage() { return errorMessage; }
+    private boolean addBcc = true;
+    public void setAddBcc(boolean value) { addBcc = value; }
 
     protected MailHandler() {
         // Get the mail Session object
@@ -60,7 +63,7 @@ public class MailHandler {
     public void setRecipients(List<SearchRowItem> recipients) {
         for (SearchRowItem eachRecipient : recipients) {
             String email = eachRecipient.getEmail();
-            if (email != null) {
+            if (email != null && email.length() > 4) {
                 this.recipientsEmail.add(email);
                 this.recipients.put(email, eachRecipient);
             }
@@ -76,10 +79,10 @@ public class MailHandler {
         from = fromDNR;
     }
 
-
-
     public boolean send() {
         // Create new email for each recipient to ensure privacy and no cross posted data...
+        successCount = 0;
+        errorMessage = "";
         boolean success = true;
         for (String eachRecipient : recipientsEmail) {
             try {
@@ -88,18 +91,23 @@ public class MailHandler {
                 MimeMessage message = new MimeMessage(session);
                 message.setFrom(new InternetAddress(from));
                 message.addRecipient(Message.RecipientType.TO, new InternetAddress(eachRecipient));
-                //message.addRecipient(Message.RecipientType.TO, new InternetAddress("tel@tezk.co.uk"));
                 message.setSubject(subject);              
                 message.setText(emailBody);
+                message.addRecipient(Message.RecipientType.BCC, new InternetAddress(from));
                 // Send message  
                 Transport.send(message);
+                // If we get here, success?
+                successCount += 1;
             } catch (MessagingException e) {
-                errorMessage = e.getMessage();
-                System.err.println("Problem sending email : " + errorMessage);
+                errorMessage += "Problem sending email "+eachRecipient+" : " + e.getMessage()+"\n";
+                System.err.println(e);
                 
                 success = false;
             }
         }
+        
+        errorMessage = "Successfully sent "+successCount+" emails - the following had issues:\n" + errorMessage;
+        
         return success;
     }
 }

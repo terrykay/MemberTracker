@@ -1,18 +1,6 @@
 package controller;
 
-import Soap.CarTO;
-import Soap.ChildTO;
-import Soap.CustomerTO;
-import Soap.ImageTO;
-import Soap.AddressTO;
-import Soap.ElectricitychargeTO;
-import Soap.InvoiceTO;
-import Soap.MembershipTO;
-import Soap.NextOfKinTO;
-import Soap.NotesTO;
-import Soap.ReceiptTO;
-import Soap.RefuseTO;
-import Soap.VisitTO;
+import Soap.*;
 import UtilityClasses.MyDate;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -38,7 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -87,7 +75,6 @@ import model.CarRowItem;
 import model.ChildRowItem;
 import model.ImageRowItem;
 import model.InvoiceRowItem;
-import model.SearchRowItem;
 import model.SoapHandler;
 import model.VisitRowItem;
 import org.ghost4j.document.DocumentException;
@@ -124,6 +111,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TableColumn<InvoiceRowItem, String> invoiceAmountColumn;
     @FXML
     private TableColumn<InvoiceRowItem, String> invoicePaidColumn;
+    @FXML
+    private CheckBox memberCheckBox;
 
     // Override String from parent so Load() will work correctly
     //protected String FXMLPath="FXMLCustomer.fxml";
@@ -138,8 +127,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private FXMLCarController carController = null;
     private static String fileChooserPath = null;
 
-    @FXML
-    private CheckBox meberCheckBox;
     @FXML
     private Button refuseButton;
     @FXML
@@ -173,7 +160,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private TextField emailField;
     @FXML
-
     private TableView<CarRowItem> carTable;
     @FXML
     private TableColumn<CarRowItem, String> carRegColumn;
@@ -220,6 +206,11 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private CustomerTO aCustomer = null;
+
+    public CustomerTO getCustomer() {
+        return aCustomer;
+    }
+
     boolean updated = false;
 
     public boolean isUpdated() {
@@ -380,8 +371,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         addNewInvoice();
         invoiceTable.setItems(invoiceList);
 
-        meberCheckBox.setOnAction(value -> {
-            if (meberCheckBox.isSelected()) {
+        memberCheckBox.setOnAction(value -> {
+            if (memberCheckBox.isSelected()) {
                 handleMemberEditButton(value);
                 setForMember(true);
             } else {
@@ -559,17 +550,33 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private class myInvoiceContextMenu extends ContextMenu {
 
         public myInvoiceContextMenu(TableView targetTable) {
-            MenuItem markPaid = new MenuItem("Mark paid");
             MenuItem addCharge = new MenuItem("Add a/c charge");
+            MenuItem markPaid = new MenuItem("Mark paid");
+            MenuItem editItem = new MenuItem("Edit");
 
-            getItems().addAll(markPaid, addCharge);
+            getItems().addAll(addCharge, markPaid, editItem);
             markPaid.setOnAction(event -> {
                 handleMarkPaid(event);
             });
             addCharge.setOnAction(event -> {
                 handleAddAcCharge(event);
             });
+            editItem.setOnAction(event -> {
+                handleEditInvoice(event);
+            });
         }
+    }
+    
+    private void handleEditInvoice(ActionEvent event) {
+        InvoiceRowItem selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
+        
+        FXMLInvoiceViewController fxmlInvoiceViewController = new FXMLInvoiceViewController();
+        fxmlInvoiceViewController = fxmlInvoiceViewController.load();
+        System.out.println("item = "+selectedItem.getClass().getSimpleName());
+        fxmlInvoiceViewController.setInvoice(selectedItem);
+        fxmlInvoiceViewController.getStage().showAndWait();
+        
+        System.out.println("Date is "+selectedItem.getIssuedate());
     }
 
     @FXML
@@ -589,6 +596,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             List<VisitRowItem> items = controller.getItems();
             aCustomer.getVisitCollection().clear();
             aCustomer.getVisitCollection().addAll(items);
+            System.out.println("Found " + items.size() + " visits");
             setVisits();
             aCustomer.getVisitDeleteCollection().addAll(controller.getDeleteList());
         }
@@ -702,34 +710,31 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         InvoiceRowItem whichInvoice = invoiceTable.getSelectionModel().getSelectedItem();
 
         ReceiptTO newReceipt = new ReceiptTO();
-        newReceipt.setAmount(1);
+        newReceipt.setAmount(whichInvoice.getAmount());
         newReceipt.setDate(MyDate.toXMLGregorianCalendar(new Date()));
-        newReceipt.setNotes("v1");
+        newReceipt.setNotes("v1.1");
         whichInvoice.addReceipt(newReceipt);
 
-        System.out.println("cc. handleMarkPaid");
-        whichInvoice.getInvoicePaidProperty().setValue("Test");
-
+        //     whichInvoice.getInvoicePaidProperty().setValue("Test");
         updated = true;
     }
 
     private void handleAddAcCharge(ActionEvent event) {
         ElectricitychargeTO charge = new ElectricitychargeTO();
-        charge.setYear(Integer.toString(new Date().getYear()));
+        charge.setYear(Integer.toString(Year.now().getValue()));
         InvoiceTO invoice = new InvoiceTO();
         invoice.setAmount(1);
+        invoice.setIssuedate(MyDate.toXMLGregorianCalendar(new Date()));
+        invoice.setDuedate(MyDate.toXMLGregorianCalendar(new Date()));
         charge.getInvoiceList().add(invoice);
+        invoice.setType("Electricity");
 
         aCustomer.getMembership().getElectricitychargeCollection().add(charge);
 
         InvoiceRowItem invoiceRowItem = new InvoiceRowItem(invoice);
-        invoiceRowItem.setType("Electricity");
+        //      invoiceRowItem.setType("Electricity");
 
-        ObservableList<InvoiceRowItem> list = FXCollections.observableArrayList(invoiceRowItem);
-        list.addAll(invoiceList);
-
-        invoiceList = list;
-        invoiceTable.setItems(list);
+        invoiceList.add(0, invoiceRowItem);
     }
 
     private void handleDelete(ActionEvent event) {
@@ -881,6 +886,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         storeCustomerDetails();
         String value = null;
+        System.out.println("Saving " + aCustomer.getVisitCollection().size() + " visits");
         try {
             value = SoapHandler.saveCustomer(aCustomer);
         } catch (Exception e) {
@@ -1070,9 +1076,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     public void setCustomerDetails(CustomerTO myCustomer) {
-        
+
         CustomerTO customer = myCustomer;
-        
+
         if (customer.getId() == null || customer.getId() == 0) {
             customer.setId(0);
             showCustomerDetails(customer);
@@ -1083,11 +1089,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         if (aCustomer == null) {
             mainAnchorPane.setDisable(true);
         }
+
         Task task = new Task() {
             protected Integer call() throws Exception {
                 try {
                     long start = System.currentTimeMillis();
                     aCustomer = SoapHandler.getCustomerByID(myCustomer.getId());
+
                     System.out.println("Request took " + ((System.currentTimeMillis() - start)) + " milliseconds");
                     if (aCustomer.getId() == null) {
                         aCustomer.setId(0);
@@ -1098,6 +1106,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
+                    Utility.showAlert("Error fetching data", "An error occured reading the customer\ndetails", "Please try again.");
+                    stage.hide();
                 }
                 return 0;
             }
@@ -1107,7 +1117,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         th.start();
     }
 
-    private void showCustomerDetails(CustomerTO myCustomer) {
+    protected void showCustomerDetails(CustomerTO myCustomer) {
         forenameField.setText(myCustomer.getForename());
         middlenameField.setText(myCustomer.getMiddlenames());
         surnameField.setText(myCustomer.getSurname());
@@ -1439,8 +1449,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                 }
             } else// Not adding new, so display image if double click
-            {
-                if (event == null || event.getClickCount() >= 2) {
+             if (event == null || event.getClickCount() >= 2) {
                     if (selection.getTheImage() == null) {
                         // we need to pull the image from the server
                         try {
@@ -1459,7 +1468,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                     showImage(selection);
                 }
-            }
         }
     }
 
@@ -1478,6 +1486,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         controller = (FXMLImageViewController) controller.load();
         controller.getStage().show();
+        if (anImage.getType() == 'd') {
+            controller.setExpires(false);
+        }
         controller.setImage(anImage);
         controller.getStage().hide();
         controller.getStage().showAndWait();
@@ -1500,7 +1511,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             CustomerTO tempCustomer = aCustomer;
             storeCustomerDetails();
             setCustomerDetails(aCustomer);
-            printController.setCustomerDetails(aCustomer);
+            printController.showCustomerDetails(aCustomer);
             printController.print();
             aCustomer = tempCustomer;
         }
@@ -1580,6 +1591,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             cancelButton.setVisible(false);
             editMemberButton.setVisible(false);
             findPartnerButton.setVisible(false);
+            refuseButton.setVisible(false);
 
             for (CarRowItem car : carTable.getItems()) {
                 if (car.getRegno().equals(ADDNEW)) {
@@ -1602,6 +1614,12 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             for (ImageRowItem doc : IDTable.getItems()) {
                 if (doc.getDetails().equals(ADDNEW)) {
                     doc.setDetails("");
+                }
+            }
+
+            for (InvoiceRowItem inv : invoiceTable.getItems()) {
+                if (inv.getType().equals(ADDNEW)) {
+                    inv.getInvoiceTypeProperty().setValue("");
                 }
             }
 
@@ -1658,7 +1676,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private void setForMember(Boolean value) {
-        meberCheckBox.setSelected(value);
+        memberCheckBox.setSelected(value);
 
         if (aCustomer != null && value) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
