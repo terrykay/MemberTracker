@@ -22,8 +22,8 @@ import javax.net.ssl.X509TrustManager;
 
 public class BHMemberTracker extends Application {
 
-    public final int versionNumber = 1;
-    public final String versionName = "1.0.0";
+    public static final int versionNumber = 1;
+    public static final String versionName = "1.0.0";
 
     @Override
     public void start(Stage stage) throws Exception {

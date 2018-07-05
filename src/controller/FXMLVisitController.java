@@ -61,15 +61,19 @@ public class FXMLVisitController extends FXMLParentController implements Initial
     private CheckBox electricityCheckBox;
 
     private static final String SELECT = "Select";
-    private static final String DAY_VISIT = "Day visit";
     private static final String FIVEK_VISIT = "5K run";
-    private static final String CHALET = "Chalet";
-    private static final String HIRE_VAN = "Hire van";
-    private static final String MOTOR_HOME = "Motorhome";
-    private static final String GUEST = "Guest";
-    private static final String TENT = "Tent";
     private static final String CARAVAN = "Caravan";
-    private static final String[] CHOICES = {SELECT, DAY_VISIT, FIVEK_VISIT, CHALET, HIRE_VAN, GUEST, TENT, CARAVAN, MOTOR_HOME};
+    private static final String CHALET = "Chalet";
+    private static final String DAY_VISIT = "Day visit";
+    private static final String GUEST = "Guest";
+    private static final String HIRE_VAN = "Hire van";
+    private static final String JAZZ_FESTIVAL = "Jazz festival";
+    private static final String MOTOR_HOME = "Motorhome";
+    private static final String PITS = "PiTS";
+
+    private static final String TENT = "Tent";
+
+    public static final String[] CHOICES = {SELECT, FIVEK_VISIT, CARAVAN, CHALET, DAY_VISIT, GUEST, HIRE_VAN, JAZZ_FESTIVAL, MOTOR_HOME, PITS, TENT};
 
     public FXMLVisitController() {
         FXMLPath = "FXMLVisit.fxml";

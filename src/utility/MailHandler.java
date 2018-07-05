@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import model.SearchRowItem;
@@ -21,16 +24,16 @@ public class MailHandler {
     private String fromDNR = "donotreply@naturistfoundation.org";
     private String fromNat = "natfound@hotmail.co.uk";
     private String from = null;
-    private int successCount = 0;
     private final String host = "idserver";
     private final Properties properties;
     private final Session session;
     private String subject;
     private String emailBody;
     private String errorMessage = "";
-    public String getErrorMessage() { return errorMessage; }
-    private boolean addBcc = true;
-    public void setAddBcc(boolean value) { addBcc = value; }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
 
     protected MailHandler() {
         // Get the mail Session object
@@ -51,16 +54,18 @@ public class MailHandler {
     public void setEmailBody(String body) {
         emailBody = body;
     }
-    
+
     public void setSubject(String aSubject) {
         subject = aSubject;
     }
-    
+
     public void setFrom(String newFrom) {
         from = newFrom;
     }
 
     public void setRecipients(List<SearchRowItem> recipients) {
+        recipientsEmail.clear();
+        recipients.clear();
         for (SearchRowItem eachRecipient : recipients) {
             String email = eachRecipient.getEmail();
             if (email != null && email.length() > 4) {
@@ -69,45 +74,56 @@ public class MailHandler {
             }
         }
     }
-    
+
     public void setRecipient(String anEmail) {
-        this.recipientsEmail.clear();
-        this.recipientsEmail.add(anEmail);
+        recipientsEmail.clear();
+        recipientsEmail.add(anEmail);
     }
-    
-    public void setDoNotReply () {
+
+    public void setDoNotReply() {
         from = fromDNR;
     }
 
     public boolean send() {
-        // Create new email for each recipient to ensure privacy and no cross posted data...
-        successCount = 0;
         errorMessage = "";
         boolean success = true;
-        for (String eachRecipient : recipientsEmail) {
-            try {
-                if (from == null)
-                    from = fromNat;
-                MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress(from));
-                message.addRecipient(Message.RecipientType.TO, new InternetAddress(eachRecipient));
-                message.setSubject(subject);              
-                message.setText(emailBody);
-                message.addRecipient(Message.RecipientType.BCC, new InternetAddress(from));
-                // Send message  
-                Transport.send(message);
-                // If we get here, success?
-                successCount += 1;
-            } catch (MessagingException e) {
-                errorMessage += "Problem sending email "+eachRecipient+" : " + e.getMessage()+"\n";
-                System.err.println(e);
-                
-                success = false;
+        try {
+            MimeMessage message = new MimeMessage(session);
+            if (from == null) {
+                from = fromNat;
             }
+            message.setFrom(new InternetAddress(from));
+            message.addRecipient(Message.RecipientType.TO, new InternetAddress(from));
+            message.setSubject(subject);
+            message.setText(emailBody);
+            for (String eachRecipient : recipientsEmail) {
+                if (isEmailValid(eachRecipient))
+                    message.addRecipient(Message.RecipientType.BCC, new InternetAddress(eachRecipient));
+                else
+                    errorMessage += "Invalid email address : "+eachRecipient+" - " + validationMessage + "\n";
+            }
+            Transport.send(message);
+        } catch (MessagingException e) {
+            errorMessage = e.toString();
+            System.err.println(e);
+
+            success = false;
         }
-        
-        errorMessage = "Successfully sent "+successCount+" emails - the following had issues:\n" + errorMessage;
-        
+
         return success;
+    }
+    
+    public String validationMessage;
+    public boolean isEmailValid(String eMailAddress) {
+        boolean valid = false;
+        try {
+            InternetAddress address = new InternetAddress(eMailAddress);
+            address.validate();
+            valid = true;
+        } catch (AddressException ex) {
+            valid = false;
+            validationMessage = ex.getMessage();
+        }
+        return valid;
     }
 }

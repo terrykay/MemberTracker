@@ -1333,7 +1333,6 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             mh.setSubject(emailController.getSubject());
             mh.setEmailBody(emailController.getBody());
             mh.setFrom(emailController.getFrom());
-            mh.setAddBcc(emailController.getBccFrom());
             mh.setRecipients(filteredRowItemList);
             if (mh.send()) {
                 Utility.showAlert("Email send", "Email has been sent", "Email has been sent to the server");

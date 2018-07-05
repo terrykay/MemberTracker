@@ -102,7 +102,7 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
         if (property != null && property.length() > 0) {
             fileChooserPath = property;
         }
-        
+
         zoomProperty.addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable arg0) {
@@ -127,16 +127,17 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
 
     public void setExpires(boolean flag) {
         expiresCheckBox.setVisible(true);
-        if (flag != expiresCheckBox.isSelected())
+        if (flag != expiresCheckBox.isSelected()) {
             return;
-        
+        }
+
         expiresCheckBox.setSelected(flag);
         expiresDatePicker.setDisable(!flag);
         if (!flag) {
             expiresDatePicker.setValue(scannedDatePicker.getValue());
-        } 
+        }
     }
-    
+
     public void setImage(ImageRowItem anImage) {
         ourImage = anImage;
         WritableImage newImage = null;
@@ -163,7 +164,7 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
             mainAnchorPane.setPrefHeight(primScreenBounds.getHeight() - 50);
         }
     }
-    
+
     public void resetExpiresDate() {
         expiresDatePicker.setValue(scannedDatePicker.getValue());
     }
@@ -190,16 +191,28 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     @FXML
     private void handleExportButton(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
+        if (fileChooser == null) {
+            System.err.println("Erro on Export - FileChooser() is null");
+            return;
+        }
         fileChooser.setTitle("Select file to save");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png")
         );
+
         if (fileChooserPath != null) {
             fileChooser.setInitialDirectory(new File(fileChooserPath));
         }
-        fileChooser.setInitialFileName(ourImage.getUrl());
 
-        File selectedFile = fileChooser.showSaveDialog(getStage());
+        fileChooser.setInitialFileName(ourImage.getUrl().replace("jpg", "png"));
+
+        File selectedFile = null;
+        try {
+            selectedFile = fileChooser.showSaveDialog(getStage());
+        } catch (Exception e) {
+            fileChooser.setInitialDirectory(null);
+            selectedFile = fileChooser.showSaveDialog(getStage());
+        }
         if (selectedFile != null) {
             fileChooserPath = selectedFile.getParent();
             IDPreferences.getInstance().setProperty(SAVE_IMAGE_PATH_KEY, fileChooserPath);

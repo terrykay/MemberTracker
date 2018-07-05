@@ -24,6 +24,10 @@
 
 <xs:element name="loginUserResponse" type="tns:loginUserResponse"/>
 
+<xs:element name="logout" type="tns:logout"/>
+
+<xs:element name="logoutResponse" type="tns:logoutResponse"/>
+
 <xs:element name="removePartner" type="tns:removePartner"/>
 
 <xs:element name="removePartnerResponse" type="tns:removePartnerResponse"/>
@@ -68,6 +72,7 @@
 <xs:element name="middlenames" type="xs:string" minOccurs="0"/>
 <xs:element name="nextOfKin" type="tns:nextOfKinTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="notes" type="tns:notesTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+<xs:element name="notificationPreferences" type="tns:notificationPreferencesTO" minOccurs="0"/>
 <xs:element name="occupation" type="xs:string" minOccurs="0"/>
 <xs:element name="partnerId" type="xs:int" minOccurs="0"/>
 <xs:element name="photography" type="xs:boolean" minOccurs="0"/>
@@ -227,6 +232,15 @@
 </xs:sequence>
 </xs:complexType>
 
+<xs:complexType name="notificationPreferencesTO">
+<xs:sequence>
+<xs:element name="customerId" type="xs:int" minOccurs="0"/>
+<xs:element name="email" type="xs:boolean" minOccurs="0"/>
+<xs:element name="post" type="xs:boolean" minOccurs="0"/>
+<xs:element name="sms" type="xs:boolean" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
 <xs:complexType name="refuseTO">
 <xs:sequence>
 <xs:element name="customerId" type="xs:int" minOccurs="0"/>
@@ -330,6 +344,18 @@
 <xs:complexType name="saveCustomerResponse">
 <xs:sequence>
 <xs:element name="return" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="logout">
+<xs:sequence>
+<xs:element name="sessionId" type="xs:string" minOccurs="0"/>
+</xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="logoutResponse">
+<xs:sequence>
+<xs:element name="return" type="xs:boolean" minOccurs="0"/>
 </xs:sequence>
 </xs:complexType>
 

@@ -81,6 +81,7 @@ import org.ghost4j.document.DocumentException;
 import org.ghost4j.document.PDFDocument;
 import org.ghost4j.renderer.RendererException;
 import org.ghost4j.renderer.SimpleRenderer;
+import utility.MailHandler;
 import utility.PostFile;
 import utility.ProgressIndicator;
 import utility.SSLUtilities;
@@ -91,8 +92,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
     private final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-    @FXML
-    private CheckBox giftAidCheckBox1;
     @FXML
     private Label dateJoinedLabel;
     @FXML
@@ -112,7 +111,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private TableColumn<InvoiceRowItem, String> invoicePaidColumn;
     @FXML
-    private CheckBox memberCheckBox;
+    private Button editNextOfKinButton;
+    @FXML
+    private CheckBox postCheckBox;
+    @FXML
+    private CheckBox smsCheckBox;
+    @FXML
+    private CheckBox eMailCheckBox;
 
     // Override String from parent so Load() will work correctly
     //protected String FXMLPath="FXMLCustomer.fxml";
@@ -149,12 +154,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private CheckBox giftAidCheckBox;
     @FXML
     private TextField nextOfKinField;
-    @FXML
-    private TextField contactNoField;
-    @FXML
-    private TextField relationShipField;
-    @FXML
-    private CheckBox naturistAwareCheckbox;
+
     @FXML
     private TextArea notesTextArea;
     @FXML
@@ -371,7 +371,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         addNewInvoice();
         invoiceTable.setItems(invoiceList);
 
-        memberCheckBox.setOnAction(value -> {
+/*  Done?      memberCheckBox.setOnAction(value -> {
             if (memberCheckBox.isSelected()) {
                 handleMemberEditButton(value);
                 setForMember(true);
@@ -385,7 +385,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     setForMember(true);
                 }
             }
-        });
+        });*/
     }
 
     @FXML
@@ -513,6 +513,21 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private void setVisitUpdatedAction(ActionEvent event) {
         viewVisitDetails();
+    }
+
+    @FXML
+    private void handleNextOfKinEditButton(ActionEvent event) {
+        FXMLNextOfKinController controller = new FXMLNextOfKinController();
+        controller = (FXMLNextOfKinController)controller.load();
+        if (aCustomer.getNextOfKin().size() > 0)
+            controller.setNextOfKin( aCustomer.getNextOfKin().get(0));
+        System.out.println("NextOfKin = "+aCustomer.getNextOfKin());
+        controller.getStage().showAndWait();
+        if (controller.isUpdated()) {
+            aCustomer.getNextOfKin().clear();
+            aCustomer.getNextOfKin().add(controller.getNextOfKin());
+            nextOfKinField.setText(controller.getNextOfKin().getName());
+        }
     }
 
     private class myPartnerContextMenu extends ContextMenu {
@@ -835,6 +850,14 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             new Alert(Alert.AlertType.ERROR, "Must enter fore and surnames at least!").showAndWait();
             return;
         }
+        
+        System.out.println("Validating email");
+        if (emailField.getText() != null && !emailField.getText().isEmpty()) {
+            System.out.println("email is set : "+emailField.getText());
+            if (!MailHandler.getInstance().isEmailValid(emailField.getText())) {
+                new Alert(Alert.AlertType.ERROR, MailHandler.getInstance().validationMessage);
+            }
+        }
 
         for (ImageRowItem eachDocument : myDocumentList) {
             if (!ADDNEW.equals(eachDocument.getDetails())) {
@@ -947,7 +970,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.setGiftAid(giftAidCheckBox.isSelected());
         aCustomer.setPhotography(photographyCheckBox.isSelected());
 
-        if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
+        NotificationPreferencesTO notificationPreferences = aCustomer.getNotificationPreferences();
+        if (notificationPreferences == null) {
+            notificationPreferences = new NotificationPreferencesTO();
+            aCustomer.setNotificationPreferences(notificationPreferences);
+        }
+        notificationPreferences.setEmail(eMailCheckBox.selectedProperty().getValue());
+        notificationPreferences.setSms(smsCheckBox.selectedProperty().getValue());
+        notificationPreferences.setPost(postCheckBox.selectedProperty().getValue());
+        
+ /*       if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
                 || ((relationShipField.getText() != null && relationShipField.getText().length() > 0))) {
             if (aCustomer.getNextOfKin().isEmpty()) {
                 aCustomer.getNextOfKin().add(new NextOfKinTO());
@@ -957,9 +989,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             aCustomer.getNextOfKin().get(0).setContactNo(contactNoField.getText());
             aCustomer.getNextOfKin().get(0).setRelationship(relationShipField.getText());
             aCustomer.getNextOfKin().get(0).setAwareNaturist(naturistAwareCheckbox.isSelected());
-        }
+        }*/
 
-        //aCustomer.setNotes(notesTextArea.getText());
         if (notesTextArea.getText() != null && notesTextArea.getText().length() > 0) {
             if (aCustomer.getNotes().isEmpty()) {
                 aCustomer.getNotes().add(new NotesTO());
@@ -1055,14 +1086,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 notesTextArea.setText(aCustomer.getNotes().get(0).getNotes());
             }
         }
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
-                nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-                contactNoField.setText(aCustomer.getNextOfKin().get(0).getContactNo());
-                relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
-                naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
-            }
-        }
+        
+         if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+             nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+         }
 
         if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
@@ -1164,17 +1191,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             notesTextArea.setText("");
         }
 
+        NotificationPreferencesTO notificationPreferences = myCustomer.getNotificationPreferences();
+        if (notificationPreferences != null) {
+            smsCheckBox.selectedProperty().setValue(notificationPreferences.isSms());
+            eMailCheckBox.selectedProperty().setValue(notificationPreferences.isEmail());
+            postCheckBox.selectedProperty().setValue(notificationPreferences.isPost());
+        }
+        
         if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
             nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
-            contactNoField.setText(myCustomer.getNextOfKin().get(0).getContactNo());
-            relationShipField.setText(myCustomer.getNextOfKin().get(0).getRelationship());
-            naturistAwareCheckbox.setSelected(myCustomer.getNextOfKin().get(0).isAwareNaturist());
-        } else {
-            nextOfKinField.setText("");
-            contactNoField.setText("");
-            relationShipField.setText("");
-            naturistAwareCheckbox.setSelected(false);
-        }
+        } 
 
         myCarList = FXCollections.observableArrayList();
         for (CarTO eachCar : myCustomer.getCarCollection()) {
@@ -1581,8 +1607,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             dateJoinedField.setStyle("-fx-background-color: white;");
             partnerNameField.setStyle("-fx-background-color: white;");
             nextOfKinField.setStyle("-fx-background-color: white;");
-            contactNoField.setStyle("-fx-background-color: white;");
-            relationShipField.setStyle("-fx-background-color: white;");
+ //           contactNoField.setStyle("-fx-background-color: white;");
+ //           relationShipField.setStyle("-fx-background-color: white;");
             notesTextArea.setStyle("-fx-background-color: white;");
 
             saveButton.setVisible(false);
@@ -1676,7 +1702,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private void setForMember(Boolean value) {
-        memberCheckBox.setSelected(value);
+ //       memberCheckBox.setSelected(value);
 
         if (aCustomer != null && value) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));

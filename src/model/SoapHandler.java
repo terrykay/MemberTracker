@@ -102,6 +102,8 @@ public class SoapHandler {
         return checkIsValidSession(SoapHandler.sessionId);
     }
     
+
+    
     private static String loginUser(java.lang.String username, java.lang.String password) {
         Soap.Idtrackerws_Service service = new Soap.Idtrackerws_Service();
         Soap.Idtrackerws port = service.getIdtrackerwsPort();
@@ -120,5 +122,9 @@ public class SoapHandler {
         return port.removePartner(customerID, sessionId);
     }
 
-    
+    public static Boolean logout(java.lang.String sessionId) {
+        Soap.Idtrackerws_Service service = new Soap.Idtrackerws_Service();
+        Soap.Idtrackerws port = service.getIdtrackerwsPort();
+        return port.logout(sessionId);
+    }
 }
