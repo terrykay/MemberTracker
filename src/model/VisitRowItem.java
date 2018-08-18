@@ -193,6 +193,8 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
                 aDimension = "n/a";
             setDimensionsProperty(setValue(getDimensionsProperty(), aUnit.getDimensions()));
             String makeDisplay = aUnit.getMake();
+            if (makeDisplay == null)
+                makeDisplay = "";
             if (aUnit.getModel() != null && !aUnit.getModel().isEmpty())
                 makeDisplay = makeDisplay.concat(" "+aUnit.getModel());
             inProperty = setValue(inProperty, makeDisplay);

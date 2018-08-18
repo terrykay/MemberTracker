@@ -7,7 +7,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="514.0" prefWidth="384.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMemberController">
+<AnchorPane id="AnchorPane" prefHeight="580.0" prefWidth="383.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLMemberController">
    <children>
       <VBox layoutX="129.0" layoutY="6.0" prefHeight="517.0" prefWidth="384.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -57,6 +57,12 @@
                <children>
                   <Label text="Caravan length (ft)" />
                   <TextField fx:id="caravanLengthTextField" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" layoutX="30.0" layoutY="100.0" prefWidth="200.0" spacing="20.0">
+               <children>
+                  <Label text="Insurance expiry" />
+                  <DatePicker fx:id="insuranceExpiryDatePicker" prefHeight="25.0" prefWidth="171.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" layoutX="30.0" layoutY="30.0" prefWidth="200.0" spacing="20.0">

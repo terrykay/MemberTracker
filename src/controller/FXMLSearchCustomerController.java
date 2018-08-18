@@ -69,6 +69,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javax.xml.datatype.DatatypeConstants;
 import model.SearchRowItem;
 import model.SoapHandler;
 import utility.CustomerFilter;
@@ -350,7 +351,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         // Comparator to ensure "Sort by member joined date" sorts by date, not String
         Comparator comparator = new Comparator<String>() {
 
-            public int compare(String a, String b) {         
+            public int compare(String a, String b) {
                 Date startDate;
                 Date endDate;
                 try {
@@ -363,7 +364,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             }
         };
         memberNoColumn.setComparator(comparator);
-        
+
         societyColumn.setCellValueFactory(t -> t.getValue().getSocietyProperty());
         idValidColumn.setCellValueFactory(cellData -> {
             return Utility.checkValidID(cellData.getValue().getImageCollection());
@@ -457,8 +458,12 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         pitchMemberNoHookup.setOnAction(v -> queryBuilderPitchNoElectricHookupTemplate());
         MenuItem unpaidInvoices = new MenuItem("Outstanding invoices");
         unpaidInvoices.setOnAction(v -> queryBuilderOutstandingInvoices());
+        MenuItem vanMembers = new MenuItem("Van members");
+        vanMembers.setOnAction(v -> queryBuilderVanMembers());
+        MenuItem vanMembersNoInsurance = new MenuItem("Van members (no insurance)");
+        vanMembersNoInsurance.setOnAction(v -> queryBuilderVanMembersNotInsured());
 
-   /*     Menu menuEvents = new Menu("Events");
+        /*     Menu menuEvents = new Menu("Events");
         MenuItem menuEventsView = new MenuItem("View");
         menuEventsView.setOnAction(v -> {
             showEvents();
@@ -466,7 +471,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         Menu menuTools = new Menu("Tools");
         MenuItem menuCreateInvoice = new MenuItem("Create invoices");
         menuCreateInvoice.setOnAction(v -> createInvoices());
-        
+
         menuFile.getItems().addAll(
                 menuPrintList,
                 menuPrintRecords,
@@ -487,12 +492,14 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuQueryFindMissingDocuments,
                 menuQueryBirthday,
                 idWillExpire,
-                customersMissingEmail
+                customersMissingEmail,
+                vanMembers,
+                vanMembersNoInsurance
         );
         menuTools.getItems().addAll(menuCreateInvoice);
- //       menuEvents.getItems().addAll(
- //               menuEventsView
- //       );
+        //       menuEvents.getItems().addAll(
+        //               menuEventsView
+        //       );
 
         menuBar.getMenus().addAll(menuFile, menuQuery, menuTools);
 
@@ -658,7 +665,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         newController = (FXMLEventListController) newController.load();
         newController.getStage().show();
     }
-    
+
     private void createInvoices() {
         FXMLCreateInvoicesController newController = new FXMLCreateInvoicesController();
 
@@ -666,7 +673,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         newController.setCustomerList(fullCustomerRowItemList);
         newController.getStage().show();
     }
-    
+
     private void applyFilters() {
         // Apply the filters to the full list to get our filtered list for display
         Task task = new Task() {
@@ -1122,7 +1129,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("Displaying customers with birthday today");
         applyFilters();
     }
-    
+
     private void queryBuilderTemplate() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1133,29 +1140,32 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("");
         applyFilters();
     }
-    
+
     private void queryBuilderOutstandingInvoices() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
         queryFilter.addFilter(new CustomerFilter() {
             @Override
             public boolean include(SearchRowItem a) {
-                if (a.getMembership() == null)
+                if (a.getMembership() == null) {
                     return false;
-                if (a.getMembership().getElectricitychargeCollection() == null)
+                }
+                if (a.getMembership().getElectricitychargeCollection() == null) {
                     return false;
+                }
                 if (!a.getMembership().getElectricitychargeCollection().isEmpty()) {
                     boolean flag = false;
                     for (ElectricitychargeTO action : a.getMembership().getElectricitychargeCollection()) {
-                //    a.getMembership().getElectricitychargeCollection().stream().forEach((ElectricitychargeTO action) -> {
+                        //    a.getMembership().getElectricitychargeCollection().stream().forEach((ElectricitychargeTO action) -> {
                         if (action.getInvoiceList() != null && action.getInvoiceList().size() > 0) {
                             // Only check for receipt of fist invoice for now
-                            if (action.getInvoiceList().get(0).getReceiptCollection()==null || action.getInvoiceList().get(0).getReceiptCollection().size()==0)
+                            if (action.getInvoiceList().get(0).getReceiptCollection() == null || action.getInvoiceList().get(0).getReceiptCollection().size() == 0) {
                                 flag = true;
+                            }
                         }
                     }
                     return flag;
-                    
+
                 }
                 return false;
             }
@@ -1164,30 +1174,55 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("Outstanding invoices");
         applyFilters();
     }
-    
+
     private void queryBuilderElectricHookupTemplate() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
         queryFilter.addFilter(a -> {
-                return (a.getMembership() != null && 
-                        (a.getMembership().isElectricityHookup() != null && a.getMembership().isElectricityHookup()));
-            });
+            return (a.getMembership() != null
+                    && (a.getMembership().isElectricityHookup() != null && a.getMembership().isElectricityHookup()));
+        });
         filterList.add(queryFilter);
         queryStatus.setText("Pitch members with hookup");
         applyFilters();
     }
-    
+
     private void queryBuilderPitchNoElectricHookupTemplate() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
         queryFilter.addFilter(a -> {
-                return ((a.getMembership() != null) &&
-                        (a.getMembership().getType() != null && ((a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(TENT_PITCH) || a.getMembership().getType().equals(VAN_PITCH)))) &&
-                        (a.getMembership().isElectricityHookup()== null || !a.getMembership().isElectricityHookup())
-                        );
-            });
+            return ((a.getMembership() != null)
+                    && (a.getMembership().getType() != null && ((a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(TENT_PITCH) || a.getMembership().getType().equals(VAN_PITCH))))
+                    && (a.getMembership().isElectricityHookup() == null || !a.getMembership().isElectricityHookup()));
+        });
         filterList.add(queryFilter);
         queryStatus.setText("Pitch members with no hookup");
+        applyFilters();
+    }
+
+    private void queryBuilderVanMembers() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null) && a.getMembership().getType() != null
+                    && (a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(VAN_PITCH)));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Van members");
+        applyFilters();
+    }
+
+    private void queryBuilderVanMembersNotInsured() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null) && a.getMembership().getType() != null
+                    && (a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(VAN_PITCH))
+                    && (a.getMembership().getInsuranceExpiry() == null
+                    || a.getMembership().getInsuranceExpiry().compare(MyDate.toXMLGregorianCalendar(new Date())) == DatatypeConstants.LESSER));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Van members with no insurance");
         applyFilters();
     }
 
@@ -1263,26 +1298,26 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 // if there's a partner, set the name
                 CustomerTO updatedCustomer = controller.getCustomer();
                 Integer partnerId = whichCustomer.getPartnerId();
-                if (partnerId!=null && partnerId!=0) {
-                    if (whichCustomer.getPartnerProperty()==null)
+                if (partnerId != null && partnerId != 0) {
+                    if (whichCustomer.getPartnerProperty() == null) {
                         whichCustomer.setPartnerProperty(new SimpleStringProperty());
+                    }
                     SimpleStringProperty partnerName = (SimpleStringProperty) whichCustomer.getPartnerProperty();
                     SearchRowItem partner = customerSet.get(partnerId);
                     partnerName.setValue(partner.getForename());
-                    if (partner.getPartnerProperty()!=null)
+                    if (partner.getPartnerProperty() != null) {
                         partner.getPartnerProperty().setValue(whichCustomer.getForename());
-                    else
+                    } else {
                         partner.setPartnerProperty(new SimpleStringProperty(whichCustomer.getForename()));
-                } else { 
-                    if (whichCustomer.getPartnerProperty() != null) {
-                        whichCustomer.getPartnerProperty().setValue("");
                     }
-                } 
+                } else if (whichCustomer.getPartnerProperty() != null) {
+                    whichCustomer.getPartnerProperty().setValue("");
+                }
                 whichCustomer.setCustomer(updatedCustomer);
                 whichCustomer.refresh(updatedCustomer);
-              //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
-              //  customer.setCustomerTO(whichCustomer);
-                
+                //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
+                //  customer.setCustomerTO(whichCustomer);
+
                 searchResultsTable.refresh();
             }
         }
@@ -1338,7 +1373,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 Utility.showAlert("Email send", "Email has been sent", "Email has been sent to the server");
             } else {
                 Optional<ButtonType> showOkOrYesAlert = Utility.showOkOrYesAlert("Error occured", "An error was returned", "An error occurred sending the emails.\nClick Log to view the error report\nor OK to close.", "Log");
-                System.out.println("Button type = "+showOkOrYesAlert.get());
+                System.out.println("Button type = " + showOkOrYesAlert.get());
                 if (showOkOrYesAlert.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
                     FXMLCopySheetController controller = new FXMLCopySheetController();
                     controller = (FXMLCopySheetController) controller.load();
@@ -1354,7 +1389,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         FXMLEmailController emailController = new FXMLEmailController();
         emailController = (FXMLEmailController) emailController.load();
         if (searchResultsTable.getSelectionModel().getSelectedItem() == null) {
-                        Utility.showAlert("Please select a record", "Nothing selected", "Please select a record and try again");
+            Utility.showAlert("Please select a record", "Nothing selected", "Please select a record and try again");
             return;
         }
         String toEmail = searchResultsTable.getSelectionModel().getSelectedItem().getEmail();

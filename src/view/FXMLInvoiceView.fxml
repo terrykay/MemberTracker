@@ -14,7 +14,7 @@
             <HBox alignment="CENTER_LEFT" layoutX="46.0" layoutY="45.0" spacing="20.0">
                <children>
                   <Label alignment="CENTER_RIGHT" layoutX="46.0" layoutY="50.0" prefWidth="90.0" text="Invoice type" />
-                  <ChoiceBox fx:id="invoiceTypeChoicBox" layoutX="150.0" layoutY="45.0" prefWidth="150.0" />
+                  <TextField fx:id="invoiceTypeTextField" editable="false" prefWidth="150.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" layoutX="46.0" layoutY="91.0" spacing="20.0">

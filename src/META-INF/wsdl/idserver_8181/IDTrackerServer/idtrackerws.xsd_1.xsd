@@ -140,6 +140,7 @@
 <xs:element name="electricityHookup" type="xs:boolean" minOccurs="0"/>
 <xs:element name="electricitychargeCollection" type="tns:electricitychargeTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="id" type="xs:int" minOccurs="0"/>
+<xs:element name="insuranceExpiry" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="joinedDate" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="lockerId" type="xs:string" minOccurs="0"/>
 <xs:element name="membershipNo" type="xs:string" minOccurs="0"/>
@@ -181,6 +182,7 @@
 <xs:sequence>
 <xs:element name="amount" type="xs:int" minOccurs="0"/>
 <xs:element name="duedate" type="xs:dateTime" minOccurs="0"/>
+<xs:element name="electricityChargeCollection" type="tns:electricitychargeTO" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
 <xs:element name="invoicenumber" type="xs:int" minOccurs="0"/>
 <xs:element name="issuedate" type="xs:dateTime" minOccurs="0"/>
 <xs:element name="membershipchargeCollection" type="xs:int" nillable="true" minOccurs="0" maxOccurs="unbounded"/>

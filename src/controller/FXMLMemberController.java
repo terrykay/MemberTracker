@@ -45,8 +45,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     private boolean updated = false;
     private double hBoxHeights;
     @FXML
-    private HBox caravanMakeHBox;
-    @FXML
     private TextField caravanMakeTextField;
     @FXML
     private HBox caravanModelHBox;
@@ -60,6 +58,10 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     private HBox caravanLengthHBox;
     @FXML
     private TextField caravanLengthTextField;
+    @FXML
+    private HBox caravanMaykeHBox;
+    @FXML
+    private DatePicker insuranceExpiryDatePicker;
 
     public boolean isUpdated() {
         return updated;
@@ -186,6 +188,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
                 caravanLengthTextField.setText(van.getLength().toString());
             }
         } 
+        insuranceExpiryDatePicker.setValue(MyDate.toLocalDate(aMembership.getInsuranceExpiry()));
     }
 
     public MembershipTO getMembership() {
@@ -199,6 +202,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
 
         aMembership.setMembershipNo(membershipNumberTextField.getText());
         aMembership.setJoinedDate(MyDate.toXMLGregorianCalendar(memberSinceDatePicker.getValue()));
+        aMembership.setInsuranceExpiry(MyDate.toXMLGregorianCalendar(insuranceExpiryDatePicker.getValue()));
         if (!SELECT.equals(societyChoiceBox.getValue())) {
             aMembership.setSociety(societyChoiceBox.getValue());
         }
@@ -267,6 +271,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
         caravanLengthTextField.setDisable(true);
         caravanMakeTextField.setPromptText("Select Van membership");
         caravanModelTextField.setPromptText("type to enable");
+        insuranceExpiryDatePicker.setDisable(true);
     }
     
     private void enableCaravanFields() {
@@ -279,5 +284,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
         caravanLengthTextField.setDisable(false);
         caravanMakeTextField.setPromptText("");
         caravanModelTextField.setPromptText("");
+        insuranceExpiryDatePicker.setDisable(false);
     }
 }

@@ -154,7 +154,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private CheckBox giftAidCheckBox;
     @FXML
     private TextField nextOfKinField;
-
     @FXML
     private TextArea notesTextArea;
     @FXML
@@ -169,7 +168,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TableColumn<CarRowItem, String> carModelColumn;
     @FXML
     private TableColumn<CarRowItem, String> carColourColumn;
-
     @FXML
     private TableView<ChildRowItem> childTable;
     @FXML
@@ -180,14 +178,12 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TableColumn<ChildRowItem, String> childAgeColumn;
     @FXML
     private TableColumn<ChildRowItem, String> childDOBColumn;
-
     @FXML
     private TableView<ImageRowItem> IDTable;
     @FXML
     private TableColumn<ImageRowItem, String> IDTypeColumn;
     @FXML
     private TableColumn<ImageRowItem, String> IDExpiryColumn;
-
     @FXML
     private TableView<ImageRowItem> documentTable;
     @FXML
@@ -248,7 +244,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TextField telephoneOneField;
     @FXML
     private TextField telephoneTwoField;
-
     @FXML
     private Button cancelButton;
 
@@ -345,13 +340,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         IDExpiryColumn.setCellValueFactory(cellData -> cellData.getValue().getExpiredProperty());
         IDTable.setContextMenu(new myContextMenu(IDTable));
 
-        /*  IDTypeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        IDTypeColumn.setOnEditCommit(t -> {
-            ImageRowItem aDocument = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            aDocument.getDetailsProperty().set(t.getNewValue());
-        });*/
-        //Document table
-        //documentTable.setEditable(true);
         documentTable.setContextMenu(new myContextMenu(documentTable));
         myDocumentList = FXCollections.observableArrayList();
         // newImageTO set in ID Table
@@ -370,22 +358,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         invoicePaidColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoicePaidProperty());
         addNewInvoice();
         invoiceTable.setItems(invoiceList);
-
-/*  Done?      memberCheckBox.setOnAction(value -> {
-            if (memberCheckBox.isSelected()) {
-                handleMemberEditButton(value);
-                setForMember(true);
-            } else {
-                Optional choice = Utility.showConfirmationAlert("Are you sure?", "This will set member as a visitor", "Please confirm. Any membership details\nwill be lost.");
-                if (choice.get() == ButtonType.OK) {
-                    setVisits();
-                    aCustomer.setMembership(null);
-                    setForMember(false);
-                } else {
-                    setForMember(true);
-                }
-            }
-        });*/
     }
 
     @FXML
@@ -490,7 +462,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
     @FXML
     private void handleRefuseButton(ActionEvent event) {
-
         Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Refuse this person entry?", "Are you sure you wish to refuse this\nperson entry? This cannot be\nrevoked once saved.");
         if (showConfirmationAlert.get() == ButtonType.OK) {
             RefuseTO refusal = new RefuseTO();
@@ -547,7 +518,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private class myContextMenu extends ContextMenu {
-
         public myContextMenu(TableView targetTable) {
             MenuItem view = new MenuItem("View");
             MenuItem delete = new MenuItem("Delete");
@@ -563,7 +533,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private class myInvoiceContextMenu extends ContextMenu {
-
         public myInvoiceContextMenu(TableView targetTable) {
             MenuItem addCharge = new MenuItem("Add a/c charge");
             MenuItem markPaid = new MenuItem("Mark paid");
@@ -742,7 +711,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         invoice.setIssuedate(MyDate.toXMLGregorianCalendar(new Date()));
         invoice.setDuedate(MyDate.toXMLGregorianCalendar(new Date()));
         charge.getInvoiceList().add(invoice);
-        invoice.setType("Electricity");
+        invoice.setType("ELECTRICITY");
+        invoice.getElectricityChargeCollection().add(charge);
 
         aCustomer.getMembership().getElectricitychargeCollection().add(charge);
 
@@ -910,6 +880,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         storeCustomerDetails();
         String value = null;
         System.out.println("Saving " + aCustomer.getVisitCollection().size() + " visits");
+        // Reset electricity charges 
+        if (aCustomer.getMembership() != null && aCustomer.getMembership().getElectricitychargeCollection() != null)
+            aCustomer.getMembership().getElectricitychargeCollection().clear();
         try {
             value = SoapHandler.saveCustomer(aCustomer);
         } catch (Exception e) {
@@ -1235,8 +1208,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         if (myCustomer.getMembership() != null && myCustomer.getMembership().getElectricitychargeCollection() != null) {
             for (ElectricitychargeTO eachcharge : myCustomer.getMembership().getElectricitychargeCollection()) {
                 for (InvoiceTO eachInvoice : eachcharge.getInvoiceList()) {
+                    // Make sure electricity charge is present so year is displayed `   `
+                    eachInvoice.getElectricityChargeCollection().add(eachcharge);
                     InvoiceRowItem invoiceRowItem = new InvoiceRowItem(eachInvoice);
-                    invoiceRowItem.getInvoiceTypeProperty().setValue("Electricity " + eachcharge.getYear());
                     invoiceList.add(invoiceRowItem);
                 }
             }

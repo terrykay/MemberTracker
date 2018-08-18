@@ -30,13 +30,11 @@ import static utility.Utility.penceToPounds;
  * @author tezk
  */
 public class FXMLInvoiceViewController extends FXMLParentController implements Initializable {
-
+    // Currently only supports electricity charges
     public static final String INVOICE_CHOICE_ELECTRICAL = "Electricity";
     
     InvoiceTO invoice;
     
-    @FXML
-    private ChoiceBox<String> invoiceTypeChoicBox;
     @FXML
     private DatePicker raisedDatePicker;
     @FXML
@@ -49,6 +47,8 @@ public class FXMLInvoiceViewController extends FXMLParentController implements I
     private TextArea notesTextArea;
     @FXML
     private Button saveButton;
+    @FXML
+    private TextField invoiceTypeTextField;
 
     public FXMLInvoiceViewController() {
         FXMLPath = "FXMLInvoiceView.fxml";
@@ -73,6 +73,7 @@ public class FXMLInvoiceViewController extends FXMLParentController implements I
                 amountTextField.setText(newv.replaceAll("[^\\d.]", ""));
             }
         });
+        invoiceTypeTextField.setText(INVOICE_CHOICE_ELECTRICAL);
     }    
 
     @FXML
@@ -100,7 +101,6 @@ public class FXMLInvoiceViewController extends FXMLParentController implements I
     public void setInvoice(InvoiceRowItem invoice) {
         this.invoice = invoice;
         amountTextField.setText(penceToPounds(invoice.getAmount()));
-        invoiceTypeChoicBox.getSelectionModel().select(invoice.getType());
         raisedDatePicker.setValue(MyDate.toLocalDate(invoice.getIssuedate()));
         dueDatePicker.setValue(MyDate.toLocalDate(invoice.getDuedate()));
         if (invoice.getReceiptCollection() != null && invoice.getReceiptCollection().size() > 0) 
@@ -110,14 +110,13 @@ public class FXMLInvoiceViewController extends FXMLParentController implements I
     
     private void saveInvoice() {
         invoice.setAmount((int)(Double.parseDouble(amountTextField.getText())*100));
-        invoice.setType(invoiceTypeChoicBox.getSelectionModel().getSelectedItem());
         invoice.setIssuedate(MyDate.toXMLGregorianCalendar(raisedDatePicker.getValue()));
         invoice.setDuedate(MyDate.toXMLGregorianCalendar(dueDatePicker.getValue()));
         if (paidCheckBox.isSelected() &&  invoice.getReceiptCollection().isEmpty()) {
             ReceiptTO newReceipt = new ReceiptTO();
             newReceipt.setAmount(invoice.getAmount());
             newReceipt.setDate(MyDate.toXMLGregorianCalendar(new Date()));
-            newReceipt.setNotes("v1");
+            newReceipt.setNotes(notesTextArea.getText());
             invoice.getReceiptCollection().add(newReceipt);
         }
         invoice.setNotes(notesTextArea.getText());

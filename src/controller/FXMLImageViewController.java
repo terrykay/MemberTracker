@@ -210,6 +210,7 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
         try {
             selectedFile = fileChooser.showSaveDialog(getStage());
         } catch (Exception e) {
+            // If initial folder has become invalid (drive ejected etc) we'll end up here
             fileChooser.setInitialDirectory(null);
             selectedFile = fileChooser.showSaveDialog(getStage());
         }

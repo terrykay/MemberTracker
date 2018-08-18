@@ -10,19 +10,13 @@ import Soap.ReceiptTO;
 import UtilityClasses.MyDate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.collections.FXCollections;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-/**
- *
- * @author tezk
- */
 public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
     StringProperty invoiceTypeProperty;
     StringProperty invoiceAmountProperty;
@@ -67,6 +61,10 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
         this.type = type;
         if (invoiceTO != null)
             invoiceTO.setType(type);
+        // Electricity charge? Show year
+        if (invoiceTO.getElectricityChargeCollection() != null && invoiceTO.getElectricityChargeCollection().size() > 0) {
+            type += " " + invoiceTO.getElectricityChargeCollection().get(0).getYear();
+        }
         invoiceTypeProperty = setValue(invoiceTypeProperty, type);
     }
     
@@ -141,6 +139,5 @@ public class InvoiceRowItem extends InvoiceTO implements InvalidationListener {
     public StringProperty getInvoicePaidProperty() {
         return invoicePaidProperty;
     }
-    
     
 }
