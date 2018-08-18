@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="351.0" prefWidth="298.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLInvoiceViewController">
+   <children>
+      <VBox layoutX="46.0" layoutY="45.0" prefHeight="345.0" prefWidth="298.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" layoutX="46.0" layoutY="45.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" layoutX="46.0" layoutY="50.0" prefWidth="90.0" text="Invoice type" />
+                  <TextField fx:id="invoiceTypeTextField" editable="false" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="46.0" layoutY="91.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" layoutX="46.0" layoutY="96.0" prefWidth="90.0" text="Raised date" />
+                  <DatePicker fx:id="raisedDatePicker" layoutX="150.0" layoutY="91.0" onAction="#handleRaisedDateChanged" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="46.0" layoutY="142.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" layoutX="46.0" layoutY="147.0" prefWidth="90.0" text="Due date" />
+                  <DatePicker fx:id="dueDatePicker" layoutX="150.0" layoutY="142.0" onAction="#handleDueDateChanged" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="46.0" layoutY="195.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" layoutX="46.0" layoutY="200.0" prefWidth="90.0" text="Amount" />
+                  <TextField fx:id="amountTextField" layoutX="150.0" layoutY="195.0" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="71.0" layoutY="255.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" layoutX="71.0" layoutY="256.0" prefWidth="90.0" text="Paid" />
+                  <CheckBox fx:id="paidCheckBox" layoutX="155.0" layoutY="255.0" mnemonicParsing="false" onAction="#handlePaidToggled" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="51.0" layoutY="298.0" spacing="20.0">
+               <children>
+                  <Label alignment="CENTER_RIGHT" layoutX="51.0" layoutY="298.0" prefWidth="90.0" text="Notes" />
+                  <TextArea fx:id="notesTextArea" layoutX="155.0" layoutY="302.0" prefHeight="80.0" prefWidth="150.0" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER">
+               <children>
+                  <Button fx:id="saveButton" alignment="CENTER" mnemonicParsing="false" onAction="#handleSaveButton" text="Save" />
+               </children>
+               <padding>
+                  <Insets top="20.0" />
+               </padding>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+      </VBox>
+   </children>
+</AnchorPane>

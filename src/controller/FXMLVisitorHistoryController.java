@@ -7,7 +7,9 @@ package controller;
 
 import Soap.VisitTO;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -15,6 +17,11 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
@@ -40,7 +47,11 @@ public class FXMLVisitorHistoryController extends FXMLParentController implement
     private TableColumn<VisitRowItem, String> inColumn;
     @FXML
     private TableColumn<VisitRowItem, String> dimensionsColumn;
+    
+    private List<VisitRowItem> deleteList = new ArrayList();
 
+    public List <VisitRowItem> getDeleteList() { return deleteList; }
+    
     public FXMLVisitorHistoryController() {
         FXMLPath = "FXMLVisitorHistory.fxml";
     }
@@ -84,7 +95,41 @@ public class FXMLVisitorHistoryController extends FXMLParentController implement
         });
         inColumn.setCellValueFactory(value -> value.getValue().getInProperty());
         dimensionsColumn.setCellValueFactory(value -> value.getValue().getDimensionsProperty());
+        
+        visitTable.setContextMenu(new myContextMenu());
     }    
+    
+    private class myContextMenu extends ContextMenu {
+
+        public myContextMenu() {
+            MenuItem view = new MenuItem("View");
+            MenuItem delete = new MenuItem("Delete");
+
+            getItems().addAll(view, delete);
+            delete.setOnAction(event -> {
+                handleDelete();
+            });
+            view.setOnAction(event -> {
+                handleTableClicked(null);
+            });
+        }
+    }
+    
+    private void handleDelete() {
+        VisitRowItem selectedItem = visitTable.getSelectionModel().getSelectedItem();
+        Alert alert = new Alert(AlertType.CONFIRMATION);
+        alert.setTitle("Please confirm");
+        alert.setHeaderText("If you click OK, this action cannot be reversed");
+        alert.setContentText("Visit will be removed. Are you sure?");
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            // ... user chose OK
+            visitList.remove(selectedItem);
+
+            deleteList.add(selectedItem);
+            updated = true;
+        }
+    }
     
     @FXML
     private void handleAddNewButton(ActionEvent event) {

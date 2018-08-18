@@ -12,8 +12,10 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import model.SearchRowItem;
 
 /**
@@ -31,6 +33,8 @@ public class FXMLEmailController extends FXMLParentController implements Initial
     private TextField fromTextField;
     @FXML
     private TextArea toTextArea;
+    @FXML
+    private CheckBox bccFromButton;
 
     public FXMLEmailController() {
         FXMLPath = "FXMLEmail.fxml";
@@ -56,7 +60,9 @@ public class FXMLEmailController extends FXMLParentController implements Initial
     public void initialize(URL url, ResourceBundle rb) {
         setFrom("natfound@hotmail.co.uk");
         toTextArea.setEditable(false);
+        toTextArea.setTooltip(new Tooltip("To edit an email, open the customers record from the Customer list screen"));
         toTextArea.setWrapText(true);
+        bccFromButton.setTooltip(new Tooltip("Selecting this will add the From address as a BCC: recipient of any emails sent"));
     }
 
     public void setTo(String newTo) {
@@ -109,6 +115,10 @@ public class FXMLEmailController extends FXMLParentController implements Initial
 
     public String getFrom() {
         return fromTextField.getText();
+    }
+    
+    public boolean getBccFrom() {
+        return bccFromButton.selectedProperty().getValue();
     }
 
     @FXML

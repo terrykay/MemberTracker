@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.collections.*?>
 
-<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" prefHeight="790.0" prefWidth="783.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLCustomerController">
+<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" prefHeight="742.0" prefWidth="783.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLCustomerController">
     <children>
-      <VBox layoutX="16.0" layoutY="17.0" prefHeight="598.0" prefWidth="764.0" AnchorPane.bottomAnchor="65.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <VBox layoutX="16.0" layoutY="17.0" prefHeight="691.0" prefWidth="763.0" AnchorPane.bottomAnchor="89.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
-            <HBox layoutX="16.0" layoutY="17.0" prefHeight="573.0" prefWidth="766.0">
+            <HBox layoutX="16.0" layoutY="17.0" prefHeight="520.0" prefWidth="766.0">
                <children>
                     <VBox alignment="CENTER_RIGHT" layoutX="16.0" layoutY="17.0" prefHeight="451.0" prefWidth="348.0" spacing="5.0">
                         <children>
@@ -106,68 +106,78 @@
                               <DatePicker fx:id="dobDatePicker" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefWidth="236.0" styleClass="textField" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
-                           <children>
-                              <CheckBox fx:id="photographyCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Allow photography" />
-                              <CheckBox fx:id="giftAidCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Gift aid" />
-                           </children>
-                        </HBox>
-                        <HBox alignment="CENTER" layoutX="10.0" layoutY="460.0" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
-                           <children>
-                              <CheckBox fx:id="meberCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" prefWidth="147.0" text="Member" />
-                              <CheckBox fx:id="giftAidCheckBox1" disable="true" mnemonicParsing="false" onAction="#setUpdatedAction" text="Gift aid" visible="false" />
-                           </children>
-                        </HBox>
+
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="446.0" spacing="10.0">
                            <children>
                               <Label fx:id="dateJoinedLabel" layoutX="23.0" layoutY="112.0" text="Date joined" />
-                              <TextField fx:id="dateJoinedField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <TextField fx:id="dateJoinedField" editable="false" layoutX="131.0" layoutY="108.0" onAction="#setMemberUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
                               <Button fx:id="editMemberButton" mnemonicParsing="false" onAction="#handleMemberEditButton" prefHeight="25.0" prefWidth="104.0" text="Edit details" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="506.0" spacing="10.0">
                            <children>
                               <Label fx:id="lastVisitLabel" layoutX="23.0" layoutY="112.0" text="Last visit" />
-                              <TextField fx:id="lastVisitField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
-                              <Button fx:id="addVisitButton" mnemonicParsing="false" onAction="#handleAddVisitButton" prefHeight="25.0" prefWidth="104.0" text="Add visit" />
+                              <TextField fx:id="lastVisitField" editable="false" layoutX="131.0" layoutY="108.0" onAction="#setVisitUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handleMemberNoClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <Button fx:id="addVisitButton" mnemonicParsing="false" onAction="#handleAddVisitButton" prefHeight="25.0" prefWidth="104.0" text="View visits" />
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="543.0" spacing="10.0">
                            <children>
                               <Label layoutX="23.0" layoutY="112.0" text="Partner" />
-                              <TextField fx:id="partnerNameField" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handlePartnerNameClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <TextField fx:id="partnerNameField" editable="false" layoutX="131.0" layoutY="108.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" onMouseClicked="#handlePartnerNameClicked" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
                               <Button fx:id="findPartnerButton" mnemonicParsing="false" onAction="#handleFindPartnerButton" prefHeight="25.0" prefWidth="104.0" text="Find" />
                            </children>
                         </HBox>
-                        <Separator prefWidth="200.0" />
+                                                
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="26.0" spacing="10.0">
                            <children>
                               <Label layoutX="19.0" layoutY="30.0" text="Next of kin" />
-                              <TextField fx:id="nextOfKinField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                              <TextField fx:id="nextOfKinField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
+                              <Button fx:id="editNextOfKinButton" mnemonicParsing="false" onAction="#handleNextOfKinEditButton" prefHeight="25.0" prefWidth="104.0" text="Edit" />
                            </children>
-                        </HBox>
-                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="558.0" spacing="10.0">
+                        </HBox> 
+                        <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
                            <children>
-                              <Label layoutX="19.0" layoutY="30.0" text="Contact no." />
-                              <TextField fx:id="contactNoField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                              <Label text="Notification preference:" />
                            </children>
+                           <VBox.margin>
+                              <Insets left="30.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
                         </HBox>
-                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="573.0" spacing="10.0">
+                                                <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="345.0" spacing="26.0">
                            <children>
-                              <Label layoutX="19.0" layoutY="30.0" text="Relationship" />
-                              <TextField fx:id="relationShipField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="236.0" styleClass="textField" />
+                              <CheckBox fx:id="postCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Post" />
+                              <CheckBox fx:id="smsCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="SMS" />
+                              <CheckBox fx:id="eMailCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="eMail" />
                            </children>
+                           <VBox.margin>
+                              <Insets left="30.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="20.0" />
+                           </padding>
                         </HBox>
-                        <HBox alignment="CENTER" layoutX="10.0" layoutY="460.0" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
+           
+                        <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="345.0" spacing="10.0">
                            <children>
-                              <CheckBox fx:id="naturistAwareCheckbox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Aware of being a naturist" />
+                              <CheckBox fx:id="photographyCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Allow photography" />
+                              <CheckBox fx:id="giftAidCheckBox" mnemonicParsing="false" onAction="#setUpdatedAction" text="Gift aid" />
                            </children>
-                        </HBox>            
+                           <VBox.margin>
+                              <Insets left="30.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="10.0" />
+                           </padding>
+                        </HBox>
                         </children>
                     </VBox>
                   <VBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="443.0" prefWidth="403.0" spacing="10.0">
                      <children>
-                        <TableView fx:id="carTable" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleCarClicked" prefHeight="123.0" prefWidth="368.0">
+                        <TableView fx:id="carTable" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleCarClicked" prefHeight="95.0" prefWidth="368.0">
                           <columns>
                             <TableColumn fx:id="carRegColumn" prefWidth="77.0" text="Car reg" />
                             <TableColumn fx:id="carMakeColumn" prefWidth="102.0" text="Make" />
@@ -201,8 +211,15 @@
                             <TableColumn fx:id="documentDateColumn" prefWidth="106.0" text="Date scanned" />
                           </columns>
                         </TableView>
+                        <TableView fx:id="invoiceTable" layoutX="35.0" layoutY="420.0" onDragDropped="#handleDocDragDropped" onDragOver="#handleIDDragOver" onKeyPressed="#handleKeyPressOnTable" onMouseClicked="#handleDocumentClicked" prefHeight="136.0" prefWidth="368.0">
+                           <columns>
+                              <TableColumn fx:id="invoiceTypeColumn" prefWidth="171.0" text="Invoice type" />
+                              <TableColumn fx:id="invoiceAmountColumn" prefWidth="86.0" text="Amount" />
+                              <TableColumn fx:id="invoicePaidColumn" prefWidth="89.0" text="Paid" />
+                           </columns>
+                        </TableView>
                         <Label text="Notes:" />
-                        <TextArea fx:id="notesTextArea" onKeyPressed="#setUpdatedKey" prefHeight="133.0" prefWidth="368.0" wrapText="true" />
+                        <TextArea fx:id="notesTextArea" onKeyPressed="#setUpdatedKey" prefHeight="81.0" prefWidth="368.0" wrapText="true" />
                      </children>
                      <padding>
                         <Insets left="25.0" right="10.0" />

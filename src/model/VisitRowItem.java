@@ -47,6 +47,7 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
         setCustomerId(aVisit.getCustomerId());
         setStartDate(aVisit.getStartDate());
         setEndDate(aVisit.getEndDate());
+        setType(aVisit.getType());
         UnitTO aUnit = aVisit.getUnitId();
         if (aUnit == null)
             aUnit = new UnitTO();
@@ -105,7 +106,7 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
             return;
         
         String date = df.format(MyDate.toDate(endDate));
-        setEndDateProperty(setValue(getStartDateProperty(), date));
+        setEndDateProperty(setValue(getEndDateProperty(), date));
         this.endDate = endDate;
         setDurationProperty();
     }
@@ -145,7 +146,9 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
     }
 
     public void setUnitId(UnitTO unitId) {
-        this.unitId = unitId;
+        ObservableUnit observableUnit = new ObservableUnit(unitId);
+        invalidated(observableUnit);
+        this.unitId = observableUnit;
     }
 
     public StringProperty getDurationProperty() {
@@ -167,7 +170,10 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
         setDimensionsProperty(setValue(getDimensionsProperty(), dimension));
     }
     
-    
+    public void setType(String type) {
+        this.type = type;
+        inProperty = setValue(inProperty, type);
+    }
     
     private StringProperty setValue(StringProperty string, String value) {
         if (string == null)
@@ -187,6 +193,8 @@ public class VisitRowItem extends VisitTO implements InvalidationListener {
                 aDimension = "n/a";
             setDimensionsProperty(setValue(getDimensionsProperty(), aUnit.getDimensions()));
             String makeDisplay = aUnit.getMake();
+            if (makeDisplay == null)
+                makeDisplay = "";
             if (aUnit.getModel() != null && !aUnit.getModel().isEmpty())
                 makeDisplay = makeDisplay.concat(" "+aUnit.getModel());
             inProperty = setValue(inProperty, makeDisplay);

@@ -34,18 +34,16 @@ public class FXMLMemberController extends FXMLParentController implements Initia
 
     private final String SELECT = "Select";
     private final String SOCIETIES[] = {SELECT, "Northern", "Southern", "Bromley", "Kent"};
-    private final String REGIONS[] = {"N/A"};
-    private final String VAN_PITCH = "Van pitch";
-    private final String LARGE_VAN_PITCH = "Large van pitch";
-    private final String MEMBERSHIP_TYPE[] = {SELECT, "Member", "Tent pitch", VAN_PITCH, LARGE_VAN_PITCH, "Resident"};
+    public final static String TENT_PITCH = "Texnt pitch";
+    public final static String VAN_PITCH = "Van pitch";
+    public final static String LARGE_VAN_PITCH = "Large van pitch";
+    private final String MEMBERSHIP_TYPE[] = {SELECT, "Member", TENT_PITCH, VAN_PITCH, LARGE_VAN_PITCH, "Resident"};
     private final String TITLE = "Member details";
 
     private MembershipTO aMembership;
 
     private boolean updated = false;
     private double hBoxHeights;
-    @FXML
-    private HBox caravanMakeHBox;
     @FXML
     private TextField caravanMakeTextField;
     @FXML
@@ -60,6 +58,10 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     private HBox caravanLengthHBox;
     @FXML
     private TextField caravanLengthTextField;
+    @FXML
+    private HBox caravanMaykeHBox;
+    @FXML
+    private DatePicker insuranceExpiryDatePicker;
 
     public boolean isUpdated() {
         return updated;
@@ -71,8 +73,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     private DatePicker memberSinceDatePicker;
     @FXML
     private ChoiceBox<String> societyChoiceBox;
-    @FXML
-    private ChoiceBox<String> districtChoiceBox;
     @FXML
     private ChoiceBox<String> membershipTypeChoiceBox;
     @FXML
@@ -107,8 +107,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
     public void initialize(URL url, ResourceBundle rb) {
         societyChoiceBox.getItems().addAll(FXCollections.observableArrayList(SOCIETIES));
         societyChoiceBox.getSelectionModel().select(SOCIETIES[0]);
-        districtChoiceBox.getItems().addAll(FXCollections.observableArrayList(REGIONS));
-        districtChoiceBox.getSelectionModel().select(0);
         membershipTypeChoiceBox.getItems().addAll(FXCollections.observableArrayList(MEMBERSHIP_TYPE));
         membershipTypeChoiceBox.getSelectionModel().select(MEMBERSHIP_TYPE[0]);
         caravanLengthTextField.textProperty().addListener((e, oldv, newv) -> {
@@ -190,6 +188,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
                 caravanLengthTextField.setText(van.getLength().toString());
             }
         } 
+        insuranceExpiryDatePicker.setValue(MyDate.toLocalDate(aMembership.getInsuranceExpiry()));
     }
 
     public MembershipTO getMembership() {
@@ -203,6 +202,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
 
         aMembership.setMembershipNo(membershipNumberTextField.getText());
         aMembership.setJoinedDate(MyDate.toXMLGregorianCalendar(memberSinceDatePicker.getValue()));
+        aMembership.setInsuranceExpiry(MyDate.toXMLGregorianCalendar(insuranceExpiryDatePicker.getValue()));
         if (!SELECT.equals(societyChoiceBox.getValue())) {
             aMembership.setSociety(societyChoiceBox.getValue());
         }
@@ -271,6 +271,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
         caravanLengthTextField.setDisable(true);
         caravanMakeTextField.setPromptText("Select Van membership");
         caravanModelTextField.setPromptText("type to enable");
+        insuranceExpiryDatePicker.setDisable(true);
     }
     
     private void enableCaravanFields() {
@@ -283,5 +284,6 @@ public class FXMLMemberController extends FXMLParentController implements Initia
         caravanLengthTextField.setDisable(false);
         caravanMakeTextField.setPromptText("");
         caravanModelTextField.setPromptText("");
+        insuranceExpiryDatePicker.setDisable(false);
     }
 }

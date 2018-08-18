@@ -1,15 +1,6 @@
 package controller;
 
-import Soap.CarTO;
-import Soap.ChildTO;
-import Soap.CustomerTO;
-import Soap.ImageTO;
-import Soap.AddressTO;
-import Soap.MembershipTO;
-import Soap.NextOfKinTO;
-import Soap.NotesTO;
-import Soap.RefuseTO;
-import Soap.VisitTO;
+import Soap.*;
 import UtilityClasses.MyDate;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -35,7 +26,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -83,28 +74,24 @@ import javax.imageio.ImageIO;
 import model.CarRowItem;
 import model.ChildRowItem;
 import model.ImageRowItem;
+import model.InvoiceRowItem;
 import model.SoapHandler;
 import model.VisitRowItem;
 import org.ghost4j.document.DocumentException;
 import org.ghost4j.document.PDFDocument;
 import org.ghost4j.renderer.RendererException;
 import org.ghost4j.renderer.SimpleRenderer;
+import utility.MailHandler;
 import utility.PostFile;
 import utility.ProgressIndicator;
 import utility.SSLUtilities;
 import utility.Utility;
 import static utility.Utility.showConfirmationAlert;
 
-/**
- *
- * @author tezk
- */
 public class FXMLCustomerController extends FXMLParentController implements Initializable {
 
     private final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
-    @FXML
-    private CheckBox giftAidCheckBox1;
     @FXML
     private Label dateJoinedLabel;
     @FXML
@@ -115,6 +102,22 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private Button addVisitButton;
     @FXML
     private TextField dateJoinedField;
+    @FXML
+    private TableView<InvoiceRowItem> invoiceTable;
+    @FXML
+    private TableColumn<InvoiceRowItem, String> invoiceTypeColumn;
+    @FXML
+    private TableColumn<InvoiceRowItem, String> invoiceAmountColumn;
+    @FXML
+    private TableColumn<InvoiceRowItem, String> invoicePaidColumn;
+    @FXML
+    private Button editNextOfKinButton;
+    @FXML
+    private CheckBox postCheckBox;
+    @FXML
+    private CheckBox smsCheckBox;
+    @FXML
+    private CheckBox eMailCheckBox;
 
     // Override String from parent so Load() will work correctly
     //protected String FXMLPath="FXMLCustomer.fxml";
@@ -129,8 +132,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private FXMLCarController carController = null;
     private static String fileChooserPath = null;
 
-    @FXML
-    private CheckBox meberCheckBox;
     @FXML
     private Button refuseButton;
     @FXML
@@ -154,17 +155,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private TextField nextOfKinField;
     @FXML
-    private TextField contactNoField;
-    @FXML
-    private TextField relationShipField;
-    @FXML
-    private CheckBox naturistAwareCheckbox;
-    @FXML
     private TextArea notesTextArea;
     @FXML
     private TextField emailField;
     @FXML
-
     private TableView<CarRowItem> carTable;
     @FXML
     private TableColumn<CarRowItem, String> carRegColumn;
@@ -174,7 +168,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TableColumn<CarRowItem, String> carModelColumn;
     @FXML
     private TableColumn<CarRowItem, String> carColourColumn;
-
     @FXML
     private TableView<ChildRowItem> childTable;
     @FXML
@@ -185,14 +178,12 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TableColumn<ChildRowItem, String> childAgeColumn;
     @FXML
     private TableColumn<ChildRowItem, String> childDOBColumn;
-
     @FXML
     private TableView<ImageRowItem> IDTable;
     @FXML
     private TableColumn<ImageRowItem, String> IDTypeColumn;
     @FXML
     private TableColumn<ImageRowItem, String> IDExpiryColumn;
-
     @FXML
     private TableView<ImageRowItem> documentTable;
     @FXML
@@ -211,6 +202,11 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private CustomerTO aCustomer = null;
+
+    public CustomerTO getCustomer() {
+        return aCustomer;
+    }
+
     boolean updated = false;
 
     public boolean isUpdated() {
@@ -248,7 +244,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TextField telephoneOneField;
     @FXML
     private TextField telephoneTwoField;
-
     @FXML
     private Button cancelButton;
 
@@ -256,6 +251,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     ObservableList<ChildRowItem> myChildList;
     ObservableList<ImageRowItem> myDocumentList;
     ObservableList<ImageRowItem> myIDList;
+    ObservableList<InvoiceRowItem> invoiceList;
     // Build lists of anything deleted so we can return the list, then they can be removed...
     List<CarTO> carDeleteList;
     List<ChildTO> childDeleteList;
@@ -344,13 +340,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         IDExpiryColumn.setCellValueFactory(cellData -> cellData.getValue().getExpiredProperty());
         IDTable.setContextMenu(new myContextMenu(IDTable));
 
-        /*  IDTypeColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        IDTypeColumn.setOnEditCommit(t -> {
-            ImageRowItem aDocument = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            aDocument.getDetailsProperty().set(t.getNewValue());
-        });*/
-        //Document table
-        //documentTable.setEditable(true);
         documentTable.setContextMenu(new myContextMenu(documentTable));
         myDocumentList = FXCollections.observableArrayList();
         // newImageTO set in ID Table
@@ -361,21 +350,14 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         documentDateColumn.setCellValueFactory(cellData -> cellData.getValue().getScannedProperty());
         photographyCheckBox.setSelected(false);
 
-        meberCheckBox.setOnAction(value -> {
-            if (meberCheckBox.isSelected()) {
-                handleMemberEditButton(value);
-                setForMember(true);
-            } else {
-                Optional choice = Utility.showConfirmationAlert("Are you sure?", "This will set member as a visitor", "Please confirm. Any membership details\nwill be lost.");
-                if (choice.get() == ButtonType.OK) {
-                    setVisits();
-                    aCustomer.setMembership(null);
-                    setForMember(false);
-                } else {
-                    setForMember(true);
-                }
-            }
-        });
+        // Invoice column
+        invoiceList = FXCollections.observableArrayList();
+        invoiceTable.setContextMenu(new myInvoiceContextMenu(invoiceTable));
+        invoiceTypeColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceTypeProperty());
+        invoiceAmountColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoiceAmountProperty());
+        invoicePaidColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoicePaidProperty());
+        addNewInvoice();
+        invoiceTable.setItems(invoiceList);
     }
 
     @FXML
@@ -480,7 +462,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
     @FXML
     private void handleRefuseButton(ActionEvent event) {
-
         Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Refuse this person entry?", "Are you sure you wish to refuse this\nperson entry? This cannot be\nrevoked once saved.");
         if (showConfirmationAlert.get() == ButtonType.OK) {
             RefuseTO refusal = new RefuseTO();
@@ -493,6 +474,31 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private void handleAddVisitButton(ActionEvent event) {
         viewVisitDetails();
+    }
+
+    @FXML
+    private void setMemberUpdatedAction(ActionEvent event) {
+        viewMemberDetails();
+    }
+
+    @FXML
+    private void setVisitUpdatedAction(ActionEvent event) {
+        viewVisitDetails();
+    }
+
+    @FXML
+    private void handleNextOfKinEditButton(ActionEvent event) {
+        FXMLNextOfKinController controller = new FXMLNextOfKinController();
+        controller = (FXMLNextOfKinController)controller.load();
+        if (aCustomer.getNextOfKin().size() > 0)
+            controller.setNextOfKin( aCustomer.getNextOfKin().get(0));
+        System.out.println("NextOfKin = "+aCustomer.getNextOfKin());
+        controller.getStage().showAndWait();
+        if (controller.isUpdated()) {
+            aCustomer.getNextOfKin().clear();
+            aCustomer.getNextOfKin().add(controller.getNextOfKin());
+            nextOfKinField.setText(controller.getNextOfKin().getName());
+        }
     }
 
     private class myPartnerContextMenu extends ContextMenu {
@@ -512,7 +518,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private class myContextMenu extends ContextMenu {
-
         public myContextMenu(TableView targetTable) {
             MenuItem view = new MenuItem("View");
             MenuItem delete = new MenuItem("Delete");
@@ -525,6 +530,37 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 handleView(event);
             });
         }
+    }
+
+    private class myInvoiceContextMenu extends ContextMenu {
+        public myInvoiceContextMenu(TableView targetTable) {
+            MenuItem addCharge = new MenuItem("Add a/c charge");
+            MenuItem markPaid = new MenuItem("Mark paid");
+            MenuItem editItem = new MenuItem("Edit");
+
+            getItems().addAll(addCharge, markPaid, editItem);
+            markPaid.setOnAction(event -> {
+                handleMarkPaid(event);
+            });
+            addCharge.setOnAction(event -> {
+                handleAddAcCharge(event);
+            });
+            editItem.setOnAction(event -> {
+                handleEditInvoice(event);
+            });
+        }
+    }
+    
+    private void handleEditInvoice(ActionEvent event) {
+        InvoiceRowItem selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
+        
+        FXMLInvoiceViewController fxmlInvoiceViewController = new FXMLInvoiceViewController();
+        fxmlInvoiceViewController = fxmlInvoiceViewController.load();
+        System.out.println("item = "+selectedItem.getClass().getSimpleName());
+        fxmlInvoiceViewController.setInvoice(selectedItem);
+        fxmlInvoiceViewController.getStage().showAndWait();
+        
+        System.out.println("Date is "+selectedItem.getIssuedate());
     }
 
     @FXML
@@ -544,7 +580,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             List<VisitRowItem> items = controller.getItems();
             aCustomer.getVisitCollection().clear();
             aCustomer.getVisitCollection().addAll(items);
+            System.out.println("Found " + items.size() + " visits");
             setVisits();
+            aCustomer.getVisitDeleteCollection().addAll(controller.getDeleteList());
         }
     }
 
@@ -652,6 +690,38 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
+    private void handleMarkPaid(ActionEvent event) {
+        InvoiceRowItem whichInvoice = invoiceTable.getSelectionModel().getSelectedItem();
+
+        ReceiptTO newReceipt = new ReceiptTO();
+        newReceipt.setAmount(whichInvoice.getAmount());
+        newReceipt.setDate(MyDate.toXMLGregorianCalendar(new Date()));
+        newReceipt.setNotes("v1.1");
+        whichInvoice.addReceipt(newReceipt);
+
+        //     whichInvoice.getInvoicePaidProperty().setValue("Test");
+        updated = true;
+    }
+
+    private void handleAddAcCharge(ActionEvent event) {
+        ElectricitychargeTO charge = new ElectricitychargeTO();
+        charge.setYear(Integer.toString(Year.now().getValue()));
+        InvoiceTO invoice = new InvoiceTO();
+        invoice.setAmount(1);
+        invoice.setIssuedate(MyDate.toXMLGregorianCalendar(new Date()));
+        invoice.setDuedate(MyDate.toXMLGregorianCalendar(new Date()));
+        charge.getInvoiceList().add(invoice);
+        invoice.setType("ELECTRICITY");
+        invoice.getElectricityChargeCollection().add(charge);
+
+        aCustomer.getMembership().getElectricitychargeCollection().add(charge);
+
+        InvoiceRowItem invoiceRowItem = new InvoiceRowItem(invoice);
+        //      invoiceRowItem.setType("Electricity");
+
+        invoiceList.add(0, invoiceRowItem);
+    }
+
     private void handleDelete(ActionEvent event) {
         Object whichItem;
         ObservableList whichList;
@@ -716,6 +786,15 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         myCarList.add(new CarRowItem(newCar));
     }
 
+    private void addNewInvoice() {
+        if (invoiceList == null) {
+            invoiceList = FXCollections.observableArrayList();
+        }
+        InvoiceTO newInvoice = new InvoiceTO();
+        newInvoice.setType(ADDNEW);
+        invoiceList.add(new InvoiceRowItem(newInvoice));
+    }
+
     private void addNewDocument() {
         if (myDocumentList == null) {
             myDocumentList = FXCollections.observableArrayList();
@@ -740,6 +819,14 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 || "".equals(surnameField.getText()) || "".equals(forenameField.getText())) {
             new Alert(Alert.AlertType.ERROR, "Must enter fore and surnames at least!").showAndWait();
             return;
+        }
+        
+        System.out.println("Validating email");
+        if (emailField.getText() != null && !emailField.getText().isEmpty()) {
+            System.out.println("email is set : "+emailField.getText());
+            if (!MailHandler.getInstance().isEmailValid(emailField.getText())) {
+                new Alert(Alert.AlertType.ERROR, MailHandler.getInstance().validationMessage);
+            }
         }
 
         for (ImageRowItem eachDocument : myDocumentList) {
@@ -792,11 +879,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         storeCustomerDetails();
         String value = null;
+        System.out.println("Saving " + aCustomer.getVisitCollection().size() + " visits");
+        // Reset electricity charges 
+        if (aCustomer.getMembership() != null && aCustomer.getMembership().getElectricitychargeCollection() != null)
+            aCustomer.getMembership().getElectricitychargeCollection().clear();
         try {
             value = SoapHandler.saveCustomer(aCustomer);
         } catch (Exception e) {
             Utility.showAlert("Error saving customer!", "Fault received from server", e.getMessage());
             System.err.println("Error saving customer! SOAP fault received from server : " + e.getMessage());
+            e.printStackTrace();
             //getScene().getWindow().hide();
             return;
         }
@@ -804,7 +896,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         try {
             aCustomer.setId(Integer.parseInt(value));
         } catch (NumberFormatException e) {
-            System.err.println("Problem parsing ID of customer (CustomerController 697) : " + e.getMessage());
+            System.err.println("Problem parsing ID of customer (CustomerController) : " + e.getMessage());
             System.err.println("Value of value : " + value);
             // Not a valid id!
         }
@@ -851,7 +943,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.setGiftAid(giftAidCheckBox.isSelected());
         aCustomer.setPhotography(photographyCheckBox.isSelected());
 
-        if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
+        NotificationPreferencesTO notificationPreferences = aCustomer.getNotificationPreferences();
+        if (notificationPreferences == null) {
+            notificationPreferences = new NotificationPreferencesTO();
+            aCustomer.setNotificationPreferences(notificationPreferences);
+        }
+        notificationPreferences.setEmail(eMailCheckBox.selectedProperty().getValue());
+        notificationPreferences.setSms(smsCheckBox.selectedProperty().getValue());
+        notificationPreferences.setPost(postCheckBox.selectedProperty().getValue());
+        
+ /*       if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
                 || ((relationShipField.getText() != null && relationShipField.getText().length() > 0))) {
             if (aCustomer.getNextOfKin().isEmpty()) {
                 aCustomer.getNextOfKin().add(new NextOfKinTO());
@@ -861,9 +962,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             aCustomer.getNextOfKin().get(0).setContactNo(contactNoField.getText());
             aCustomer.getNextOfKin().get(0).setRelationship(relationShipField.getText());
             aCustomer.getNextOfKin().get(0).setAwareNaturist(naturistAwareCheckbox.isSelected());
-        }
+        }*/
 
-        //aCustomer.setNotes(notesTextArea.getText());
         if (notesTextArea.getText() != null && notesTextArea.getText().length() > 0) {
             if (aCustomer.getNotes().isEmpty()) {
                 aCustomer.getNotes().add(new NotesTO());
@@ -959,14 +1059,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 notesTextArea.setText(aCustomer.getNotes().get(0).getNotes());
             }
         }
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
-                nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-                contactNoField.setText(aCustomer.getNextOfKin().get(0).getContactNo());
-                relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
-                naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
-            }
-        }
+        
+         if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+             nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+         }
 
         if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
@@ -980,13 +1076,26 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     public void setCustomerDetails(CustomerTO myCustomer) {
-        if (aCustomer == null)
-                mainAnchorPane.setDisable(true);
+
+        CustomerTO customer = myCustomer;
+
+        if (customer.getId() == null || customer.getId() == 0) {
+            customer.setId(0);
+            showCustomerDetails(customer);
+            aCustomer = customer;
+            return;
+        }
+
+        if (aCustomer == null) {
+            mainAnchorPane.setDisable(true);
+        }
+
         Task task = new Task() {
             protected Integer call() throws Exception {
                 try {
                     long start = System.currentTimeMillis();
                     aCustomer = SoapHandler.getCustomerByID(myCustomer.getId());
+
                     System.out.println("Request took " + ((System.currentTimeMillis() - start)) + " milliseconds");
                     if (aCustomer.getId() == null) {
                         aCustomer.setId(0);
@@ -996,7 +1105,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                         mainAnchorPane.setDisable(false);
                     });
                 } catch (Exception e) {
-
+                    e.printStackTrace();
+                    Utility.showAlert("Error fetching data", "An error occured reading the customer\ndetails", "Please try again.");
+                    stage.hide();
                 }
                 return 0;
             }
@@ -1006,8 +1117,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         th.start();
     }
 
-    private void showCustomerDetails(CustomerTO myCustomer) {
-
+    protected void showCustomerDetails(CustomerTO myCustomer) {
         forenameField.setText(myCustomer.getForename());
         middlenameField.setText(myCustomer.getMiddlenames());
         surnameField.setText(myCustomer.getSurname());
@@ -1054,17 +1164,16 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             notesTextArea.setText("");
         }
 
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-            contactNoField.setText(aCustomer.getNextOfKin().get(0).getContactNo());
-            relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
-            naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
-        } else {
-            nextOfKinField.setText("");
-            contactNoField.setText("");
-            relationShipField.setText("");
-            naturistAwareCheckbox.setSelected(false);
+        NotificationPreferencesTO notificationPreferences = myCustomer.getNotificationPreferences();
+        if (notificationPreferences != null) {
+            smsCheckBox.selectedProperty().setValue(notificationPreferences.isSms());
+            eMailCheckBox.selectedProperty().setValue(notificationPreferences.isEmail());
+            postCheckBox.selectedProperty().setValue(notificationPreferences.isPost());
         }
+        
+        if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
+            nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
+        } 
 
         myCarList = FXCollections.observableArrayList();
         for (CarTO eachCar : myCustomer.getCarCollection()) {
@@ -1094,6 +1203,21 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         addNewID();
         documentTable.setItems(myDocumentList);
         IDTable.setItems(myIDList);
+
+        invoiceList = FXCollections.observableArrayList();
+        if (myCustomer.getMembership() != null && myCustomer.getMembership().getElectricitychargeCollection() != null) {
+            for (ElectricitychargeTO eachcharge : myCustomer.getMembership().getElectricitychargeCollection()) {
+                for (InvoiceTO eachInvoice : eachcharge.getInvoiceList()) {
+                    // Make sure electricity charge is present so year is displayed `   `
+                    eachInvoice.getElectricityChargeCollection().add(eachcharge);
+                    InvoiceRowItem invoiceRowItem = new InvoiceRowItem(eachInvoice);
+                    invoiceList.add(invoiceRowItem);
+                }
+            }
+        }
+        addNewInvoice();
+        invoiceTable.setItems(invoiceList);
+
         if (myCustomer.getRefuse() != null && myCustomer.getRefuse().getDate() != null) {
             showRefused();
         }
@@ -1325,8 +1449,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                 }
             } else// Not adding new, so display image if double click
-            {
-                if (event == null || event.getClickCount() >= 2) {
+             if (event == null || event.getClickCount() >= 2) {
                     if (selection.getTheImage() == null) {
                         // we need to pull the image from the server
                         try {
@@ -1345,7 +1468,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                     showImage(selection);
                 }
-            }
         }
     }
 
@@ -1364,6 +1486,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         controller = (FXMLImageViewController) controller.load();
         controller.getStage().show();
+        if (anImage.getType() == 'd') {
+            controller.setExpires(false);
+        }
         controller.setImage(anImage);
         controller.getStage().hide();
         controller.getStage().showAndWait();
@@ -1386,7 +1511,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             CustomerTO tempCustomer = aCustomer;
             storeCustomerDetails();
             setCustomerDetails(aCustomer);
-            printController.setCustomerDetails(aCustomer);
+            printController.showCustomerDetails(aCustomer);
             printController.print();
             aCustomer = tempCustomer;
         }
@@ -1456,8 +1581,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             dateJoinedField.setStyle("-fx-background-color: white;");
             partnerNameField.setStyle("-fx-background-color: white;");
             nextOfKinField.setStyle("-fx-background-color: white;");
-            contactNoField.setStyle("-fx-background-color: white;");
-            relationShipField.setStyle("-fx-background-color: white;");
+ //           contactNoField.setStyle("-fx-background-color: white;");
+ //           relationShipField.setStyle("-fx-background-color: white;");
             notesTextArea.setStyle("-fx-background-color: white;");
 
             saveButton.setVisible(false);
@@ -1466,6 +1591,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             cancelButton.setVisible(false);
             editMemberButton.setVisible(false);
             findPartnerButton.setVisible(false);
+            refuseButton.setVisible(false);
 
             for (CarRowItem car : carTable.getItems()) {
                 if (car.getRegno().equals(ADDNEW)) {
@@ -1488,6 +1614,12 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             for (ImageRowItem doc : IDTable.getItems()) {
                 if (doc.getDetails().equals(ADDNEW)) {
                     doc.setDetails("");
+                }
+            }
+
+            for (InvoiceRowItem inv : invoiceTable.getItems()) {
+                if (inv.getType().equals(ADDNEW)) {
+                    inv.getInvoiceTypeProperty().setValue("");
                 }
             }
 
@@ -1544,7 +1676,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private void setForMember(Boolean value) {
-        meberCheckBox.setSelected(value);
+ //       memberCheckBox.setSelected(value);
 
         if (aCustomer != null && value) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));

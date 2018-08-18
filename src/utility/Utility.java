@@ -27,11 +27,13 @@ import java.util.Optional;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
 import model.SearchRowItem;
+import model.SoapHandler;
 import org.apache.http.client.HttpClient;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -48,35 +50,62 @@ import org.apache.http.ssl.TrustStrategy;
  * @author tezk
  */
 public class Utility {
-    private static List <File> tempFileList;
-    
+
+    private static List<File> tempFileList;
+
     public static void addFileToTempList(File tempFile) {
-        if (tempFileList == null)
+        if (tempFileList == null) {
             tempFileList = new ArrayList();
-        
+        }
+
         tempFileList.add(tempFile);
     }
-    
-    public static List <File> getFileTempList() {
+
+    public static List<File> getFileTempList() {
         return tempFileList;
     }
 
     public static void removeTempFiles() {
-        if (tempFileList == null)
+        if (tempFileList == null) {
             return;
-        
+        }
+
         for (File eachFile : tempFileList) {
             eachFile.delete();
         }
         tempFileList = null;
     }
-    
+
+    public static String penceToPounds(int pence) {
+        int pounds = pence / 100;
+        int newPence = pence % 100;
+
+        String value = "" + pounds + "." + (newPence < 10 ? "0" + newPence : newPence);
+        if (newPence % 10 == 0) {
+            value = value + "0";
+        }
+        return value;
+    }
+
     public static CustomerTO createCustomer() {
         //Soap.CustomerTO is generated class, create here
         CustomerTO newCustomer = new CustomerTO();
         newCustomer.setAddressId(new AddressTO());
+        newCustomer.setId(0);
 
         return newCustomer;
+    }
+
+    public static Optional<ButtonType> showOkOrYesAlert(String title, String header, String body, String yesButtonText) {
+        // Returns Optional, optional.get() == ButtonType.ok for OK selected
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(body);
+        ButtonType customButton = new ButtonType(yesButtonText, ButtonBar.ButtonData.YES);
+        alert.getButtonTypes().add(customButton);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result;
     }
 
     public static Optional<ButtonType> showConfirmationAlert(String title, String header, String body) {
@@ -120,19 +149,36 @@ public class Utility {
     public static String toString(Collection<SearchRowItem> customers) {
         StringBuilder string = new StringBuilder();
 
-        string.append("Forename, Surname, Tel no. one, Tel no. two, email, ID Valid\n");
+        string.append("Forename, Surname, Tel no. one, Tel no. two, email, ID Valid, address one, address two, town, county, postcode, country\n");
         for (SearchRowItem eachCustomer : customers) {
-            addNoReturn(string, eachCustomer.getForename());
+            CustomerTO aCustomer = SoapHandler.getCustomerByID(eachCustomer.getId());
+            addNoReturn(string, aCustomer.getForename());
             addComma(string);
-            addNoReturn(string, eachCustomer.getSurname());
+            addNoReturn(string, aCustomer.getSurname());
             addComma(string);
-            addNoReturn(string, eachCustomer.getTelephoneOne());
+            addNoReturn(string, aCustomer.getTelephoneOne());
             addComma(string);
-            addNoReturn(string, eachCustomer.getTelephoneTwo());
+            addNoReturn(string, aCustomer.getTelephoneTwo());
             addComma(string);
-            addNoReturn(string, eachCustomer.getEmail());
+            addNoReturn(string, aCustomer.getEmail());
             addComma(string);
-            string.append(checkValidID(eachCustomer.getImageCollection()).getValue());
+            string.append(checkValidID(aCustomer.getImageCollection()).getValue());
+            
+            AddressTO address = aCustomer.getAddressId();
+            if (address != null) {
+                addComma(string);
+                addNoReturn(string, address.getAddressLineOne());
+                addComma(string);
+                addNoReturn(string, address.getAddressLineTwo());
+                addComma(string);
+                addNoReturn(string, address.getTown());
+                addComma(string);
+                addNoReturn(string, address.getCounty());
+                addComma(string);
+                addNoReturn(string, address.getPostcode());
+                addComma(string);
+                addNoReturn(string, address.getCountry());
+            }
             addReturn(string);
         }
 
@@ -204,15 +250,15 @@ public class Utility {
         return latestDate;
     }
 
-  public static BufferedImage imageToBufferedImage(Image im) {
-     BufferedImage bi = new BufferedImage(im.getWidth(null),im.getHeight(null),BufferedImage.TYPE_INT_RGB);
-     Graphics bg = bi.getGraphics();
-     bg.drawImage(im, 0, 0, null);
-     bg.dispose();
-     return bi;
-  }
-  
-      public static HttpClient createHttpClient_AcceptsUntrustedCerts() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+    public static BufferedImage imageToBufferedImage(Image im) {
+        BufferedImage bi = new BufferedImage(im.getWidth(null), im.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics bg = bi.getGraphics();
+        bg.drawImage(im, 0, 0, null);
+        bg.dispose();
+        return bi;
+    }
+
+    public static HttpClient createHttpClient_AcceptsUntrustedCerts() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         HttpClientBuilder b = HttpClientBuilder.create();
 
         // setup a Trust Strategy that allows all certificates.
@@ -248,21 +294,20 @@ public class Utility {
         HttpClient client = b.build();
         return client;
     }
-      
 
+    public static class DefaultTrustManager implements X509TrustManager {
 
- public static class DefaultTrustManager implements X509TrustManager {
-    public DefaultTrustManager() {
+        public DefaultTrustManager() {
+        }
+
+        public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        }
+
+        public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+        }
+
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
     }
-
-    public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-    }
-
-    public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
-    }
-
-    public X509Certificate[] getAcceptedIssuers() {
-        return new X509Certificate[0];
-    }
-}
 }
