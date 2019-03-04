@@ -64,18 +64,10 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     private VBox buttonVBox;
     @FXML
     private ScrollPane imageScrollPane;
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
     @FXML
     private CheckBox expiresCheckBox;
     @FXML
     private Label scannedLabel;
->>>>>>> Stashed changes
-=======
-    @FXML
-    private CheckBox expiresCheckBox;
->>>>>>> AddNotificatoinPreferences
 
     public boolean isUpdated() {
         return updated;

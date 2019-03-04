@@ -456,13 +456,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         idWillExpire.setOnAction(v -> queryBuilderIDExpiring());
         MenuItem customersMissingEmail = new MenuItem("Customers missing email address");
         customersMissingEmail.setOnAction(v -> queryBuilderMissingEmail());
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-
-        Menu menuEvents = new Menu("Events");
-=======
-=======
->>>>>>> AddNotificatoinPreferences
+     //   Menu menuEvents = new Menu("Events");
         MenuItem customersWithHookup = new MenuItem("Pitch members with hookup");
         customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
         MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
@@ -473,16 +467,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         vanMembers.setOnAction(v -> queryBuilderVanMembers());
         MenuItem vanMembersNoInsurance = new MenuItem("Van members (no insurance)");
         vanMembersNoInsurance.setOnAction(v -> queryBuilderVanMembersNotInsured());
-<<<<<<< HEAD
         MenuItem membersWithInsurance = new MenuItem("Members with insurance");
         membersWithInsurance.setOnAction(v -> queryBuilderMembersInsured());
 
         /*     Menu menuEvents = new Menu("Events");
->>>>>>> Stashed changes
-=======
-
-        /*     Menu menuEvents = new Menu("Events");
->>>>>>> AddNotificatoinPreferences
         MenuItem menuEventsView = new MenuItem("View");
         menuEventsView.setOnAction(v -> {
             showEvents();
@@ -512,20 +500,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuQueryFindMissingDocuments,
                 menuQueryBirthday,
                 idWillExpire,
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-                customersMissingEmail
-=======
                 customersMissingEmail,
                 vanMembers,
                 vanMembersNoInsurance,
                 membersWithInsurance
->>>>>>> Stashed changes
-=======
-                customersMissingEmail,
-                vanMembers,
-                vanMembersNoInsurance
->>>>>>> AddNotificatoinPreferences
         );
         menuTools.getItems().addAll(menuCreateInvoice);
         //       menuEvents.getItems().addAll(
@@ -1179,11 +1157,6 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         applyFilters();
     }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> AddNotificatoinPreferences
     private void queryBuilderOutstandingInvoices() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1268,7 +1241,6 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("Van members with no insurance");
         applyFilters();
     }
-<<<<<<< HEAD
     
     private void queryBuilderMembersInsured() {
         filterList.remove(queryFilter);
@@ -1282,10 +1254,6 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         applyFilters();
     }
 
->>>>>>> Stashed changes
-=======
-
->>>>>>> AddNotificatoinPreferences
     private void queryBuilderIDExpiring() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();

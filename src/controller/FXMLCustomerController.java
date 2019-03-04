@@ -477,11 +477,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         viewVisitDetails();
     }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-=======
->>>>>>> AddNotificatoinPreferences
     @FXML
     private void setMemberUpdatedAction(ActionEvent event) {
         viewMemberDetails();
@@ -495,18 +490,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private void handleNextOfKinEditButton(ActionEvent event) {
         FXMLNextOfKinController controller = new FXMLNextOfKinController();
-<<<<<<< HEAD
+
         controller = (FXMLNextOfKinController) controller.load();
         if (aCustomer.getNextOfKin().size() > 0) {
             controller.setNextOfKin(aCustomer.getNextOfKin().get(0));
         }
         System.out.println("NextOfKin = " + aCustomer.getNextOfKin());
-=======
-        controller = (FXMLNextOfKinController)controller.load();
-        if (aCustomer.getNextOfKin().size() > 0)
-            controller.setNextOfKin( aCustomer.getNextOfKin().get(0));
-        System.out.println("NextOfKin = "+aCustomer.getNextOfKin());
->>>>>>> AddNotificatoinPreferences
+
         controller.getStage().showAndWait();
         if (controller.isUpdated()) {
             aCustomer.getNextOfKin().clear();
@@ -515,10 +505,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> AddNotificatoinPreferences
     private class myPartnerContextMenu extends ContextMenu {
 
         public myPartnerContextMenu() {
@@ -550,14 +536,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
     private class myInvoiceContextMenu extends ContextMenu {
-
-=======
-    private class myInvoiceContextMenu extends ContextMenu {
->>>>>>> AddNotificatoinPreferences
         public myInvoiceContextMenu(TableView targetTable) {
             MenuItem addCharge = new MenuItem("Add a/c charge");
             MenuItem markPaid = new MenuItem("Mark paid");
@@ -575,7 +554,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             });
         }
     }
-<<<<<<< HEAD
+
 
     private void handleEditInvoice(ActionEvent event) {
         InvoiceRowItem selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
@@ -588,23 +567,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         System.out.println("Date is " + selectedItem.getIssuedate());
     }
-
->>>>>>> Stashed changes
-=======
     
-    private void handleEditInvoice(ActionEvent event) {
-        InvoiceRowItem selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
-        
-        FXMLInvoiceViewController fxmlInvoiceViewController = new FXMLInvoiceViewController();
-        fxmlInvoiceViewController = fxmlInvoiceViewController.load();
-        System.out.println("item = "+selectedItem.getClass().getSimpleName());
-        fxmlInvoiceViewController.setInvoice(selectedItem);
-        fxmlInvoiceViewController.getStage().showAndWait();
-        
-        System.out.println("Date is "+selectedItem.getIssuedate());
-    }
-
->>>>>>> AddNotificatoinPreferences
     @FXML
     private void handleKeyPressOnTable(KeyEvent event) {
         KeyCode keyCode = event.getCode();
@@ -862,27 +825,14 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             new Alert(Alert.AlertType.ERROR, "Must enter fore and surnames at least!").showAndWait();
             return;
         }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-
-        System.out.println("Validating email");
-        if (emailField.getText() != null && !emailField.getText().isEmpty()) {
-            System.out.println("email is set : " + emailField.getText());
-=======
         
         System.out.println("Validating email");
         if (emailField.getText() != null && !emailField.getText().isEmpty()) {
             System.out.println("email is set : "+emailField.getText());
->>>>>>> AddNotificatoinPreferences
             if (!MailHandler.getInstance().isEmailValid(emailField.getText())) {
                 new Alert(Alert.AlertType.ERROR, MailHandler.getInstance().validationMessage);
             }
         }
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> AddNotificatoinPreferences
 
         for (ImageRowItem eachDocument : myDocumentList) {
             if (!ADDNEW.equals(eachDocument.getDetails())) {
@@ -934,21 +884,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         storeCustomerDetails();
         String value = null;
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
+
         System.out.println("Saving " + aCustomer.getVisitCollection().size() + " visits");
         // Reset electricity charges 
         if (aCustomer.getMembership() != null && aCustomer.getMembership().getElectricitychargeCollection() != null) {
             aCustomer.getMembership().getElectricitychargeCollection().clear();
         }
->>>>>>> Stashed changes
-=======
-        System.out.println("Saving " + aCustomer.getVisitCollection().size() + " visits");
-        // Reset electricity charges 
-        if (aCustomer.getMembership() != null && aCustomer.getMembership().getElectricitychargeCollection() != null)
-            aCustomer.getMembership().getElectricitychargeCollection().clear();
->>>>>>> AddNotificatoinPreferences
+
         try {
             value = SoapHandler.saveCustomer(aCustomer);
         } catch (Exception e) {
@@ -1009,12 +951,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.setGiftAid(giftAidCheckBox.isSelected());
         aCustomer.setPhotography(photographyCheckBox.isSelected());
 
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
-=======
-=======
->>>>>>> AddNotificatoinPreferences
+
+
         NotificationPreferencesTO notificationPreferences = aCustomer.getNotificationPreferences();
         if (notificationPreferences == null) {
             notificationPreferences = new NotificationPreferencesTO();
@@ -1023,35 +961,25 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         notificationPreferences.setEmail(eMailCheckBox.selectedProperty().getValue());
         notificationPreferences.setSms(smsCheckBox.selectedProperty().getValue());
         notificationPreferences.setPost(postCheckBox.selectedProperty().getValue());
-<<<<<<< HEAD
 
-        /*       if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
->>>>>>> Stashed changes
-=======
+
+
         
- /*       if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
->>>>>>> AddNotificatoinPreferences
-                || ((relationShipField.getText() != null && relationShipField.getText().length() > 0))) {
+        if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
+       /*         || ((relationShipField.getText() != null && relationShipField.getText().length() > 0))*/) {
             if (aCustomer.getNextOfKin().isEmpty()) {
                 aCustomer.getNextOfKin().add(new NextOfKinTO());
             }
             aCustomer.getNextOfKin().get(0).setCustomerId(aCustomer.getId());
             aCustomer.getNextOfKin().get(0).setName(nextOfKinField.getText());
-            aCustomer.getNextOfKin().get(0).setContactNo(contactNoField.getText());
-            aCustomer.getNextOfKin().get(0).setRelationship(relationShipField.getText());
-            aCustomer.getNextOfKin().get(0).setAwareNaturist(naturistAwareCheckbox.isSelected());
-<<<<<<< HEAD
-<<<<<<< Updated upstream
+  //          aCustomer.getNextOfKin().get(0).setContactNo(contactNoField.getText());
+  //          aCustomer.getNextOfKin().get(0).setRelationship(relationShipField.getText());
+  //          aCustomer.getNextOfKin().get(0).setAwareNaturist(naturistAwareCheckbox.isSelected());
+
         }
 
         //aCustomer.setNotes(notesTextArea.getText());
-=======
-        }*/
->>>>>>> Stashed changes
-=======
-        }*/
 
->>>>>>> AddNotificatoinPreferences
         if (notesTextArea.getText() != null && notesTextArea.getText().length() > 0) {
             if (aCustomer.getNotes().isEmpty()) {
                 aCustomer.getNotes().add(new NotesTO());
@@ -1146,27 +1074,25 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 notesTextArea.setText(aCustomer.getNotes().get(0).getNotes());
             }
         }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+
+    /*    if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
             if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
                 nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
                 contactNoField.setText(aCustomer.getNextOfKin().get(0).getContactNo());
                 relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
                 naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
             }
-=======
 
+*/
         if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
             nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
->>>>>>> Stashed changes
+
         }
-=======
+
         
          if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
              nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
          }
->>>>>>> AddNotificatoinPreferences
 
         if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
@@ -1245,10 +1171,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         if (myCustomer.getMembership() != null && myCustomer.getMembership().getJoinedDate() != null) {
             String date = df.format(MyDate.toDate(myCustomer.getMembership().getJoinedDate()));
-            setForMember(true);
+ //           setForMember(true);
             dateJoinedField.setText(date);
         }
-        setVisits();
+ //       setVisits();
 
         if (myCustomer.getPartnerId() != null) {
             partner = SoapHandler.getCustomerByID(myCustomer.getPartnerId());
@@ -1274,20 +1200,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             eMailCheckBox.selectedProperty().setValue(notificationPreferences.isEmail());
             postCheckBox.selectedProperty().setValue(notificationPreferences.isPost());
         }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
 
         if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
             nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
         }
->>>>>>> Stashed changes
-=======
-        
-        if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
-            nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
-        } 
->>>>>>> AddNotificatoinPreferences
 
         myCarList = FXCollections.observableArrayList();
         for (CarTO eachCar : myCustomer.getCarCollection()) {
@@ -1580,11 +1496,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                     showImage(selection);
                 }
-<<<<<<< HEAD
             }
-<<<<<<< Updated upstream
-=======
-        }
     }
 
     private void handleIdClicked(MouseEvent event) {
@@ -1605,9 +1517,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             } else {
                 showImage(selection);
             }
->>>>>>> Stashed changes
-=======
->>>>>>> AddNotificatoinPreferences
         }
     }
 
@@ -1627,20 +1536,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         controller = (FXMLImageViewController) controller.load();
         controller.getStage().show();
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
+
         if (anImage.getType() == 'd') {
             controller.setExpires(false);
         } else {
             controller.setNoImage();
         }
->>>>>>> Stashed changes
-=======
-        if (anImage.getType() == 'd') {
-            controller.setExpires(false);
-        }
->>>>>>> AddNotificatoinPreferences
+
         controller.setImage(anImage);
         controller.getStage().hide();
         controller.getStage().showAndWait();
@@ -1734,18 +1636,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             dateJoinedField.setStyle("-fx-background-color: white;");
             partnerNameField.setStyle("-fx-background-color: white;");
             nextOfKinField.setStyle("-fx-background-color: white;");
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-            contactNoField.setStyle("-fx-background-color: white;");
-            relationShipField.setStyle("-fx-background-color: white;");
-=======
-            //           contactNoField.setStyle("-fx-background-color: white;");
-            //           relationShipField.setStyle("-fx-background-color: white;");
->>>>>>> Stashed changes
-=======
- //           contactNoField.setStyle("-fx-background-color: white;");
- //           relationShipField.setStyle("-fx-background-color: white;");
->>>>>>> AddNotificatoinPreferences
+  //          contactNoField.setStyle("-fx-background-color: white;");
+  //          relationShipField.setStyle("-fx-background-color: white;");
+
             notesTextArea.setStyle("-fx-background-color: white;");
 
             saveButton.setVisible(false);
@@ -1839,16 +1732,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private void setForMember(Boolean value) {
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        meberCheckBox.setSelected(value);
-=======
         //       memberCheckBox.setSelected(value);
->>>>>>> Stashed changes
-=======
- //       memberCheckBox.setSelected(value);
->>>>>>> AddNotificatoinPreferences
-
         if (aCustomer != null && value) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
             dateJoinedField.setText(date);
