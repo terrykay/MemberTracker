@@ -111,13 +111,17 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private TableColumn<InvoiceRowItem, String> invoicePaidColumn;
     @FXML
-    private Button editNextOfKinButton;
-    @FXML
     private CheckBox postCheckBox;
     @FXML
     private CheckBox smsCheckBox;
     @FXML
     private CheckBox eMailCheckBox;
+    @FXML
+    private TextField nextOfKinRelationship;
+    @FXML
+    private TextField nextOfKinNumber;
+    @FXML
+    private CheckBox nextOfKinNaturistAware;
 
     // Override String from parent so Load() will work correctly
     //protected String FXMLPath="FXMLCustomer.fxml";
@@ -485,24 +489,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private void setVisitUpdatedAction(ActionEvent event) {
         viewVisitDetails();
-    }
-
-    @FXML
-    private void handleNextOfKinEditButton(ActionEvent event) {
-        FXMLNextOfKinController controller = new FXMLNextOfKinController();
-
-        controller = (FXMLNextOfKinController) controller.load();
-        if (aCustomer.getNextOfKin().size() > 0) {
-            controller.setNextOfKin(aCustomer.getNextOfKin().get(0));
-        }
-        System.out.println("NextOfKin = " + aCustomer.getNextOfKin());
-
-        controller.getStage().showAndWait();
-        if (controller.isUpdated()) {
-            aCustomer.getNextOfKin().clear();
-            aCustomer.getNextOfKin().add(controller.getNextOfKin());
-            nextOfKinField.setText(controller.getNextOfKin().getName());
-        }
     }
 
     private class myPartnerContextMenu extends ContextMenu {
@@ -966,19 +952,17 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         
         if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
-       /*         || ((relationShipField.getText() != null && relationShipField.getText().length() > 0))*/) {
+                || ((nextOfKinRelationship.getText() != null && nextOfKinRelationship.getText().length() > 0))) {
             if (aCustomer.getNextOfKin().isEmpty()) {
                 aCustomer.getNextOfKin().add(new NextOfKinTO());
             }
             aCustomer.getNextOfKin().get(0).setCustomerId(aCustomer.getId());
             aCustomer.getNextOfKin().get(0).setName(nextOfKinField.getText());
-  //          aCustomer.getNextOfKin().get(0).setContactNo(contactNoField.getText());
-  //          aCustomer.getNextOfKin().get(0).setRelationship(relationShipField.getText());
-  //          aCustomer.getNextOfKin().get(0).setAwareNaturist(naturistAwareCheckbox.isSelected());
+            aCustomer.getNextOfKin().get(0).setContactNo(nextOfKinNumber.getText());
+            aCustomer.getNextOfKin().get(0).setRelationship(nextOfKinRelationship.getText());
+            aCustomer.getNextOfKin().get(0).setAwareNaturist(nextOfKinNaturistAware.isSelected());
 
         }
-
-        //aCustomer.setNotes(notesTextArea.getText());
 
         if (notesTextArea.getText() != null && notesTextArea.getText().length() > 0) {
             if (aCustomer.getNotes().isEmpty()) {
@@ -1075,15 +1059,15 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             }
         }
 
-    /*    if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
             if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
                 nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-                contactNoField.setText(aCustomer.getNextOfKin().get(0).getContactNo());
-                relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
-                naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
+                nextOfKinNumber.setText(aCustomer.getNextOfKin().get(0).getContactNo());
+                nextOfKinRelationship.setText(aCustomer.getNextOfKin().get(0).getRelationship());
+                nextOfKinNaturistAware.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
             }
+        }
 
-*/
         if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
             nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
 
@@ -1203,6 +1187,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
             nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
+            nextOfKinNumber.setText(myCustomer.getNextOfKin().get(0).getContactNo());
+            nextOfKinRelationship.setText(myCustomer.getNextOfKin().get(0).getRelationship());
+            nextOfKinNaturistAware.selectedProperty().set(myCustomer.getNextOfKin().get(0).isAwareNaturist());
         }
 
         myCarList = FXCollections.observableArrayList();
@@ -1636,8 +1623,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             dateJoinedField.setStyle("-fx-background-color: white;");
             partnerNameField.setStyle("-fx-background-color: white;");
             nextOfKinField.setStyle("-fx-background-color: white;");
-  //          contactNoField.setStyle("-fx-background-color: white;");
-  //          relationShipField.setStyle("-fx-background-color: white;");
+  //          nextOfKinNumber.setStyle("-fx-background-color: white;");
+  //          nextOfKinRelationship.setStyle("-fx-background-color: white;");
 
             notesTextArea.setStyle("-fx-background-color: white;");
 
