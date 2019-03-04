@@ -7,6 +7,8 @@ import UtilityClasses.MyDate;
 import static controller.FXMLMemberController.LARGE_VAN_PITCH;
 import static controller.FXMLMemberController.TENT_PITCH;
 import static controller.FXMLMemberController.VAN_PITCH;
+import filter.CustomerToTextFilter;
+import filter.DisplayFilter;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -74,6 +76,7 @@ import model.SearchRowItem;
 import model.SoapHandler;
 import utility.CustomerFilter;
 import utility.CustomerListFilter;
+import utility.IDPreferences;
 import utility.MailHandler;
 import utility.ProgressIndicator;
 import utility.Utility;
@@ -413,6 +416,12 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         menuExportInsuranceRecords.setOnAction(v -> {
             handleExportInsuranceButton(null);
         });
+        MenuItem menuCustomExport = new MenuItem("Export - select fields");
+        menuCustomExport.setOnAction(v ->
+        {
+            handleCustomExportButton(null);
+        }
+        );
         MenuItem menuRefresh = new MenuItem("Reload & Reset");
         menuRefresh.setAccelerator(KeyCombination.keyCombination("Ctrl+F5"));
         menuRefresh.setOnAction(v -> handleRefreshButton(null));
@@ -484,6 +493,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuPrintRecords,
                 menuExportRecords,
                 menuExportInsuranceRecords,
+                menuCustomExport,
                 new SeparatorMenuItem(),
                 menuRefresh,
                 new SeparatorMenuItem(),
@@ -875,6 +885,35 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         }
 
         applyFilters();
+    }
+    
+    private void handleCustomExportButton(ActionEvent event) {
+        FXMLDisplayFilterController controller = new FXMLDisplayFilterController();
+        controller = (FXMLDisplayFilterController)controller.load();
+        
+        IDPreferences prefs = IDPreferences.getInstance();
+        String keyString = SoapHandler.getUserId()+"customExport";
+        byte[] byteArrayProperty = prefs.getByteArrayProperty(keyString);
+        if (byteArrayProperty.length > 0) {
+            DisplayFilter filter = new DisplayFilter();
+            filter.fromByteArray(byteArrayProperty);
+            controller.setDisplayFilter(filter);
+        }
+        
+        controller.getStage().showAndWait();
+        
+        if (!controller.isDoneSelected())
+            return;
+        
+        prefs.setProperty(keyString, controller.getDisplayFilter().asByteArray());
+        
+        CustomerToTextFilter filter = new CustomerToTextFilter();
+        String string = filter.toString(searchResultsTable.getItems(), controller.getDisplayFilter());
+        
+        FXMLCopySheetController copyController = new FXMLCopySheetController();
+        copyController = (FXMLCopySheetController) copyController.load();
+        copyController.setText(string);
+        copyController.getStage().show();
     }
 
     private void handleExportButton(ActionEvent event) {

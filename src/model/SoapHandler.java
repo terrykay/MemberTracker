@@ -14,8 +14,10 @@ import Soap.CustomerTO;
 public class SoapHandler {
 
     private static String sessionId;
+    private static String userId;
 
     public static String getSessionId() { return sessionId; }
+    public static String getUserId() { return userId; }
     
     public static String saveCustomer(Soap.CustomerTO aCustomer) {
         Soap.Idtrackerws_Service service = new Soap.Idtrackerws_Service();
@@ -107,6 +109,7 @@ public class SoapHandler {
     private static String loginUser(java.lang.String username, java.lang.String password) {
         Soap.Idtrackerws_Service service = new Soap.Idtrackerws_Service();
         Soap.Idtrackerws port = service.getIdtrackerwsPort();
+        userId = username;
         return port.loginUser(username, password);
     }
 
@@ -125,6 +128,7 @@ public class SoapHandler {
     public static Boolean logout(java.lang.String sessionId) {
         Soap.Idtrackerws_Service service = new Soap.Idtrackerws_Service();
         Soap.Idtrackerws port = service.getIdtrackerwsPort();
+        userId = null;
         return port.logout(sessionId);
     }
 }

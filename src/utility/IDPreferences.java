@@ -19,7 +19,7 @@ public class IDPreferences {
         return idPreferences;
     }
     
-  
+
     protected IDPreferences() {
         
     }
@@ -29,7 +29,6 @@ public class IDPreferences {
         String value = null;
         Preferences prefs = Preferences.userNodeForPackage(IDPreferences.class);
         value = prefs.get(what, "");
-        System.err.println("Preference get : "+what+" = "+value);
         return value;
     }
     
@@ -39,4 +38,19 @@ public class IDPreferences {
         prefs.put(what, value);
     }
 
+    public byte[] getByteArrayProperty(String what) {
+        byte[] value = null;
+        Preferences prefs = Preferences.userNodeForPackage(IDPreferences.class);
+        value = prefs.getByteArray(what, new byte[0]);
+        for (int i=0; i<value.length; i++) {
+            System.err.print(", "+value[i]);
+        }
+        return value;
+    }
+    
+    public void setProperty(String what, byte [] value) {
+        String oldValue = getProperty(what);
+        Preferences prefs = Preferences.userNodeForPackage(IDPreferences.class);
+        prefs.putByteArray(what, value);
+    }
 } 
