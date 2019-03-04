@@ -132,8 +132,24 @@
                         <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="26.0" spacing="10.0">
                            <children>
                               <Label layoutX="19.0" layoutY="30.0" text="Next of kin" />
-                              <TextField fx:id="nextOfKinField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="120.0" styleClass="textField" />
-                              <Button fx:id="editNextOfKinButton" mnemonicParsing="false" onAction="#handleNextOfKinEditButton" prefHeight="25.0" prefWidth="104.0" text="Edit" />
+                              <TextField fx:id="nextOfKinField" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="234.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="550.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="19.0" layoutY="30.0" text="Relationship" />
+                              <TextField fx:id="nextOfKinRelationship" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="233.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="580.0" spacing="10.0">
+                           <children>
+                              <Label layoutX="19.0" layoutY="30.0" text="Number" />
+                              <TextField fx:id="nextOfKinNumber" layoutX="131.0" layoutY="26.0" onAction="#setUpdatedAction" onKeyPressed="#setUpdatedKey" prefHeight="25.0" prefWidth="234.0" styleClass="textField" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" layoutX="10.0" layoutY="610.0" spacing="10.0">
+                           <children>
+                              <CheckBox fx:id="nextOfKinNaturistAware" mnemonicParsing="false" text="Aware of being naturist" />
                            </children>
                         </HBox> 
                         <HBox alignment="CENTER_LEFT" prefHeight="32.0" prefWidth="345.0" spacing="10.0">

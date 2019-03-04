@@ -409,6 +409,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         menuExportRecords.setOnAction(v -> {
             handleExportButton(null);
         });
+        MenuItem menuExportInsuranceRecords = new MenuItem("Export as CSV (Insurance)");
+        menuExportInsuranceRecords.setOnAction(v -> {
+            handleExportInsuranceButton(null);
+        });
         MenuItem menuRefresh = new MenuItem("Reload & Reset");
         menuRefresh.setAccelerator(KeyCombination.keyCombination("Ctrl+F5"));
         menuRefresh.setOnAction(v -> handleRefreshButton(null));
@@ -452,6 +456,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         idWillExpire.setOnAction(v -> queryBuilderIDExpiring());
         MenuItem customersMissingEmail = new MenuItem("Customers missing email address");
         customersMissingEmail.setOnAction(v -> queryBuilderMissingEmail());
+     //   Menu menuEvents = new Menu("Events");
         MenuItem customersWithHookup = new MenuItem("Pitch members with hookup");
         customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
         MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
@@ -462,6 +467,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         vanMembers.setOnAction(v -> queryBuilderVanMembers());
         MenuItem vanMembersNoInsurance = new MenuItem("Van members (no insurance)");
         vanMembersNoInsurance.setOnAction(v -> queryBuilderVanMembersNotInsured());
+        MenuItem membersWithInsurance = new MenuItem("Members with insurance");
+        membersWithInsurance.setOnAction(v -> queryBuilderMembersInsured());
 
         /*     Menu menuEvents = new Menu("Events");
         MenuItem menuEventsView = new MenuItem("View");
@@ -476,6 +483,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuPrintList,
                 menuPrintRecords,
                 menuExportRecords,
+                menuExportInsuranceRecords,
                 new SeparatorMenuItem(),
                 menuRefresh,
                 new SeparatorMenuItem(),
@@ -494,7 +502,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 idWillExpire,
                 customersMissingEmail,
                 vanMembers,
-                vanMembersNoInsurance
+                vanMembersNoInsurance,
+                membersWithInsurance
         );
         menuTools.getItems().addAll(menuCreateInvoice);
         //       menuEvents.getItems().addAll(
@@ -874,6 +883,13 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         controller.setText(Utility.toString(searchResultsTable.getItems()));
         controller.getStage().show();
     }
+    
+    private void handleExportInsuranceButton(ActionEvent event) {
+        FXMLCopySheetController controller = new FXMLCopySheetController();
+        controller = (FXMLCopySheetController) controller.load();
+        controller.setText(Utility.toStringNameAndInsurance(searchResultsTable.getItems()));
+        controller.getStage().show();
+    }
 
     private void printList() {
         FXMLSearchCustomerController printController = new FXMLSearchCustomerController();
@@ -1223,6 +1239,18 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         });
         filterList.add(queryFilter);
         queryStatus.setText("Van members with no insurance");
+        applyFilters();
+    }
+    
+    private void queryBuilderMembersInsured() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null) && a.getMembership().getType() != null
+                    && (a.getMembership().getInsuranceExpiry() != null));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Members with insurance");
         applyFilters();
     }
 
