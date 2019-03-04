@@ -5,45 +5,53 @@
  */
 package model;
 
+import Soap.ReceiptTO;
 import Soap.UnitTO;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
  *
  * @author tezk
  */
-public class ObservableUnit extends UnitTO implements Observable {
+public class ObservableReceipt extends ReceiptTO implements Observable {
     List <InvalidationListener> listenerList = new ArrayList();
-
-    public ObservableUnit(UnitTO aUnit) {
-        setElectricity(false);
-        if (aUnit == null)
-            return;
-        setId(aUnit.getId());
-        setMake(aUnit.getMake());
-        setModel(aUnit.getModel());
-        setDimensions(aUnit.getDimensions());
-        setElectricity(aUnit.isElectricity());
-    }
     
-    @Override
-    public void setModel(String value) {
-        super.setModel(value); //To change body of generated methods, choose Tools | Templates.
+    public ObservableReceipt(ReceiptTO aReceipt) {
+        if (aReceipt == null)
+            return;
+        amount = aReceipt.getAmount();
+        date = aReceipt.getDate();
+        notes = aReceipt.getNotes();
+        receiptnumber = aReceipt.getReceiptnumber();
+        receivedby = aReceipt.getReceivedby();       
+    }
+
+    public void setAmount(Integer amount) {
+        super.setAmount(amount);
         notifyChange();
     }
 
-    @Override
-    public void setMake(String value) {
-        super.setMake(value); //To change body of generated methods, choose Tools | Templates.
+    public void setDate(XMLGregorianCalendar date) {
+        super.setDate(date);
         notifyChange();
     }
 
-    @Override
-    public void setDimensions(String value) {
-        super.setDimensions(value); //To change body of generated methods, choose Tools | Templates.
+    public void setNotes(String notes) {
+        super.setNotes(notes);
+        notifyChange();
+    }
+
+    public void setReceiptnumber(Integer receiptnumber) {
+        super.setReceiptnumber(receiptnumber);
+        notifyChange();
+    }
+
+    public void setReceivedby(String receivedby) {
+        super.setReceivedby(receivedby);
         notifyChange();
     }
 

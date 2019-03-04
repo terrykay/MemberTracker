@@ -424,7 +424,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
     @FXML
     private void handleIDDragDrop(DragEvent event) {
-        Dragboard dragboard = event.getDragboard();
+        return;
+        /*   Dragboard dragboard = event.getDragboard();
         if (dragboard.hasFiles()) {
             String filePath = null;
             for (File file : dragboard.getFiles()) {
@@ -441,7 +442,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                 }
             }
-        }
+        }*/
     }
 
     @FXML
@@ -495,6 +496,35 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         viewVisitDetails();
     }
 
+<<<<<<< Updated upstream
+=======
+    @FXML
+    private void setMemberUpdatedAction(ActionEvent event) {
+        viewMemberDetails();
+    }
+
+    @FXML
+    private void setVisitUpdatedAction(ActionEvent event) {
+        viewVisitDetails();
+    }
+
+    @FXML
+    private void handleNextOfKinEditButton(ActionEvent event) {
+        FXMLNextOfKinController controller = new FXMLNextOfKinController();
+        controller = (FXMLNextOfKinController) controller.load();
+        if (aCustomer.getNextOfKin().size() > 0) {
+            controller.setNextOfKin(aCustomer.getNextOfKin().get(0));
+        }
+        System.out.println("NextOfKin = " + aCustomer.getNextOfKin());
+        controller.getStage().showAndWait();
+        if (controller.isUpdated()) {
+            aCustomer.getNextOfKin().clear();
+            aCustomer.getNextOfKin().add(controller.getNextOfKin());
+            nextOfKinField.setText(controller.getNextOfKin().getName());
+        }
+    }
+
+>>>>>>> Stashed changes
     private class myPartnerContextMenu extends ContextMenu {
 
         public myPartnerContextMenu() {
@@ -527,6 +557,41 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
+<<<<<<< Updated upstream
+=======
+    private class myInvoiceContextMenu extends ContextMenu {
+
+        public myInvoiceContextMenu(TableView targetTable) {
+            MenuItem addCharge = new MenuItem("Add a/c charge");
+            MenuItem markPaid = new MenuItem("Mark paid");
+            MenuItem editItem = new MenuItem("Edit");
+
+            getItems().addAll(addCharge, markPaid, editItem);
+            markPaid.setOnAction(event -> {
+                handleMarkPaid(event);
+            });
+            addCharge.setOnAction(event -> {
+                handleAddAcCharge(event);
+            });
+            editItem.setOnAction(event -> {
+                handleEditInvoice(event);
+            });
+        }
+    }
+
+    private void handleEditInvoice(ActionEvent event) {
+        InvoiceRowItem selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
+
+        FXMLInvoiceViewController fxmlInvoiceViewController = new FXMLInvoiceViewController();
+        fxmlInvoiceViewController = fxmlInvoiceViewController.load();
+        System.out.println("item = " + selectedItem.getClass().getSimpleName());
+        fxmlInvoiceViewController.setInvoice(selectedItem);
+        fxmlInvoiceViewController.getStage().showAndWait();
+
+        System.out.println("Date is " + selectedItem.getIssuedate());
+    }
+
+>>>>>>> Stashed changes
     @FXML
     private void handleKeyPressOnTable(KeyEvent event) {
         KeyCode keyCode = event.getCode();
@@ -741,6 +806,17 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             new Alert(Alert.AlertType.ERROR, "Must enter fore and surnames at least!").showAndWait();
             return;
         }
+<<<<<<< Updated upstream
+=======
+
+        System.out.println("Validating email");
+        if (emailField.getText() != null && !emailField.getText().isEmpty()) {
+            System.out.println("email is set : " + emailField.getText());
+            if (!MailHandler.getInstance().isEmailValid(emailField.getText())) {
+                new Alert(Alert.AlertType.ERROR, MailHandler.getInstance().validationMessage);
+            }
+        }
+>>>>>>> Stashed changes
 
         for (ImageRowItem eachDocument : myDocumentList) {
             if (!ADDNEW.equals(eachDocument.getDetails())) {
@@ -766,7 +842,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 }
             }
         }
-        for (ImageRowItem eachDocument : myIDList) {
+        /*     for (ImageRowItem eachDocument : myIDList) {
             if (!ADDNEW.equals(eachDocument.getDetails())) {
                 if (eachDocument.getId() == null || eachDocument.getId() == 0) {
                     if (eachDocument.getFilename() == null) {
@@ -788,10 +864,18 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                 }
             }
-        }
+        }*/
 
         storeCustomerDetails();
         String value = null;
+<<<<<<< Updated upstream
+=======
+        System.out.println("Saving " + aCustomer.getVisitCollection().size() + " visits");
+        // Reset electricity charges 
+        if (aCustomer.getMembership() != null && aCustomer.getMembership().getElectricitychargeCollection() != null) {
+            aCustomer.getMembership().getElectricitychargeCollection().clear();
+        }
+>>>>>>> Stashed changes
         try {
             value = SoapHandler.saveCustomer(aCustomer);
         } catch (Exception e) {
@@ -851,7 +935,20 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.setGiftAid(giftAidCheckBox.isSelected());
         aCustomer.setPhotography(photographyCheckBox.isSelected());
 
+<<<<<<< Updated upstream
         if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
+=======
+        NotificationPreferencesTO notificationPreferences = aCustomer.getNotificationPreferences();
+        if (notificationPreferences == null) {
+            notificationPreferences = new NotificationPreferencesTO();
+            aCustomer.setNotificationPreferences(notificationPreferences);
+        }
+        notificationPreferences.setEmail(eMailCheckBox.selectedProperty().getValue());
+        notificationPreferences.setSms(smsCheckBox.selectedProperty().getValue());
+        notificationPreferences.setPost(postCheckBox.selectedProperty().getValue());
+
+        /*       if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
+>>>>>>> Stashed changes
                 || ((relationShipField.getText() != null && relationShipField.getText().length() > 0))) {
             if (aCustomer.getNextOfKin().isEmpty()) {
                 aCustomer.getNextOfKin().add(new NextOfKinTO());
@@ -861,9 +958,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             aCustomer.getNextOfKin().get(0).setContactNo(contactNoField.getText());
             aCustomer.getNextOfKin().get(0).setRelationship(relationShipField.getText());
             aCustomer.getNextOfKin().get(0).setAwareNaturist(naturistAwareCheckbox.isSelected());
+<<<<<<< Updated upstream
         }
 
         //aCustomer.setNotes(notesTextArea.getText());
+=======
+        }*/
+>>>>>>> Stashed changes
         if (notesTextArea.getText() != null && notesTextArea.getText().length() > 0) {
             if (aCustomer.getNotes().isEmpty()) {
                 aCustomer.getNotes().add(new NotesTO());
@@ -895,7 +996,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         for (ImageTO eachImage : myIDList) {
             if (!ADDNEW.equals(eachImage.getDetails())) {
                 aCustomer.getImageCollection().add(eachImage);
-                System.out.println("Adding ID " + eachImage.getFilename());
             }
         }
 
@@ -959,6 +1059,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 notesTextArea.setText(aCustomer.getNotes().get(0).getNotes());
             }
         }
+<<<<<<< Updated upstream
         if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
             if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
                 nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
@@ -966,6 +1067,11 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 relationShipField.setText(aCustomer.getNextOfKin().get(0).getRelationship());
                 naturistAwareCheckbox.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
             }
+=======
+
+        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+>>>>>>> Stashed changes
         }
 
         if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
@@ -1065,6 +1171,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             relationShipField.setText("");
             naturistAwareCheckbox.setSelected(false);
         }
+<<<<<<< Updated upstream
+=======
+
+        if (myCustomer.getNextOfKin() != null && myCustomer.getNextOfKin().size() > 0) {
+            nextOfKinField.setText(myCustomer.getNextOfKin().get(0).getName());
+        }
+>>>>>>> Stashed changes
 
         myCarList = FXCollections.observableArrayList();
         for (CarTO eachCar : myCustomer.getCarCollection()) {
@@ -1311,8 +1424,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 if (selectedFile != null) {
                     fileChooserPath = selectedFile.getParent();
 
-                    System.out.println("path = " + fileChooserPath);
-                    System.out.println("selectedFile = " + selectedFile);
                     if (selectedFile.getName().toLowerCase().endsWith(".pdf")) {
                         // Dealing with PDF
                         readPDFFromFile(selectedFile, imageType, whichList);
@@ -1346,6 +1457,30 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     showImage(selection);
                 }
             }
+<<<<<<< Updated upstream
+=======
+        }
+    }
+
+    private void handleIdClicked(MouseEvent event) {
+        if (event == null || event.getButton().equals(MouseButton.PRIMARY)) {
+            ImageRowItem selection = (ImageRowItem) IDTable.getSelectionModel().getSelectedItem();
+            // Cover case of null selection
+            if (selection == null) {
+                return;
+            }
+            // Has user clicked "Add new"?
+            if (ADDNEW.equals(selection.getDetailsProperty().getValue())) {
+                ImageTO imageTo = new ImageTO();
+                imageTo.setType('i');
+                ImageRowItem imageRowItem = new ImageRowItem(imageTo);
+                showImage(imageRowItem);
+                myIDList.add(0, imageRowItem);
+                updated = true;
+            } else {
+                showImage(selection);
+            }
+>>>>>>> Stashed changes
         }
     }
 
@@ -1356,7 +1491,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
     @FXML
     private void handleIDClicked(MouseEvent event) {
-        handleImageClicked(event, 'i', IDTable, myIDList);
+//        handleImageClicked(event, 'i', IDTable, myIDList);
+        handleIdClicked(event);
     }
 
     private boolean showImage(ImageRowItem anImage) {
@@ -1364,9 +1500,18 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         controller = (FXMLImageViewController) controller.load();
         controller.getStage().show();
+<<<<<<< Updated upstream
+=======
+        if (anImage.getType() == 'd') {
+            controller.setExpires(false);
+        } else {
+            controller.setNoImage();
+        }
+>>>>>>> Stashed changes
         controller.setImage(anImage);
         controller.getStage().hide();
         controller.getStage().showAndWait();
+        System.out.println("Controller.isUpdated = "+controller.isUpdated());
         if (controller.isUpdated()) {
             IDTable.refresh();
             documentTable.refresh();
@@ -1456,8 +1601,13 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             dateJoinedField.setStyle("-fx-background-color: white;");
             partnerNameField.setStyle("-fx-background-color: white;");
             nextOfKinField.setStyle("-fx-background-color: white;");
+<<<<<<< Updated upstream
             contactNoField.setStyle("-fx-background-color: white;");
             relationShipField.setStyle("-fx-background-color: white;");
+=======
+            //           contactNoField.setStyle("-fx-background-color: white;");
+            //           relationShipField.setStyle("-fx-background-color: white;");
+>>>>>>> Stashed changes
             notesTextArea.setStyle("-fx-background-color: white;");
 
             saveButton.setVisible(false);
@@ -1544,7 +1694,11 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private void setForMember(Boolean value) {
+<<<<<<< Updated upstream
         meberCheckBox.setSelected(value);
+=======
+        //       memberCheckBox.setSelected(value);
+>>>>>>> Stashed changes
 
         if (aCustomer != null && value) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));

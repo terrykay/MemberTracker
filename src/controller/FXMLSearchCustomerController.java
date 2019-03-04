@@ -400,6 +400,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         menuExportRecords.setOnAction(v -> {
             handleExportButton(null);
         });
+        MenuItem menuExportInsuranceRecords = new MenuItem("Export as CSV (Insurance)");
+        menuExportInsuranceRecords.setOnAction(v -> {
+            handleExportInsuranceButton(null);
+        });
         MenuItem menuRefresh = new MenuItem("Reload & Reset");
         menuRefresh.setAccelerator(KeyCombination.keyCombination("Ctrl+F5"));
         menuRefresh.setOnAction(v -> handleRefreshButton(null));
@@ -443,8 +447,25 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         idWillExpire.setOnAction(v -> queryBuilderIDExpiring());
         MenuItem customersMissingEmail = new MenuItem("Customers missing email address");
         customersMissingEmail.setOnAction(v -> queryBuilderMissingEmail());
+<<<<<<< Updated upstream
 
         Menu menuEvents = new Menu("Events");
+=======
+        MenuItem customersWithHookup = new MenuItem("Pitch members with hookup");
+        customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
+        MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
+        pitchMemberNoHookup.setOnAction(v -> queryBuilderPitchNoElectricHookupTemplate());
+        MenuItem unpaidInvoices = new MenuItem("Outstanding invoices");
+        unpaidInvoices.setOnAction(v -> queryBuilderOutstandingInvoices());
+        MenuItem vanMembers = new MenuItem("Van members");
+        vanMembers.setOnAction(v -> queryBuilderVanMembers());
+        MenuItem vanMembersNoInsurance = new MenuItem("Van members (no insurance)");
+        vanMembersNoInsurance.setOnAction(v -> queryBuilderVanMembersNotInsured());
+        MenuItem membersWithInsurance = new MenuItem("Members with insurance");
+        membersWithInsurance.setOnAction(v -> queryBuilderMembersInsured());
+
+        /*     Menu menuEvents = new Menu("Events");
+>>>>>>> Stashed changes
         MenuItem menuEventsView = new MenuItem("View");
         menuEventsView.setOnAction(v -> {
             showEvents();
@@ -454,6 +475,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuPrintList,
                 menuPrintRecords,
                 menuExportRecords,
+                menuExportInsuranceRecords,
                 new SeparatorMenuItem(),
                 menuRefresh,
                 new SeparatorMenuItem(),
@@ -467,7 +489,14 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuQueryFindMissingDocuments,
                 menuQueryBirthday,
                 idWillExpire,
+<<<<<<< Updated upstream
                 customersMissingEmail
+=======
+                customersMissingEmail,
+                vanMembers,
+                vanMembersNoInsurance,
+                membersWithInsurance
+>>>>>>> Stashed changes
         );
  //       menuEvents.getItems().addAll(
  //               menuEventsView
@@ -840,6 +869,13 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         controller.setText(Utility.toString(searchResultsTable.getItems()));
         controller.getStage().show();
     }
+    
+    private void handleExportInsuranceButton(ActionEvent event) {
+        FXMLCopySheetController controller = new FXMLCopySheetController();
+        controller = (FXMLCopySheetController) controller.load();
+        controller.setText(Utility.toStringNameAndInsurance(searchResultsTable.getItems()));
+        controller.getStage().show();
+    }
 
     private void printList() {
         FXMLSearchCustomerController printController = new FXMLSearchCustomerController();
@@ -1107,6 +1143,106 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         applyFilters();
     }
 
+<<<<<<< Updated upstream
+=======
+    private void queryBuilderOutstandingInvoices() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(new CustomerFilter() {
+            @Override
+            public boolean include(SearchRowItem a) {
+                if (a.getMembership() == null) {
+                    return false;
+                }
+                if (a.getMembership().getElectricitychargeCollection() == null) {
+                    return false;
+                }
+                if (!a.getMembership().getElectricitychargeCollection().isEmpty()) {
+                    boolean flag = false;
+                    for (ElectricitychargeTO action : a.getMembership().getElectricitychargeCollection()) {
+                        //    a.getMembership().getElectricitychargeCollection().stream().forEach((ElectricitychargeTO action) -> {
+                        if (action.getInvoiceList() != null && action.getInvoiceList().size() > 0) {
+                            // Only check for receipt of fist invoice for now
+                            if (action.getInvoiceList().get(0).getReceiptCollection() == null || action.getInvoiceList().get(0).getReceiptCollection().size() == 0) {
+                                flag = true;
+                            }
+                        }
+                    }
+                    return flag;
+
+                }
+                return false;
+            }
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Outstanding invoices");
+        applyFilters();
+    }
+
+    private void queryBuilderElectricHookupTemplate() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return (a.getMembership() != null
+                    && (a.getMembership().isElectricityHookup() != null && a.getMembership().isElectricityHookup()));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Pitch members with hookup");
+        applyFilters();
+    }
+
+    private void queryBuilderPitchNoElectricHookupTemplate() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null)
+                    && (a.getMembership().getType() != null && ((a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(TENT_PITCH) || a.getMembership().getType().equals(VAN_PITCH))))
+                    && (a.getMembership().isElectricityHookup() == null || !a.getMembership().isElectricityHookup()));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Pitch members with no hookup");
+        applyFilters();
+    }
+
+    private void queryBuilderVanMembers() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null) && a.getMembership().getType() != null
+                    && (a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(VAN_PITCH)));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Van members");
+        applyFilters();
+    }
+
+    private void queryBuilderVanMembersNotInsured() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null) && a.getMembership().getType() != null
+                    && (a.getMembership().getType().equals(LARGE_VAN_PITCH) || a.getMembership().getType().equals(VAN_PITCH))
+                    && (a.getMembership().getInsuranceExpiry() == null
+                    || a.getMembership().getInsuranceExpiry().compare(MyDate.toXMLGregorianCalendar(new Date())) == DatatypeConstants.LESSER));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Van members with no insurance");
+        applyFilters();
+    }
+    
+    private void queryBuilderMembersInsured() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return ((a.getMembership() != null) && a.getMembership().getType() != null
+                    && (a.getMembership().getInsuranceExpiry() != null));
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("Members with insurance");
+        applyFilters();
+    }
+
+>>>>>>> Stashed changes
     private void queryBuilderIDExpiring() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();

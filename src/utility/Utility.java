@@ -117,6 +117,23 @@ public class Utility {
         return aString.toString();
     }
 
+    public static String toStringNameAndInsurance(Collection<SearchRowItem> customers) {
+        StringBuilder string = new StringBuilder();
+        
+        string.append("Forename, Surname, Insurance expiry\n");
+         for (SearchRowItem eachCustomer : customers) {
+            CustomerTO aCustomer = SoapHandler.getCustomerByID(eachCustomer.getId());
+            addNoReturn(string, aCustomer.getForename());
+            addComma(string);
+            addNoReturn(string, aCustomer.getSurname());
+            addComma(string);
+            addNoReturn(string, aCustomer.getMembership().getInsuranceExpiry().toString());
+            addReturn(string);
+        }
+
+        return string.toString();
+    }
+    
     public static String toString(Collection<SearchRowItem> customers) {
         StringBuilder string = new StringBuilder();
 

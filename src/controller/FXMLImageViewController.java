@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
@@ -47,7 +49,8 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
 
     private final int EXPIRY = 5; // number of years until expiry
     private final String SAVE_IMAGE_PATH_KEY = "saveimagepath";
-
+    private boolean noImage = false;
+    
     static String fileChooserPath;
     final DoubleProperty zoomProperty = new SimpleDoubleProperty(200);
 
@@ -59,6 +62,13 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     private VBox buttonVBox;
     @FXML
     private ScrollPane imageScrollPane;
+<<<<<<< Updated upstream
+=======
+    @FXML
+    private CheckBox expiresCheckBox;
+    @FXML
+    private Label scannedLabel;
+>>>>>>> Stashed changes
 
     public boolean isUpdated() {
         return updated;
@@ -119,14 +129,39 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
         });
 
     }
+    
+    public void setNoImage() {
+        noImage = true;
+        stage.setHeight(200);
+        scannedLabel.setText("Seen");
+        System.out.println("MyDate = "+MyDate.toLocalDate(MyDate.toXMLGregorianCalendar(new Date())));
+        scannedDatePicker.setValue(MyDate.toLocalDate(MyDate.toXMLGregorianCalendar(new Date())));
+        updated = true;
+        hideImageView();
+    }
+    
+    private void hideImageView() {
+            imageView.setY(0);
+            imageScrollPane.setHmax(0);
+            imageScrollPane.setVisible(false);
+    }
 
     public void setImage(ImageRowItem anImage) {
         ourImage = anImage;
         WritableImage newImage = null;
-        newImage = SwingFXUtils.toFXImage(anImage.getTheImage(), newImage);
-        imageView.setImage(newImage);
+        imageScrollPane.managedProperty().bind(imageScrollPane.visibleProperty());
+        System.out.println("image? noImage = "+noImage);
+        if (!noImage) {
+            newImage = SwingFXUtils.toFXImage(anImage.getTheImage(), newImage);
+            imageView.setImage(newImage);
+        } else {
+            hideImageView();
+        
+        }
+        if (anImage.getScanned() != null) {
         scannedDatePicker.setValue(MyDate.toLocalDate(anImage.getScanned()));
         expiresDatePicker.setValue(MyDate.toLocalDate(anImage.getExpires()));
+        }
         detailsTextArea.setText(anImage.getDetails());
         double ih = imageView.getBoundsInParent().getHeight();
         double mph = mainAnchorPane.getPrefHeight();

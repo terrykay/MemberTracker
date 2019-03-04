@@ -25,7 +25,7 @@
                            <children>
                               <HBox alignment="CENTER_RIGHT" layoutX="25.0" layoutY="623.0" spacing="10.0">
                                  <children>
-                                    <Label layoutX="25.0" layoutY="628.0" text="Scanned" />
+                                    <Label fx:id="scannedLabel" layoutX="25.0" layoutY="628.0" text="Scanned" />
                                     <DatePicker fx:id="scannedDatePicker" layoutX="96.0" layoutY="623.0" prefHeight="25.0" prefWidth="121.0" />
                                  </children>
                               </HBox>
