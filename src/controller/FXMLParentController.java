@@ -24,7 +24,8 @@ public class FXMLParentController {
     // Reference to the DBAccess methods
     protected String FXMLPath="old";
 
-    
+    protected boolean updated = false;
+    public boolean isUpdated() { return updated; }
 
     public FXMLParentController load() {
         // Load the FXML  - we need to set FXMLPath in constructor to link to path to the page

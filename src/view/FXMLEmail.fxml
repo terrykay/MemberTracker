@@ -14,13 +14,14 @@
             <HBox alignment="CENTER_RIGHT" layoutX="10.0" layoutY="10.0" spacing="20.0">
                <children>
                   <Label text="To" />
-                  <TextArea fx:id="toTextArea" prefHeight="25.0" prefWidth="491.0" />
+                  <TextArea fx:id="toTextArea" editable="false" prefHeight="25.0" prefWidth="491.0" />
                </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">
                <children>
                   <Label text="From" />
-                  <TextField fx:id="fromTextField" prefHeight="25.0" prefWidth="491.0" />
+                  <TextField fx:id="fromTextField" prefHeight="25.0" prefWidth="385.0" />
+                  <CheckBox fx:id="bccFromButton" mnemonicParsing="false" selected="true" text="BCC from" />
                </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="20.0">

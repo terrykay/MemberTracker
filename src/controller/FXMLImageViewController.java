@@ -24,6 +24,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -32,6 +33,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
@@ -62,6 +64,7 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     private VBox buttonVBox;
     @FXML
     private ScrollPane imageScrollPane;
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
     @FXML
@@ -69,6 +72,10 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     @FXML
     private Label scannedLabel;
 >>>>>>> Stashed changes
+=======
+    @FXML
+    private CheckBox expiresCheckBox;
+>>>>>>> AddNotificatoinPreferences
 
     public boolean isUpdated() {
         return updated;
@@ -108,7 +115,7 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
         if (property != null && property.length() > 0) {
             fileChooserPath = property;
         }
-        
+
         zoomProperty.addListener(new InvalidationListener() {
             @Override
             public void invalidated(Observable arg0) {
@@ -127,7 +134,21 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
                 }
             }
         });
+        expiresCheckBox.setSelected(true);
+        expiresCheckBox.setVisible(false);
+    }
 
+    public void setExpires(boolean flag) {
+        expiresCheckBox.setVisible(true);
+        if (flag != expiresCheckBox.isSelected()) {
+            return;
+        }
+
+        expiresCheckBox.setSelected(flag);
+        expiresDatePicker.setDisable(!flag);
+        if (!flag) {
+            expiresDatePicker.setValue(scannedDatePicker.getValue());
+        }
     }
     
     public void setNoImage() {
@@ -182,6 +203,10 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
         }
     }
 
+    public void resetExpiresDate() {
+        expiresDatePicker.setValue(scannedDatePicker.getValue());
+    }
+
     private void saveImage() {
         ourImage.setDetails(detailsTextArea.getText());
         ourImage.setScanned(MyDate.toXMLGregorianCalendar(scannedDatePicker.getValue()));
@@ -204,16 +229,29 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
     @FXML
     private void handleExportButton(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
+        if (fileChooser == null) {
+            System.err.println("Erro on Export - FileChooser() is null");
+            return;
+        }
         fileChooser.setTitle("Select file to save");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Image Files", "*.png")
         );
+
         if (fileChooserPath != null) {
             fileChooser.setInitialDirectory(new File(fileChooserPath));
         }
-        fileChooser.setInitialFileName(ourImage.getUrl());
 
-        File selectedFile = fileChooser.showSaveDialog(getStage());
+        fileChooser.setInitialFileName(ourImage.getUrl().replace("jpg", "png"));
+
+        File selectedFile = null;
+        try {
+            selectedFile = fileChooser.showSaveDialog(getStage());
+        } catch (Exception e) {
+            // If initial folder has become invalid (drive ejected etc) we'll end up here
+            fileChooser.setInitialDirectory(null);
+            selectedFile = fileChooser.showSaveDialog(getStage());
+        }
         if (selectedFile != null) {
             fileChooserPath = selectedFile.getParent();
             IDPreferences.getInstance().setProperty(SAVE_IMAGE_PATH_KEY, fileChooserPath);
@@ -231,5 +269,10 @@ public class FXMLImageViewController extends FXMLParentController implements Ini
 
         }
 
+    }
+
+    @FXML
+    private void handleClickExpiresCheckBox(ActionEvent event) {
+        setExpires(expiresCheckBox.isSelected());
     }
 }

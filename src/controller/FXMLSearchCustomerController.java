@@ -2,7 +2,11 @@ package controller;
 
 import IDTrackerTO.EventTO;
 import Soap.CustomerTO;
+import Soap.ElectricitychargeTO;
 import UtilityClasses.MyDate;
+import static controller.FXMLMemberController.LARGE_VAN_PITCH;
+import static controller.FXMLMemberController.TENT_PITCH;
+import static controller.FXMLMemberController.VAN_PITCH;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -65,8 +69,10 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javax.xml.datatype.DatatypeConstants;
 import model.SearchRowItem;
 import model.SoapHandler;
+import utility.CustomerFilter;
 import utility.CustomerListFilter;
 import utility.MailHandler;
 import utility.ProgressIndicator;
@@ -82,6 +88,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private static final String SELECT_TITLE = "Selecting";
     private static final String SEARCH_TITLE = "BH ID tracker customer list";
     private static final String EVENT_SEARCH_TITLE = "Attendees for ";
+    private static final DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
 
     private ContextMenu contextMenu;
     // If we're selecting for an Event
@@ -227,6 +234,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private static final String SOUTHERN = "Southern";
     private static final String BROMLEY = "Bromley";
     private static final String KENT = "Kent";
+    private static final String ELECTRIC_HOOKUP = "Members with electricity";
+    private static final String NO_ELECTRIC_HOOKUP = "Members with pitch, no elec";
     private static final String[] filterItems = {SHOWONLY, SHOWALL, EXPIRED, MEMBERSONLY, NONEMEMBERS, REFUSED, NORTHERN, SOUTHERN, BROMLEY, KENT};
 
     @FXML
@@ -341,8 +350,8 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
         // Comparator to ensure "Sort by member joined date" sorts by date, not String
         Comparator comparator = new Comparator<String>() {
-            DateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            public int compare(String a, String b) {         
+
+            public int compare(String a, String b) {
                 Date startDate;
                 Date endDate;
                 try {
@@ -355,7 +364,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             }
         };
         memberNoColumn.setComparator(comparator);
-        
+
         societyColumn.setCellValueFactory(t -> t.getValue().getSocietyProperty());
         idValidColumn.setCellValueFactory(cellData -> {
             return Utility.checkValidID(cellData.getValue().getImageCollection());
@@ -408,7 +417,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         menuRefresh.setAccelerator(KeyCombination.keyCombination("Ctrl+F5"));
         menuRefresh.setOnAction(v -> handleRefreshButton(null));
         Menu menuEmail = new Menu("Email");
-        MenuItem menuEmailAll = new MenuItem("Email all");
+        MenuItem menuEmailAll = new MenuItem("Email filtered");
         MenuItem menuEmailSelected = new MenuItem("Email selected");
         menuEmailAll.setOnAction(v -> {
             handleSendEmailList();
@@ -447,10 +456,13 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         idWillExpire.setOnAction(v -> queryBuilderIDExpiring());
         MenuItem customersMissingEmail = new MenuItem("Customers missing email address");
         customersMissingEmail.setOnAction(v -> queryBuilderMissingEmail());
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 
         Menu menuEvents = new Menu("Events");
 =======
+=======
+>>>>>>> AddNotificatoinPreferences
         MenuItem customersWithHookup = new MenuItem("Pitch members with hookup");
         customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
         MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
@@ -461,16 +473,24 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         vanMembers.setOnAction(v -> queryBuilderVanMembers());
         MenuItem vanMembersNoInsurance = new MenuItem("Van members (no insurance)");
         vanMembersNoInsurance.setOnAction(v -> queryBuilderVanMembersNotInsured());
+<<<<<<< HEAD
         MenuItem membersWithInsurance = new MenuItem("Members with insurance");
         membersWithInsurance.setOnAction(v -> queryBuilderMembersInsured());
 
         /*     Menu menuEvents = new Menu("Events");
 >>>>>>> Stashed changes
+=======
+
+        /*     Menu menuEvents = new Menu("Events");
+>>>>>>> AddNotificatoinPreferences
         MenuItem menuEventsView = new MenuItem("View");
         menuEventsView.setOnAction(v -> {
             showEvents();
-        });
-        
+        });*/
+        Menu menuTools = new Menu("Tools");
+        MenuItem menuCreateInvoice = new MenuItem("Create invoices");
+        menuCreateInvoice.setOnAction(v -> createInvoices());
+
         menuFile.getItems().addAll(
                 menuPrintList,
                 menuPrintRecords,
@@ -486,9 +506,13 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuQueryView,
                 menuQueryClear,
                 new SeparatorMenuItem(),
+                unpaidInvoices,
+                customersWithHookup,
+                pitchMemberNoHookup,
                 menuQueryFindMissingDocuments,
                 menuQueryBirthday,
                 idWillExpire,
+<<<<<<< HEAD
 <<<<<<< Updated upstream
                 customersMissingEmail
 =======
@@ -497,12 +521,18 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 vanMembersNoInsurance,
                 membersWithInsurance
 >>>>>>> Stashed changes
+=======
+                customersMissingEmail,
+                vanMembers,
+                vanMembersNoInsurance
+>>>>>>> AddNotificatoinPreferences
         );
- //       menuEvents.getItems().addAll(
- //               menuEventsView
- //       );
+        menuTools.getItems().addAll(menuCreateInvoice);
+        //       menuEvents.getItems().addAll(
+        //               menuEventsView
+        //       );
 
-        menuBar.getMenus().addAll(menuFile, menuQuery);
+        menuBar.getMenus().addAll(menuFile, menuQuery, menuTools);
 
         mainAnchorPane.getChildren().add(menuBar);
     }
@@ -636,9 +666,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         if (EXPIRED.equals(filterSelected)) {
             showOnlyFilter.addFilter(a -> {
                 int days = Utility.getIDDaysLeft(a.getImageCollection());
-
                 return days <= 0;
-
             });
         } else if (MEMBERSONLY.equals(filterSelected)) {
             showOnlyFilter.addFilter(a -> {
@@ -668,7 +696,15 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         newController = (FXMLEventListController) newController.load();
         newController.getStage().show();
     }
-    
+
+    private void createInvoices() {
+        FXMLCreateInvoicesController newController = new FXMLCreateInvoicesController();
+
+        newController = (FXMLCreateInvoicesController) newController.load();
+        newController.setCustomerList(fullCustomerRowItemList);
+        newController.getStage().show();
+    }
+
     private void applyFilters() {
         // Apply the filters to the full list to get our filtered list for display
         Task task = new Task() {
@@ -764,7 +800,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         FXMLCustomerController newController = new FXMLCustomerController();
 
         newController = (FXMLCustomerController) newController.load();
-        CustomerTO aCustomer = Utility.createCustomer();
+        SearchRowItem aCustomer = new SearchRowItem(Utility.createCustomer());
         // Is this a case of "PickAndSelect"? If so, we  might be adding a partner...
         //       System.err.println("addressId = "+selectFor.getAddressId());
         if (pickAndReturn && selectFor != null) {
@@ -1143,8 +1179,11 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         applyFilters();
     }
 
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
+=======
+>>>>>>> AddNotificatoinPreferences
     private void queryBuilderOutstandingInvoices() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1229,6 +1268,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("Van members with no insurance");
         applyFilters();
     }
+<<<<<<< HEAD
     
     private void queryBuilderMembersInsured() {
         filterList.remove(queryFilter);
@@ -1243,6 +1283,9 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     }
 
 >>>>>>> Stashed changes
+=======
+
+>>>>>>> AddNotificatoinPreferences
     private void queryBuilderIDExpiring() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1313,27 +1356,28 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 //       CustomerTO updatedCustomer = SoapHandler.getCustomerByID(whichCustomer.getCustomerId());
                 //       whichCustomer.setCustomerTO(updatedCustomer);
                 // if there's a partner, set the name
+                CustomerTO updatedCustomer = controller.getCustomer();
                 Integer partnerId = whichCustomer.getPartnerId();
-                if (partnerId!=null && partnerId!=0) {
-                    if (whichCustomer.getPartnerProperty()==null)
+                if (partnerId != null && partnerId != 0) {
+                    if (whichCustomer.getPartnerProperty() == null) {
                         whichCustomer.setPartnerProperty(new SimpleStringProperty());
+                    }
                     SimpleStringProperty partnerName = (SimpleStringProperty) whichCustomer.getPartnerProperty();
                     SearchRowItem partner = customerSet.get(partnerId);
                     partnerName.setValue(partner.getForename());
-                    if (partner.getPartnerProperty()!=null)
+                    if (partner.getPartnerProperty() != null) {
                         partner.getPartnerProperty().setValue(whichCustomer.getForename());
-                    else
+                    } else {
                         partner.setPartnerProperty(new SimpleStringProperty(whichCustomer.getForename()));
-                } else { 
-                    if (whichCustomer.getPartnerProperty() != null) {
-                        whichCustomer.getPartnerProperty().setValue("");
                     }
-                } 
-                
-                whichCustomer.refresh(whichCustomer);
-              //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
-              //  customer.setCustomerTO(whichCustomer);
-                
+                } else if (whichCustomer.getPartnerProperty() != null) {
+                    whichCustomer.getPartnerProperty().setValue("");
+                }
+                whichCustomer.setCustomer(updatedCustomer);
+                whichCustomer.refresh(updatedCustomer);
+                //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
+                //  customer.setCustomerTO(whichCustomer);
+
                 searchResultsTable.refresh();
             }
         }
@@ -1388,7 +1432,14 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             if (mh.send()) {
                 Utility.showAlert("Email send", "Email has been sent", "Email has been sent to the server");
             } else {
-                Utility.showAlert("Error occured", "An error was returned", "An error occurred sending\nthe email\n\n" + mh.getErrorMessage());
+                Optional<ButtonType> showOkOrYesAlert = Utility.showOkOrYesAlert("Error occured", "An error was returned", "An error occurred sending the emails.\nClick Log to view the error report\nor OK to close.", "Log");
+                System.out.println("Button type = " + showOkOrYesAlert.get());
+                if (showOkOrYesAlert.get().getButtonData().equals(ButtonBar.ButtonData.YES)) {
+                    FXMLCopySheetController controller = new FXMLCopySheetController();
+                    controller = (FXMLCopySheetController) controller.load();
+                    controller.setText(mh.getErrorMessage());
+                    controller.getStage().showAndWait();
+                }
             }
 
         }
@@ -1397,6 +1448,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private void handleSendEmailSingle() {
         FXMLEmailController emailController = new FXMLEmailController();
         emailController = (FXMLEmailController) emailController.load();
+        if (searchResultsTable.getSelectionModel().getSelectedItem() == null) {
+            Utility.showAlert("Please select a record", "Nothing selected", "Please select a record and try again");
+            return;
+        }
         String toEmail = searchResultsTable.getSelectionModel().getSelectedItem().getEmail();
         if (toEmail == null || toEmail.length() == 0) {
             Utility.showAlert("Problem with record", "EMail address unavailable",

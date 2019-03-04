@@ -8,7 +8,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="600.0" minWidth="600.0" prefHeight="716.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLImageViewController">
+<AnchorPane id="AnchorPane" fx:id="mainAnchorPane" minHeight="600.0" minWidth="595.0" prefHeight="736.0" prefWidth="595.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.FXMLImageViewController">
    <children>
       <VBox alignment="CENTER" minWidth="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -17,7 +17,7 @@
                   <ImageView fx:id="imageView" fitHeight="600.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                </content>
             </ScrollPane>
-            <VBox fx:id="buttonVBox" alignment="CENTER" layoutX="50.0" layoutY="598.0" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
+            <VBox fx:id="buttonVBox" alignment="CENTER" layoutX="50.0" layoutY="598.0" maxHeight="160.0" minHeight="160.0" prefHeight="160.0" spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
                <children>
                   <HBox alignment="CENTER" layoutX="25.0" layoutY="598.0" spacing="50.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
                      <children>
@@ -33,6 +33,11 @@
                                  <children>
                                     <Label layoutX="41.0" layoutY="674.0" text="Expires" />
                                     <DatePicker fx:id="expiresDatePicker" layoutX="101.0" layoutY="669.0" prefHeight="25.0" prefWidth="120.0" />
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER">
+                                 <children>
+                                    <CheckBox fx:id="expiresCheckBox" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#handleClickExpiresCheckBox" text="Expires" />
                                  </children>
                               </HBox>
                            </children>
