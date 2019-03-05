@@ -417,11 +417,15 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             handleExportInsuranceButton(null);
         });
         MenuItem menuCustomExport = new MenuItem("Export - select fields");
-        menuCustomExport.setOnAction(v ->
-        {
+        menuCustomExport.setOnAction(v
+                -> {
             handleCustomExportButton(null);
         }
         );
+        MenuItem menuTableView = new MenuItem("View in table");
+        menuTableView.setOnAction(v -> {
+            tableView();
+        });
         MenuItem menuRefresh = new MenuItem("Reload & Reset");
         menuRefresh.setAccelerator(KeyCombination.keyCombination("Ctrl+F5"));
         menuRefresh.setOnAction(v -> handleRefreshButton(null));
@@ -465,7 +469,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         idWillExpire.setOnAction(v -> queryBuilderIDExpiring());
         MenuItem customersMissingEmail = new MenuItem("Customers missing email address");
         customersMissingEmail.setOnAction(v -> queryBuilderMissingEmail());
-     //   Menu menuEvents = new Menu("Events");
+        //   Menu menuEvents = new Menu("Events");
         MenuItem customersWithHookup = new MenuItem("Pitch members with hookup");
         customersWithHookup.setOnAction(v -> queryBuilderElectricHookupTemplate());
         MenuItem pitchMemberNoHookup = new MenuItem("Pitch members without hookup");
@@ -494,6 +498,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                 menuExportRecords,
                 menuExportInsuranceRecords,
                 menuCustomExport,
+                menuTableView,
                 new SeparatorMenuItem(),
                 menuRefresh,
                 new SeparatorMenuItem(),
@@ -886,30 +891,31 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
         applyFilters();
     }
-    
+
     private void handleCustomExportButton(ActionEvent event) {
         FXMLDisplayFilterController controller = new FXMLDisplayFilterController();
-        controller = (FXMLDisplayFilterController)controller.load();
-        
+        controller = (FXMLDisplayFilterController) controller.load();
+
         IDPreferences prefs = IDPreferences.getInstance();
-        String keyString = SoapHandler.getUserId()+"customExport";
+        String keyString = SoapHandler.getUserId() + "customExport";
         byte[] byteArrayProperty = prefs.getByteArrayProperty(keyString);
         if (byteArrayProperty.length > 0) {
             DisplayFilter filter = new DisplayFilter();
             filter.fromByteArray(byteArrayProperty);
             controller.setDisplayFilter(filter);
         }
-        
+
         controller.getStage().showAndWait();
-        
-        if (!controller.isDoneSelected())
+
+        if (!controller.isDoneSelected()) {
             return;
-        
+        }
+
         prefs.setProperty(keyString, controller.getDisplayFilter().asByteArray());
-        
+
         CustomerToTextFilter filter = new CustomerToTextFilter();
         String string = filter.toString(searchResultsTable.getItems(), controller.getDisplayFilter());
-        
+
         FXMLCopySheetController copyController = new FXMLCopySheetController();
         copyController = (FXMLCopySheetController) copyController.load();
         copyController.setText(string);
@@ -922,12 +928,44 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         controller.setText(Utility.toString(searchResultsTable.getItems()));
         controller.getStage().show();
     }
-    
+
     private void handleExportInsuranceButton(ActionEvent event) {
         FXMLCopySheetController controller = new FXMLCopySheetController();
         controller = (FXMLCopySheetController) controller.load();
         controller.setText(Utility.toStringNameAndInsurance(searchResultsTable.getItems()));
         controller.getStage().show();
+    }
+
+    private void tableView() {
+        FXMLDisplayFilterController controller = new FXMLDisplayFilterController();
+        controller = (FXMLDisplayFilterController) controller.load();
+
+        IDPreferences prefs = IDPreferences.getInstance();
+        String keyString = SoapHandler.getUserId() + "tableView";
+        byte[] byteArrayProperty = prefs.getByteArrayProperty(keyString);
+        if (byteArrayProperty.length > 0) {
+            DisplayFilter filter = new DisplayFilter();
+            filter.fromByteArray(byteArrayProperty);
+            controller.setDisplayFilter(filter);
+        }
+
+        controller.getStage().showAndWait();
+
+        if (!controller.isDoneSelected()) {
+            return;
+        }
+
+        DisplayFilter displayFilter = controller.getDisplayFilter();
+        prefs.setProperty(keyString, displayFilter.asByteArray());
+        
+        FXMLFilteredCustomerListViewController ncontroller = new FXMLFilteredCustomerListViewController();
+        ncontroller = (FXMLFilteredCustomerListViewController) ncontroller.load();
+        for (int i=0; i<DisplayFilter.fieldNames.length; i++) {
+            if (displayFilter.getValue(DisplayFilter.fieldNames[i]))
+                ncontroller.addColumn(DisplayFilter.fieldNames[i]);
+        }
+        ncontroller.setItems(searchResultsTable.getItems());
+        ncontroller.getStage().show();
     }
 
     private void printList() {
@@ -1280,7 +1318,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         queryStatus.setText("Van members with no insurance");
         applyFilters();
     }
-    
+
     private void queryBuilderMembersInsured() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
