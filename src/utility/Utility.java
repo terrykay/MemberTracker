@@ -156,7 +156,7 @@ public class Utility {
             addComma(string);
             addNoReturn(string, aCustomer.getSurname());
             addComma(string);
-            addNoReturn(string, aCustomer.getMembership().getInsuranceExpiry().toString());
+            addNoReturn(string, MyDate.toString(aCustomer.getMembership().getInsuranceExpiry()));
             addReturn(string);
         }
 

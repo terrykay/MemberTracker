@@ -1158,7 +1158,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
  //           setForMember(true);
             dateJoinedField.setText(date);
         }
- //       setVisits();
+        setVisits();
 
         if (myCustomer.getPartnerId() != null) {
             partner = SoapHandler.getCustomerByID(myCustomer.getPartnerId());
