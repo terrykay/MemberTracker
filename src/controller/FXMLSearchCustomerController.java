@@ -564,7 +564,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                         // populate customerSet Map, allows easy indexing as Soap TO objects don't override equals
                         customerSet.put(eachRow.getId(), eachRow);
                     }
-
+                    System.out.println("Populating list took " + ((System.currentTimeMillis() - start)) + " milliseconds");
                     // Now we can easily pull partner details
                     new Thread() {
                         public void run() {
@@ -961,8 +961,12 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         FXMLFilteredCustomerListViewController ncontroller = new FXMLFilteredCustomerListViewController();
         ncontroller = (FXMLFilteredCustomerListViewController) ncontroller.load();
         for (int i=0; i<DisplayFilter.fieldNames.length; i++) {
-            if (displayFilter.getValue(DisplayFilter.fieldNames[i]))
+            if (displayFilter.getValue(DisplayFilter.fieldNames[i])) {
+                if (DisplayFilter.fieldNames[i].equals(DisplayFilter.ADDRESS)) {
+                    Utility.showAlert("Error", "Operation currently unsupported", "Showing addresses currently doesn't work.\nOffer your dev bribes and beer to enable...");
+                }
                 ncontroller.addColumn(DisplayFilter.fieldNames[i]);
+            }
         }
         ncontroller.setItems(searchResultsTable.getItems());
         ncontroller.getStage().show();
