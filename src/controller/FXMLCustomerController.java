@@ -30,6 +30,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import javafx.application.Platform;
@@ -71,6 +72,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.StageStyle;
 import javax.imageio.ImageIO;
+import jdk.nashorn.internal.runtime.regexp.joni.Warnings;
 import model.CarRowItem;
 import model.ChildRowItem;
 import model.ImageRowItem;
@@ -122,6 +124,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     private TextField nextOfKinNumber;
     @FXML
     private CheckBox nextOfKinNaturistAware;
+    @FXML
+    private Button warningButton;
+    @FXML
+    private Button warningClearButton;
 
     // Override String from parent so Load() will work correctly
     //protected String FXMLPath="FXMLCustomer.fxml";
@@ -260,6 +266,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     List<CarTO> carDeleteList;
     List<ChildTO> childDeleteList;
     List<ImageTO> imageDeleteList;
+    RefuseTO refuseDelete = null;
+    List<AmberWarningTO> amberWarningDeleteList;
 
     @Override
 
@@ -269,14 +277,41 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         return controller;
     }
 
+    public void resetWarnings() {
+        stage.setTitle("Customer details");
+        refuseButton.setText("refuse");
+        forenameField.setStyle("-fx-background-color: white;");
+        middlenameField.setStyle("-fx-background-color: white;");
+        surnameField.setStyle("-fx-background-color: white;");
+        hideResetWarningButton();
+    }
+
     public void showRefused() {
         stage.setTitle("Individual should be refused entry");
         scene.setFill(Color.BEIGE);
         forenameField.setStyle("-fx-background-color: red;");
         middlenameField.setStyle("-fx-background-color: red;");
         surnameField.setStyle("-fx-background-color: red;");
-        refuseButton.setVisible(false);
-        refuseButton.setPrefWidth(0);
+        refuseButton.setText("Admit");
+    }
+
+    public void showWarning(List<AmberWarningTO> warnings) {
+        stage.setTitle("Individual has recevied " + warnings.size() + " warnings");
+        scene.setFill(Color.BEIGE);
+        forenameField.setStyle("-fx-background-color: yellow;");
+        middlenameField.setStyle("-fx-background-color: yellow;");
+        surnameField.setStyle("-fx-background-color: yellow;");
+        showResetWarningButton();
+    }
+
+    private void hideResetWarningButton() {
+        warningClearButton.setVisible(false);
+        warningClearButton.setPrefWidth(0);
+    }
+
+    private void showResetWarningButton() {
+        warningClearButton.setVisible(true);
+        warningClearButton.setPrefWidth(120);
     }
 
     public void setExitBehaviour() {
@@ -301,6 +336,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         carDeleteList = new ArrayList();
         childDeleteList = new ArrayList();
         imageDeleteList = new ArrayList();
+        amberWarningDeleteList = new ArrayList();
 
         postcodeField.textProperty().addListener((e, oldv, newv) -> {
             if (newv != null) {
@@ -362,6 +398,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         invoicePaidColumn.setCellValueFactory(cellData -> cellData.getValue().getInvoicePaidProperty());
         addNewInvoice();
         invoiceTable.setItems(invoiceList);
+
+        hideResetWarningButton();
     }
 
     @FXML
@@ -467,12 +505,30 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
     @FXML
     private void handleRefuseButton(ActionEvent event) {
-        Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Refuse this person entry?", "Are you sure you wish to refuse this\nperson entry? This cannot be\nrevoked once saved.");
-        if (showConfirmationAlert.get() == ButtonType.OK) {
-            RefuseTO refusal = new RefuseTO();
-            refusal.setDate(MyDate.toXMLGregorianCalendar(new Date()));
-            aCustomer.setRefuse(refusal);
-            showRefused();
+
+        if (aCustomer.getRefuse() != null && aCustomer.getRefuse().getDate() != null) {
+            // Already refused - admit!
+            Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Allow this person entry?", "Are you sure you wish to allow this\nperson entry?");
+            if (showConfirmationAlert.get() == ButtonType.OK) {
+                refuseDelete = aCustomer.getRefuse();
+                aCustomer.setRefuse(null);
+
+                if (aCustomer.getAmberWarningCollection() != null && aCustomer.getAmberWarningCollection().size() > 0) {
+                    showWarning(aCustomer.getAmberWarningCollection());
+                } else {
+                    resetWarnings();
+                }
+            }
+
+        } else {
+
+            Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Refuse this person entry?", "Are you sure you wish to refuse this\nperson entry? ");
+            if (showConfirmationAlert.get() == ButtonType.OK) {
+                RefuseTO refusal = new RefuseTO();
+                refusal.setDate(MyDate.toXMLGregorianCalendar(new Date()));
+                aCustomer.setRefuse(refusal);
+                showRefused();
+            }
         }
     }
 
@@ -489,6 +545,31 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     @FXML
     private void setVisitUpdatedAction(ActionEvent event) {
         viewVisitDetails();
+    }
+
+    @FXML
+    private void handleWarningButton(ActionEvent event) {
+        Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Add a warning marker?", "Are you sure you wish to add a\nwarning to this person?");
+        if (showConfirmationAlert.get() == ButtonType.OK) {
+            AmberWarningTO warning = new AmberWarningTO();
+            warning.setDate(MyDate.toXMLGregorianCalendar(new Date()));
+            aCustomer.getAmberWarningCollection().add(warning);
+            showWarning(aCustomer.getAmberWarningCollection());
+        }
+    }
+
+    @FXML
+    private void handleClearWarningButton(ActionEvent event) {
+        Optional<ButtonType> showConfirmationAlert = Utility.showConfirmationAlert("Please confirm", "Remove warning markers?", "Are you sure you wish to remove\nwarnings from this person?");
+        if (showConfirmationAlert.get() == ButtonType.OK) {
+
+            Iterator<AmberWarningTO> iterator = aCustomer.getAmberWarningCollection().iterator();
+            while (iterator.hasNext()) {
+                amberWarningDeleteList.add(iterator.next());
+            }
+            aCustomer.getAmberWarningCollection().clear();
+            resetWarnings();
+        }
     }
 
     private class myPartnerContextMenu extends ContextMenu {
@@ -508,6 +589,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private class myContextMenu extends ContextMenu {
+
         public myContextMenu(TableView targetTable) {
             MenuItem view = new MenuItem("View");
             MenuItem delete = new MenuItem("Delete");
@@ -523,6 +605,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
     }
 
     private class myInvoiceContextMenu extends ContextMenu {
+
         public myInvoiceContextMenu(TableView targetTable) {
             MenuItem addCharge = new MenuItem("Add a/c charge");
             MenuItem markPaid = new MenuItem("Mark paid");
@@ -541,19 +624,15 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         }
     }
 
-
     private void handleEditInvoice(ActionEvent event) {
         InvoiceRowItem selectedItem = invoiceTable.getSelectionModel().getSelectedItem();
 
         FXMLInvoiceViewController fxmlInvoiceViewController = new FXMLInvoiceViewController();
         fxmlInvoiceViewController = fxmlInvoiceViewController.load();
-        System.out.println("item = " + selectedItem.getClass().getSimpleName());
         fxmlInvoiceViewController.setInvoice(selectedItem);
         fxmlInvoiceViewController.getStage().showAndWait();
-
-        System.out.println("Date is " + selectedItem.getIssuedate());
     }
-    
+
     @FXML
     private void handleKeyPressOnTable(KeyEvent event) {
         KeyCode keyCode = event.getCode();
@@ -811,10 +890,10 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             new Alert(Alert.AlertType.ERROR, "Must enter fore and surnames at least!").showAndWait();
             return;
         }
-        
+
         System.out.println("Validating email");
         if (emailField.getText() != null && !emailField.getText().isEmpty()) {
-            System.out.println("email is set : "+emailField.getText());
+            System.out.println("email is set : " + emailField.getText());
             if (!MailHandler.getInstance().isEmailValid(emailField.getText())) {
                 new Alert(Alert.AlertType.ERROR, MailHandler.getInstance().validationMessage);
             }
@@ -937,8 +1016,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.setGiftAid(giftAidCheckBox.isSelected());
         aCustomer.setPhotography(photographyCheckBox.isSelected());
 
-
-
         NotificationPreferencesTO notificationPreferences = aCustomer.getNotificationPreferences();
         if (notificationPreferences == null) {
             notificationPreferences = new NotificationPreferencesTO();
@@ -948,9 +1025,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         notificationPreferences.setSms(smsCheckBox.selectedProperty().getValue());
         notificationPreferences.setPost(postCheckBox.selectedProperty().getValue());
 
-
-
-        
         if ((nextOfKinField.getText() != null && nextOfKinField.getText().length() > 0)
                 || ((nextOfKinRelationship.getText() != null && nextOfKinRelationship.getText().length() > 0))) {
             if (aCustomer.getNextOfKin().isEmpty()) {
@@ -1001,6 +1075,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.getCarDeleteCollection().addAll(carDeleteList);
         aCustomer.getChildDeleteCollection().addAll(childDeleteList);
         aCustomer.getImageDeleteCollection().addAll(imageDeleteList);
+        aCustomer.getAmberWarningDeleteCollection().addAll(amberWarningDeleteList);
+        aCustomer.setRefuseDelete(refuseDelete);
     }
 
     public void refreshCustomerDetails() {
@@ -1073,10 +1149,9 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         }
 
-        
-         if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-             nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-         }
+        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+        }
 
         if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
             String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
@@ -1155,7 +1230,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         if (myCustomer.getMembership() != null && myCustomer.getMembership().getJoinedDate() != null) {
             String date = df.format(MyDate.toDate(myCustomer.getMembership().getJoinedDate()));
- //           setForMember(true);
+            //           setForMember(true);
             dateJoinedField.setText(date);
         }
         setVisits();
@@ -1237,6 +1312,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
 
         if (myCustomer.getRefuse() != null && myCustomer.getRefuse().getDate() != null) {
             showRefused();
+        } else if (myCustomer.getAmberWarningCollection() != null && myCustomer.getAmberWarningCollection().size() > 0) {
+            showWarning(myCustomer.getAmberWarningCollection());
         }
         updated = false;
     }
@@ -1464,26 +1541,50 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                     }
                 }
             } else// Not adding new, so display image if double click
-             if (event == null || event.getClickCount() >= 2) {
-                    if (selection.getTheImage() == null) {
-                        // we need to pull the image from the server
+            if (event == null || event.getClickCount() >= 2) {
+                if (selection.getTheImage() == null) {
+                    // we need to pull the image from the server
+                    try {
+                        URL serviceUrl = new URL("https://idserver:8181/IDTrackerServer/ImageServlet?id=" + aCustomer.getId() + "&url=" + selection.getUrl() + "&sessionid=" + SoapHandler.getSessionId());
+                        System.out.println("URL : " + serviceUrl);
+
+                        SSLUtilities.trustAllHostnames();
+                        SSLUtilities.trustAllHttpsCertificates();
+
+                        selection.setTheImage(ImageIO.read(serviceUrl));
+                    } catch (Exception e) {
+                        System.err.println("Error retrieving image : " + e.getMessage());
+
+                        System.err.println("Error retrieving image, trying 0 : " + e.getMessage());
                         try {
-                            URL serviceUrl = new URL("https://idserver:8181/IDTrackerServer/ImageServlet?id=" + aCustomer.getId() + "&url=" + selection.getUrl() + "&sessionid=" + SoapHandler.getSessionId());
+                            URL serviceUrl = new URL("https://idserver:8181/IDTrackerServer/ImageServlet?id=0&url=" + selection.getUrl() + "&sessionid=" + SoapHandler.getSessionId());
                             System.out.println("URL : " + serviceUrl);
-
-                            SSLUtilities.trustAllHostnames();
-                            SSLUtilities.trustAllHttpsCertificates();
-
                             selection.setTheImage(ImageIO.read(serviceUrl));
-                        } catch (Exception e) {
-                            System.err.println("Error retrieving image : " + e.getMessage());
-                            Utility.showAlert("Error occured retrieving image", "Image could not be found on server", e.getMessage());
-                            return;
+                        } catch (Exception exc) {
+                            System.err.println("Trying with partners id - " + aCustomer.getPartnerId());
+                            Integer partnerId = aCustomer.getPartnerId();
+
+                            System.err.println("Error retrieving image, : " + exc.getMessage());
+
+                            if (partnerId != null && partnerId > 0) {
+                                try {
+                                    URL serviceUrl = new URL("https://idserver:8181/IDTrackerServer/ImageServlet?id=" + partnerId + "&url=" + selection.getUrl() + "&sessionid=" + SoapHandler.getSessionId());
+                                    System.out.println("URL : " + serviceUrl);
+                                    selection.setTheImage(ImageIO.read(serviceUrl));
+                                } catch (Exception ex) {
+                                    Utility.showAlert("Error occured retrieving image", "Image could not be found on server", exc.getMessage());
+                                    return;
+                                }
+                            } else {
+                                Utility.showAlert("Error occured retrieving image", "Image could not be found on server", e.getMessage());
+                                return;
+                            }
                         }
                     }
-                    showImage(selection);
                 }
+                showImage(selection);
             }
+        }
     }
 
     private void handleIdClicked(MouseEvent event) {
@@ -1533,7 +1634,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         controller.setImage(anImage);
         controller.getStage().hide();
         controller.getStage().showAndWait();
-        System.out.println("Controller.isUpdated = "+controller.isUpdated());
+        System.out.println("Controller.isUpdated = " + controller.isUpdated());
         if (controller.isUpdated()) {
             IDTable.refresh();
             documentTable.refresh();
@@ -1623,8 +1724,8 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             dateJoinedField.setStyle("-fx-background-color: white;");
             partnerNameField.setStyle("-fx-background-color: white;");
             nextOfKinField.setStyle("-fx-background-color: white;");
-  //          nextOfKinNumber.setStyle("-fx-background-color: white;");
-  //          nextOfKinRelationship.setStyle("-fx-background-color: white;");
+            //          nextOfKinNumber.setStyle("-fx-background-color: white;");
+            //          nextOfKinRelationship.setStyle("-fx-background-color: white;");
 
             notesTextArea.setStyle("-fx-background-color: white;");
 

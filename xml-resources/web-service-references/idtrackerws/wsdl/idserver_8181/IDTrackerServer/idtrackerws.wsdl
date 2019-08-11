@@ -4,6 +4,12 @@
 <xsd:import namespace="http://controller/" schemaLocation="https://idserver:8181/IDTrackerServer/idtrackerws?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="logout">
+<part name="parameters" element="tns:logout"/>
+</message>
+<message name="logoutResponse">
+<part name="parameters" element="tns:logoutResponse"/>
+</message>
 <message name="getCustomers">
 <part name="parameters" element="tns:getCustomers"/>
 </message>
@@ -58,13 +64,11 @@
 <message name="removePartnerResponse">
 <part name="parameters" element="tns:removePartnerResponse"/>
 </message>
-<message name="logout">
-<part name="parameters" element="tns:logout"/>
-</message>
-<message name="logoutResponse">
-<part name="parameters" element="tns:logoutResponse"/>
-</message>
 <portType name="idtrackerws">
+<operation name="logout">
+<input wsam:Action="http://controller/idtrackerws/logoutRequest" message="tns:logout"/>
+<output wsam:Action="http://controller/idtrackerws/logoutResponse" message="tns:logoutResponse"/>
+</operation>
 <operation name="getCustomers">
 <input wsam:Action="http://controller/idtrackerws/getCustomersRequest" message="tns:getCustomers"/>
 <output wsam:Action="http://controller/idtrackerws/getCustomersResponse" message="tns:getCustomersResponse"/>
@@ -101,13 +105,18 @@
 <input wsam:Action="http://controller/idtrackerws/removePartnerRequest" message="tns:removePartner"/>
 <output wsam:Action="http://controller/idtrackerws/removePartnerResponse" message="tns:removePartnerResponse"/>
 </operation>
-<operation name="logout">
-<input wsam:Action="http://controller/idtrackerws/logoutRequest" message="tns:logout"/>
-<output wsam:Action="http://controller/idtrackerws/logoutResponse" message="tns:logoutResponse"/>
-</operation>
 </portType>
 <binding name="idtrackerwsPortBinding" type="tns:idtrackerws">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="logout">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="getCustomers">
 <soap:operation soapAction=""/>
 <input>
@@ -181,15 +190,6 @@
 </output>
 </operation>
 <operation name="removePartner">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="logout">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>

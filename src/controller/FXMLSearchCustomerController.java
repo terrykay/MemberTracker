@@ -344,10 +344,14 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             StringProperty value = cellData.getValue().getMemberNoProperty();
             if (cellData.getValue().getRefuse() != null && cellData.getValue().getRefuse().getDate() != null) {
                 value.setValue("refuse entry");
+            } else if (cellData.getValue().getAmberWarningCollection() != null && cellData.getValue().getAmberWarningCollection().size() > 0) {
+                value.setValue(cellData.getValue().getAmberWarningCollection().size() + " warnings");
             }
+
             if (value.getValue() == null) {
                 value.setValue("n/a");
             }
+
             return value;
         });
 
@@ -957,10 +961,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
         DisplayFilter displayFilter = controller.getDisplayFilter();
         prefs.setProperty(keyString, displayFilter.asByteArray());
-        
+
         FXMLFilteredCustomerListViewController ncontroller = new FXMLFilteredCustomerListViewController();
         ncontroller = (FXMLFilteredCustomerListViewController) ncontroller.load();
-        for (int i=0; i<DisplayFilter.fieldNames.length; i++) {
+        for (int i = 0; i < DisplayFilter.fieldNames.length; i++) {
             if (displayFilter.getValue(DisplayFilter.fieldNames[i])) {
                 if (DisplayFilter.fieldNames[i].equals(DisplayFilter.ADDRESS)) {
                     Utility.showAlert("Error", "Operation currently unsupported", "Showing addresses currently doesn't work.\nOffer your dev bribes and beer to enable...");
@@ -1393,41 +1397,43 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         // private class to handle delete menu or delete key press
         @Override
         public void handle(Event event) {
-            FXMLCustomerController controller = new FXMLCustomerController();
-            controller = (FXMLCustomerController) controller.load();
-
             SearchRowItem whichCustomer = searchResultsTable.getSelectionModel().getSelectedItem();
-            controller.setCustomerDetails(whichCustomer);
+            if (whichCustomer != null) {
+                FXMLCustomerController controller = new FXMLCustomerController();
+                controller = (FXMLCustomerController) controller.load();
 
-            controller.getStage().showAndWait();
-            if (controller.isUpdated()) {
-                // refresh Customer against server
-                //       CustomerTO updatedCustomer = SoapHandler.getCustomerByID(whichCustomer.getCustomerId());
-                //       whichCustomer.setCustomerTO(updatedCustomer);
-                // if there's a partner, set the name
-                CustomerTO updatedCustomer = controller.getCustomer();
-                Integer partnerId = whichCustomer.getPartnerId();
-                if (partnerId != null && partnerId != 0) {
-                    if (whichCustomer.getPartnerProperty() == null) {
-                        whichCustomer.setPartnerProperty(new SimpleStringProperty());
+                controller.setCustomerDetails(whichCustomer);
+
+                controller.getStage().showAndWait();
+                if (controller.isUpdated()) {
+                    // refresh Customer against server
+                    //       CustomerTO updatedCustomer = SoapHandler.getCustomerByID(whichCustomer.getCustomerId());
+                    //       whichCustomer.setCustomerTO(updatedCustomer);
+                    // if there's a partner, set the name
+                    CustomerTO updatedCustomer = controller.getCustomer();
+                    Integer partnerId = whichCustomer.getPartnerId();
+                    if (partnerId != null && partnerId != 0) {
+                        if (whichCustomer.getPartnerProperty() == null) {
+                            whichCustomer.setPartnerProperty(new SimpleStringProperty());
+                        }
+                        SimpleStringProperty partnerName = (SimpleStringProperty) whichCustomer.getPartnerProperty();
+                        SearchRowItem partner = customerSet.get(partnerId);
+                        partnerName.setValue(partner.getForename());
+                        if (partner.getPartnerProperty() != null) {
+                            partner.getPartnerProperty().setValue(whichCustomer.getForename());
+                        } else {
+                            partner.setPartnerProperty(new SimpleStringProperty(whichCustomer.getForename()));
+                        }
+                    } else if (whichCustomer.getPartnerProperty() != null) {
+                        whichCustomer.getPartnerProperty().setValue("");
                     }
-                    SimpleStringProperty partnerName = (SimpleStringProperty) whichCustomer.getPartnerProperty();
-                    SearchRowItem partner = customerSet.get(partnerId);
-                    partnerName.setValue(partner.getForename());
-                    if (partner.getPartnerProperty() != null) {
-                        partner.getPartnerProperty().setValue(whichCustomer.getForename());
-                    } else {
-                        partner.setPartnerProperty(new SimpleStringProperty(whichCustomer.getForename()));
-                    }
-                } else if (whichCustomer.getPartnerProperty() != null) {
-                    whichCustomer.getPartnerProperty().setValue("");
+                    whichCustomer.setCustomer(updatedCustomer);
+                    whichCustomer.refresh(updatedCustomer);
+                    //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
+                    //  customer.setCustomerTO(whichCustomer);
+
+                    searchResultsTable.refresh();
                 }
-                whichCustomer.setCustomer(updatedCustomer);
-                whichCustomer.refresh(updatedCustomer);
-                //  SearchRowItem customer = customerSet.get(whichCustomer.getCustomerId());
-                //  customer.setCustomerTO(whichCustomer);
-
-                searchResultsTable.refresh();
             }
         }
     }

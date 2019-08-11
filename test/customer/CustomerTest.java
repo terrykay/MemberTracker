@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import utility.SSLUtilities;
 
 /**
  *
@@ -44,17 +45,9 @@ public class CustomerTest {
     
     @Before
     public void setUp() {
-        try {
-            LoginTest.readCerts();
-        } catch (IOException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (KeyStoreException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (CertificateException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(CustomerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+                                SSLUtilities.trustAllHostnames();
+                        SSLUtilities.trustAllHttpsCertificates();
+
         sessionId = LoginTest.loginAndGetSession();
     }
     

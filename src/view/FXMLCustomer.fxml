@@ -252,6 +252,8 @@
             <Button fx:id="printButton" mnemonicParsing="false" onAction="#handlePrintButton" text="Print" />
               <Button fx:id="cancelButton" layoutX="222.0" layoutY="541.0" mnemonicParsing="false" onAction="#handleCancelButtonAction" text="Cancel" />
             <Button fx:id="refuseButton" mnemonicParsing="false" onAction="#handleRefuseButton" text="Refuse" />
+            <Button fx:id="warningButton" mnemonicParsing="false" onAction="#handleWarningButton" text="Warning" />
+            <Button fx:id="warningClearButton" layoutX="513.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleClearWarningButton" text="Clear warnings" />
          </children>
          <padding>
             <Insets top="10.0" />

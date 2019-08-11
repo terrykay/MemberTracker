@@ -1,5 +1,6 @@
 package model;
 
+import Soap.AmberWarningTO;
 import Soap.CarTO;
 import Soap.ChildTO;
 import Soap.CustomerTO;
@@ -8,6 +9,7 @@ import Soap.RefuseTO;
 import UtilityClasses.MyDate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -44,6 +46,9 @@ public class SearchRowItem extends CustomerTO {
         setCustomer(fromCustomer);
      
         refresh(fromCustomer);
+    }    
+    public List<AmberWarningTO> getWarning() {
+        return super.getAmberWarningCollection();
     }
     
     public void refresh(CustomerTO customer) {
@@ -104,6 +109,8 @@ public class SearchRowItem extends CustomerTO {
         setTelephoneTwo(aCustomer.getTelephoneTwo());
         setPhotography(aCustomer.isPhotography());
         setRefuse(aCustomer.getRefuse());
+        getAmberWarningCollection().clear();
+        getAmberWarningCollection().addAll(aCustomer.getAmberWarningCollection());
         getNotes().clear();
         getNotes().addAll(aCustomer.getNotes());
         getNextOfKin().clear();
