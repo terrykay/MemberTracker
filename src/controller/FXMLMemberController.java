@@ -34,7 +34,7 @@ public class FXMLMemberController extends FXMLParentController implements Initia
 
     private final String SELECT = "Select";
     private final String SOCIETIES[] = {SELECT, "Northern", "Southern", "Bromley", "Kent"};
-    public final static String TENT_PITCH = "Texnt pitch";
+    public final static String TENT_PITCH = "Tent pitch";
     public final static String VAN_PITCH = "Van pitch";
     public final static String LARGE_VAN_PITCH = "Large van pitch";
     private final String MEMBERSHIP_TYPE[] = {SELECT, "Member", TENT_PITCH, VAN_PITCH, LARGE_VAN_PITCH, "Resident"};

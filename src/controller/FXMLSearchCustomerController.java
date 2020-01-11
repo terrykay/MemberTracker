@@ -233,13 +233,14 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
     private static final String MEMBERSONLY = "Members";
     private static final String NONEMEMBERS = "Non-members";
     private static final String REFUSED = "Refuse entry";
+    private static final String WARNING = "Has warning";
     private static final String NORTHERN = "Northern";
     private static final String SOUTHERN = "Southern";
     private static final String BROMLEY = "Bromley";
     private static final String KENT = "Kent";
     private static final String ELECTRIC_HOOKUP = "Members with electricity";
     private static final String NO_ELECTRIC_HOOKUP = "Members with pitch, no elec";
-    private static final String[] filterItems = {SHOWONLY, SHOWALL, EXPIRED, MEMBERSONLY, NONEMEMBERS, REFUSED, NORTHERN, SOUTHERN, BROMLEY, KENT};
+    private static final String[] filterItems = {SHOWONLY, SHOWALL, EXPIRED, MEMBERSONLY, NONEMEMBERS, REFUSED, WARNING, NORTHERN, SOUTHERN, BROMLEY, KENT};
 
     @FXML
     private TextField searchField;
@@ -293,7 +294,7 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         // of partners etc if we click "Add new"
         selected = searchResultsTable.getSelectionModel().getSelectedItem();
         // Make sure we persist the address and return the ID for it, to ensure partners can share
-        if (selected.getAddressId() == null || selected.getAddressId().getId() == null || selected.getAddressId().getId() == 0) {
+        if (selected.getAddressId() != null && (selected.getAddressId().getId() == null || selected.getAddressId().getId() == 0)) {
             Integer addressId = SoapHandler.saveAddress(selected.getAddressId());
             selected.getAddressId().setId(addressId);
         }
@@ -374,6 +375,15 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
 
         societyColumn.setCellValueFactory(t -> t.getValue().getSocietyProperty());
         idValidColumn.setCellValueFactory(cellData -> {
+            try {
+            Utility.checkValidID(cellData.getValue().getImageCollection());
+            } catch (Exception e) {
+                System.err.println("Error with "+cellData.getValue());
+                System.err.println("Images with "+cellData.getValue().getImageCollection());
+                e.printStackTrace();
+                
+            }
+            
             return Utility.checkValidID(cellData.getValue().getImageCollection());
         });
 
@@ -678,6 +688,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
             showOnlyFilter.addFilter(a -> {
                 return (a.getRefuse() != null && a.getRefuse().getDate() != null);
             });
+          } else if (WARNING.equals(filterSelected)) {
+            showOnlyFilter.addFilter(a -> {
+                return (a.getAmberWarningCollection()!= null && a.getAmberWarningCollection().size() > 0);
+            });          
         } else {
             // Searching for one of societies, all that is left
             showOnlyFilter.addFilter(a -> {
@@ -715,8 +729,10 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                     filteredRowItemList = eachFilter.run();
                 }
                 System.out.println("Filtering took : " + (System.currentTimeMillis() - start) + " ms");
-                searchResultsTable.setItems(filteredRowItemList);
-                customerCountStatus.setText(Integer.toString(filteredRowItemList.size()));
+                Platform.runLater(() -> {
+                    searchResultsTable.setItems(filteredRowItemList);
+                    customerCountStatus.setText(Integer.toString(filteredRowItemList.size()));
+                });
                 return null;
             }
         };
@@ -1231,6 +1247,18 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
         applyFilters();
     }
 
+    
+    private void queryBuilderWithWarnings() {
+        filterList.remove(queryFilter);
+        queryFilter = new CustomerListFilter();
+        queryFilter.addFilter(a -> {
+            return a.getAmberWarningCollection()!=null && a.getAmberWarningCollection().size() > 0;
+        });
+        filterList.add(queryFilter);
+        queryStatus.setText("");
+        applyFilters();
+    }
+    
     private void queryBuilderTemplate() {
         filterList.remove(queryFilter);
         queryFilter = new CustomerListFilter();
@@ -1411,13 +1439,15 @@ public class FXMLSearchCustomerController extends FXMLParentController implement
                     //       whichCustomer.setCustomerTO(updatedCustomer);
                     // if there's a partner, set the name
                     CustomerTO updatedCustomer = controller.getCustomer();
-                    Integer partnerId = whichCustomer.getPartnerId();
+                    Integer partnerId = updatedCustomer.getPartnerId();
                     if (partnerId != null && partnerId != 0) {
                         if (whichCustomer.getPartnerProperty() == null) {
                             whichCustomer.setPartnerProperty(new SimpleStringProperty());
                         }
                         SimpleStringProperty partnerName = (SimpleStringProperty) whichCustomer.getPartnerProperty();
                         SearchRowItem partner = customerSet.get(partnerId);
+                        if (partner==null)
+                            partner = new SearchRowItem(SoapHandler.getCustomerByID(partnerId));
                         partnerName.setValue(partner.getForename());
                         if (partner.getPartnerProperty() != null) {
                             partner.getPartnerProperty().setValue(whichCustomer.getForename());

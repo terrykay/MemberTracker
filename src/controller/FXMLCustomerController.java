@@ -83,6 +83,7 @@ import org.ghost4j.document.DocumentException;
 import org.ghost4j.document.PDFDocument;
 import org.ghost4j.renderer.RendererException;
 import org.ghost4j.renderer.SimpleRenderer;
+import utility.CustomerUtility;
 import utility.MailHandler;
 import utility.PostFile;
 import utility.ProgressIndicator;
@@ -671,7 +672,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         controller.setMembership(membership);
         controller.getStage().showAndWait();
         if (controller.isUpdated()) {
-            if ("remove".equals(aCustomer.getMembership().getMembershipNo())) {
+            if (aCustomer.getMembership()!=null && "remove".equals(aCustomer.getMembership().getMembershipNo())) {
                 aCustomer.setMembership(null);
                 setVisits();
             } else if (aCustomer.getMembership() == null) {
@@ -679,7 +680,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 setForMember(true);
                 //   dateJoinedField.setText(controller.getMembership().getMembershipNo());
             }
-            refreshCustomerDetails();
         }
     }
 
@@ -702,6 +702,7 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         if (controller.getSelected() != null) {
             storeCustomerDetails();
             CustomerTO partner = controller.getSelected();
+            partner = SoapHandler.getCustomerByID(partner.getId());
             aCustomer.setPartnerId(partner.getId());
 
             partnerNameField.setText(partner.getForename());
@@ -726,7 +727,6 @@ public class FXMLCustomerController extends FXMLParentController implements Init
                 }
             }
             updated = true;
-            refreshCustomerDetails();
         }
     }
 
@@ -1079,90 +1079,90 @@ public class FXMLCustomerController extends FXMLParentController implements Init
         aCustomer.setRefuseDelete(refuseDelete);
     }
 
-    public void refreshCustomerDetails() {
-        // Already set aCustomer, we've done something and need to refresh the display if 
-        // the Customer is different or the display hasn't yet been set
-        if ("".equals(forenameField.getText()) || !"".equals(aCustomer.getForename())) {
-            forenameField.setText(aCustomer.getForename());
-        }
-        if ("".equals(middlenameField.getText()) || !"".equals(aCustomer.getMiddlenames())) {
-            middlenameField.setText(aCustomer.getMiddlenames());
-        }
-        if ("".equals(surnameField.getText()) || !"".equals(aCustomer.getSurname())) {
-            surnameField.setText(aCustomer.getSurname());
-        }
-
-        AddressTO theAddress = aCustomer.getAddressId();
-        if ("".equals(addressOneField.getText()) || !"".equals(theAddress.getAddressLineOne())) {
-            addressOneField.setText(theAddress.getAddressLineOne());
-        }
-        if ("".equals(addressTwoField.getText()) || !"".equals(theAddress.getAddressLineTwo())) {
-            addressTwoField.setText(theAddress.getAddressLineTwo());
-        }
-        if ("".equals(townField.getText()) || !"".equals(theAddress.getTown())) {
-            townField.setText(theAddress.getTown());
-        }
-        if ("".equals(countyField.getText()) || !"".equals(theAddress.getCounty())) {
-            countyField.setText(theAddress.getCounty());
-        }
-        if ("".equals(postcodeField.getText()) || !"".equals(theAddress.getPostcode())) {
-            postcodeField.setText(theAddress.getPostcode());
-        }
-        if ("".equals(countryField.getText()) || !"".equals(theAddress.getCountry())) {
-            countryField.setText(theAddress.getCountry());
-        }
-
-        if ("".equals(telephoneOneField.getText()) || !"".equals(aCustomer.getTelephoneOne())) {
-            telephoneOneField.setText(aCustomer.getTelephoneOne());
-        }
-        if ("".equals(telephoneOneField.getText()) || !"".equals(aCustomer.getTelephoneOne())) {
-            telephoneTwoField.setText(aCustomer.getTelephoneTwo());
-        }
-        if ("".equals(emailField.getText()) || !"".equals(aCustomer.getEmail())) {
-            emailField.setText(aCustomer.getEmail());
-        }
-        if ("".equals(occupationField.getText()) || !"".equals(aCustomer.getOccupation())) {
-            occupationField.setText(aCustomer.getOccupation());
-        }
-        if ("".equals(hobbiesField.getText()) || !"".equals(aCustomer.getHobbies())) {
-            hobbiesField.setText(aCustomer.getHobbies());
-        }
-        if ("".equals(notesTextArea.getText())) {
-            if (aCustomer.getNotes() != null
-                    && aCustomer.getNotes().size() > 0
-                    && !"".equals(aCustomer.getNotes().get(0).getNotes())) {
-                notesTextArea.setText(aCustomer.getNotes().get(0).getNotes());
-            }
-        }
-
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
-                nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-                nextOfKinNumber.setText(aCustomer.getNextOfKin().get(0).getContactNo());
-                nextOfKinRelationship.setText(aCustomer.getNextOfKin().get(0).getRelationship());
-                nextOfKinNaturistAware.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
-            }
-        }
-
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-
-        }
-
-        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
-            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
-        }
-
-        if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
-            String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
-
-            dateJoinedField.setText(date);
-        } else {
-            dateJoinedField.setText("n/a");
-        }
-
-        //dobDatePicker.setValue(MyDate.toLocalDate(myCustomer.getDob()));
-    }
+//    public void refreshCustomerDetails() {
+//        // Already set aCustomer, we've done something and need to refresh the display if 
+//        // the Customer is different or the display hasn't yet been set
+//        if ("".equals(forenameField.getText()) || !"".equals(aCustomer.getForename())) {
+//            forenameField.setText(aCustomer.getForename());
+//        }
+//        if ("".equals(middlenameField.getText()) || !"".equals(aCustomer.getMiddlenames())) {
+//            middlenameField.setText(aCustomer.getMiddlenames());
+//        }
+//        if ("".equals(surnameField.getText()) || !"".equals(aCustomer.getSurname())) {
+//            surnameField.setText(aCustomer.getSurname());
+//        }
+//
+//        AddressTO theAddress = aCustomer.getAddressId();
+//        if ("".equals(addressOneField.getText()) || !"".equals(theAddress.getAddressLineOne())) {
+//            addressOneField.setText(theAddress.getAddressLineOne());
+//        }
+//        if ("".equals(addressTwoField.getText()) || !"".equals(theAddress.getAddressLineTwo())) {
+//            addressTwoField.setText(theAddress.getAddressLineTwo());
+//        }
+//        if ("".equals(townField.getText()) || !"".equals(theAddress.getTown())) {
+//            townField.setText(theAddress.getTown());
+//        }
+//        if ("".equals(countyField.getText()) || !"".equals(theAddress.getCounty())) {
+//            countyField.setText(theAddress.getCounty());
+//        }
+//        if ("".equals(postcodeField.getText()) || !"".equals(theAddress.getPostcode())) {
+//            postcodeField.setText(theAddress.getPostcode());
+//        }
+//        if ("".equals(countryField.getText()) || !"".equals(theAddress.getCountry())) {
+//            countryField.setText(theAddress.getCountry());
+//        }
+//
+//        if ("".equals(telephoneOneField.getText()) || !"".equals(aCustomer.getTelephoneOne())) {
+//            telephoneOneField.setText(aCustomer.getTelephoneOne());
+//        }
+//        if ("".equals(telephoneOneField.getText()) || !"".equals(aCustomer.getTelephoneOne())) {
+//            telephoneTwoField.setText(aCustomer.getTelephoneTwo());
+//        }
+//        if ("".equals(emailField.getText()) || !"".equals(aCustomer.getEmail())) {
+//            emailField.setText(aCustomer.getEmail());
+//        }
+//        if ("".equals(occupationField.getText()) || !"".equals(aCustomer.getOccupation())) {
+//            occupationField.setText(aCustomer.getOccupation());
+//        }
+//        if ("".equals(hobbiesField.getText()) || !"".equals(aCustomer.getHobbies())) {
+//            hobbiesField.setText(aCustomer.getHobbies());
+//        }
+//        if ("".equals(notesTextArea.getText())) {
+//            if (aCustomer.getNotes() != null
+//                    && aCustomer.getNotes().size() > 0
+//                    && !"".equals(aCustomer.getNotes().get(0).getNotes())) {
+//                notesTextArea.setText(aCustomer.getNotes().get(0).getNotes());
+//            }
+//        }
+//
+//        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+//            if ("".equals(nextOfKinField.getText()) || !"".equals(aCustomer.getNextOfKin().get(0).getName())) {
+//                nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+//                nextOfKinNumber.setText(aCustomer.getNextOfKin().get(0).getContactNo());
+//                nextOfKinRelationship.setText(aCustomer.getNextOfKin().get(0).getRelationship());
+//                nextOfKinNaturistAware.setSelected(aCustomer.getNextOfKin().get(0).isAwareNaturist());
+//            }
+//        }
+//
+//        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+//            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+//
+//        }
+//
+//        if (aCustomer.getNextOfKin() != null && aCustomer.getNextOfKin().size() > 0) {
+//            nextOfKinField.setText(aCustomer.getNextOfKin().get(0).getName());
+//        }
+//
+//        if (aCustomer.getMembership() != null && aCustomer.getMembership().getJoinedDate() != null) {
+//            String date = df.format(MyDate.toDate(aCustomer.getMembership().getJoinedDate()));
+//
+//            dateJoinedField.setText(date);
+//        } else {
+//            dateJoinedField.setText("n/a");
+//        }
+//
+//        //dobDatePicker.setValue(MyDate.toLocalDate(myCustomer.getDob()));
+//    }
 
     public void setCustomerDetails(CustomerTO myCustomer) {
 
@@ -1183,7 +1183,11 @@ public class FXMLCustomerController extends FXMLParentController implements Init
             protected Integer call() throws Exception {
                 try {
                     long start = System.currentTimeMillis();
-                    aCustomer = SoapHandler.getCustomerByID(myCustomer.getId());
+                    CustomerTO customerDetails = SoapHandler.getCustomerByID(myCustomer.getId());
+                    // This sets the customer in the lists details from those retrieved from the server
+                    // Ensure this is updated if CustomerTO is updated
+                    CustomerUtility.copyCustomer(customerDetails, myCustomer);
+                    aCustomer = myCustomer;
 
                     System.out.println("Request took " + ((System.currentTimeMillis() - start)) + " milliseconds");
                     if (aCustomer.getId() == null) {
